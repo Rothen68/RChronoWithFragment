@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+lv_seq_layout.xml
+
+Définit le layout d'une séquence dans la listView
+
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="42dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/txtLvSequence"
+        android:gravity="left|center_vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:id="@+id/btnSuppr"
+        android:background="@drawable/suppr"
+        android:layout_gravity="center" />
+</merge>

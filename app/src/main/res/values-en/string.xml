@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chronometre_start">Start</string>
+    <string name="chronometre_pause">Pause</string>
+    <string name="chronometre_reset">Reset</string>
+
+    <string name="descChronometre_Exercice">Exercise</string>
+    <string name="descChronometre_Sequence">Sequence</string>
+    <string name="descChronometre_Total">Total</string>
+
+</resources>
