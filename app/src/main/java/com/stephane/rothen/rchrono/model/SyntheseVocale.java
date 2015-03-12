@@ -52,4 +52,7 @@ public class SyntheseVocale {
         return r;
     }
 
+    public boolean getNom(){return m_nom;}
+    public boolean getDuree(){return m_duree;}
+
 }

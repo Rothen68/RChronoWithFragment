@@ -19,11 +19,13 @@ import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
+import java.util.Locale;
+
 
 /**
  * Created by stéphane on 23/02/2015.
  */
-public class ChronoService extends Service  {
+public class ChronoService extends Service implements TextToSpeech.OnInitListener {
 
     public static final String SER_ACTION="action";
 
@@ -59,12 +61,32 @@ public class ChronoService extends Service  {
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder mNotificationBuilder;
 
+    private TextToSpeech mTextToSpeach;
+    private boolean mTextToSpeachReady=false;
+
 
 
     private NotificationExercice mNotificationExercice;
     private SyntheseVocale mSyntheseVocaleExercice;
     private SyntheseVocale mSyntheseVocaleSequence;
+    private int mIndexSequenceSyntheseVocaleEnnoncee=-1;
 
+    @Override
+    public void onInit(int status) {
+        if (status==TextToSpeech.SUCCESS)
+        {
+            int result = mTextToSpeach.setLanguage(Locale.FRANCE);
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                mTextToSpeachReady=true;
+
+
+
+            }
+        }
+    }
 
 
     /**
@@ -84,6 +106,7 @@ public class ChronoService extends Service  {
     @Override
     public void onCreate() {
         super.onCreate();
+
         mNotificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationBuilder = new NotificationCompat.Builder(this);
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
@@ -92,11 +115,9 @@ public class ChronoService extends Service  {
         Intent i = new Intent(this,ChronometreActivity.class);
         PendingIntent nPi = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationBuilder.setContentIntent(nPi);
-
-
-
         mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
 
+        mTextToSpeach= new TextToSpeech(this,this);
     }
 
 
@@ -126,6 +147,11 @@ public class ChronoService extends Service  {
             mNotificationManager.cancel(IDNOTIFICATION);
             mNotificationManager=null;
             mNotificationBuilder=null;
+        }
+        if(mTextToSpeach!=null)
+        {
+            mTextToSpeach.stop();
+            mTextToSpeach.shutdown();
         }
     }
 
@@ -325,6 +351,26 @@ public class ChronoService extends Service  {
     }
 
     private void gestionSyntheseVocale() {
+        if (mTextToSpeachReady) {
+            if(mIndexSequenceSyntheseVocaleEnnoncee!=mChrono.getIndexSequenceActive()) {
+                if (mSyntheseVocaleSequence.getNom()) {
+                    mTextToSpeach.speak(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getNomSequence(), TextToSpeech.QUEUE_ADD, null);
+                }
+                if (mSyntheseVocaleSequence.getDuree()) {
+                    mTextToSpeach.speak(String.valueOf(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getDureeSequence()) + " secondes", TextToSpeech.QUEUE_ADD, null);
+                }
+                mIndexSequenceSyntheseVocaleEnnoncee = mChrono.getIndexSequenceActive();
+            }
+            if(mSyntheseVocaleExercice.getNom())
+            {
+                mTextToSpeach.speak(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getNomExercice(),TextToSpeech.QUEUE_ADD,null);
+            }
+            if(mSyntheseVocaleExercice.getDuree())
+            {
+                mTextToSpeach.speak(String.valueOf(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getDureeExercice()) + " secondes",TextToSpeech.QUEUE_ADD,null);
+            }
+
+        }
     }
 
     private void gestionNotification() {

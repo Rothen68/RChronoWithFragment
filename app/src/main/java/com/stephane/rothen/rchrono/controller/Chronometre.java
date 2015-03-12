@@ -147,15 +147,15 @@ public class Chronometre {
         }*/
         ElementSequence e = new ElementSequence("Exercice 1","",10,null,10,null,new NotificationExercice(0x01,0),new SyntheseVocale(0));
         ElementSequence e2 = new ElementSequence("Exercice 2","",60,null,5,null,new NotificationExercice(0x01,0),new SyntheseVocale(0));
-        ElementSequence e3 = new ElementSequence("Exercice 3","",30,null,5,null,new NotificationExercice(0,0),new SyntheseVocale(0));
+        ElementSequence e3 = new ElementSequence("Exercice 3","",30,null,5,null,new NotificationExercice(0,0),new SyntheseVocale(0x01));
         ElementSequence e4 = new ElementSequence("Exercice 4","",30,null,7,null,new NotificationExercice(0x01,0),new SyntheseVocale(0));
         ElementSequence e5 = new ElementSequence("Exercice 5","",30,null,7,null,new NotificationExercice(0x01,0),new SyntheseVocale(0));
-        Sequence s = new Sequence("Sequence 1", 2,null);
+        Sequence s = new Sequence("Sequence 1", 2,new SyntheseVocale(0x03));
         s.ajouterElement(e);
         s.ajouterElement(e2);
-        Sequence s2 = new Sequence("Sequence 2", 1,null);
+        Sequence s2 = new Sequence("Sequence 2", 1,new SyntheseVocale(0x03));
         s2.ajouterElement(e3);
-        Sequence s3 = new Sequence("Sequence 3",2,null);
+        Sequence s3 = new Sequence("Sequence 3",2,new SyntheseVocale(0x03));
         s3.ajouterElement(e4);
         s3.ajouterElement(e5);
         m_tabSequence.add(s);
