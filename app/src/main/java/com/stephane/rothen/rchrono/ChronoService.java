@@ -58,19 +58,52 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private CountDownTimer mTimer;
 
+    /**
+     * Manager de notification
+     */
     private NotificationManager mNotificationManager;
+    /**
+     * Notification builder pour l'affichage de la notification
+     */
     NotificationCompat.Builder mNotificationBuilder;
 
+    /**
+     * Instance de l'objet TextToSpeech pour la synthèse vocale
+     */
     private TextToSpeech mTextToSpeach;
+    /**
+     * Variable permettant de controler l'état de la synthese vocale
+     *
+     * @see com.stephane.rothen.rchrono.ChronoService#mTextToSpeach
+     */
     private boolean mTextToSpeachReady=false;
 
 
-
+    /**
+     * Stocke la notification de l'exercice actif
+     */
     private NotificationExercice mNotificationExercice;
+    /**
+     * Stocke la synthese vocale de l'exercice actif
+     */
     private SyntheseVocale mSyntheseVocaleExercice;
+    /**
+     * Stocke la synthese vocale de la séquence active
+     */
     private SyntheseVocale mSyntheseVocaleSequence;
+    /**
+     * Stocke l'index de la synthese vocale qui a été énnoncé
+     */
     private int mIndexSequenceSyntheseVocaleEnnoncee=-1;
 
+
+    /**
+     * Implémente l'interface TextToSpeech.OnInitListener, active lors de la fin de l'initialisation du TextToSpeech
+     * @param status
+     *      Status du TextToSpeech
+     *
+     *  @see com.stephane.rothen.rchrono.ChronoService#mTextToSpeach
+     */
     @Override
     public void onInit(int status) {
         if (status==TextToSpeech.SUCCESS)
@@ -81,9 +114,6 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                 Log.e("TTS", "This Language is not supported");
             } else {
                 mTextToSpeachReady=true;
-
-
-
             }
         }
     }
@@ -100,6 +130,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             return ChronoService.this;
         }
     }
+
 
 
 
@@ -327,17 +358,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                     gestionNotification();
                     updateNotificationSynthVocaleActives();
                     gestionSyntheseVocale();
-
-
-
                 }
                 updateChrono();
-
-
             }
-
-
-
 
             @Override
             public void onFinish() {
@@ -346,10 +369,11 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             }
         }.start();
 
-
-
     }
 
+    /**
+     * Gestion de la synthèse vocale pour la séquence et l'exercice en cours
+     */
     private void gestionSyntheseVocale() {
         if (mTextToSpeachReady) {
             if(mIndexSequenceSyntheseVocaleEnnoncee!=mChrono.getIndexSequenceActive()) {
@@ -373,6 +397,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         }
     }
 
+    /**
+     * Gestion des notifications de l'exercice actif
+     */
     private void gestionNotification() {
         if (mNotificationExercice.getVibreur())
         {
@@ -382,6 +409,13 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
     }
 
+    /**
+     * Mise à jours des notifications et syntheses vocales des exercices et sequences actifs
+     *
+     * @see com.stephane.rothen.rchrono.ChronoService#mNotificationExercice
+     * @see com.stephane.rothen.rchrono.ChronoService#mSyntheseVocaleExercice
+     * @see com.stephane.rothen.rchrono.ChronoService#mSyntheseVocaleSequence
+     */
     private void updateNotificationSynthVocaleActives()
     {
         mNotificationExercice = mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getNotification();
