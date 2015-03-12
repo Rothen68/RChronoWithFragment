@@ -242,6 +242,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     {
         chronoStart=false;
         mChrono.resetChrono();
+        mIndexSequenceSyntheseVocaleEnnoncee=-1;
         if(mTimer!=null)
             mTimer.cancel();
         updateChrono();
@@ -252,8 +253,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentText("Chronomètre arrêté");
         mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
-    }
 
+    }
+//todo rendre mChrono threadSafe multithread
     /**
      * Permet de positionner les curseurs du chronometre à une position définie
      * @param sequence

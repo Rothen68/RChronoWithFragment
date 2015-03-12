@@ -1,4 +1,4 @@
-package com.stephane.rothen.rchrono.controller;
+package com.stephane.rothen.rchrono.model;
 
 import android.content.Context;
 import android.database.DatabaseErrorHandler;

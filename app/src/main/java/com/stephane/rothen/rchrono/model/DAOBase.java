@@ -1,19 +1,10 @@
-package com.stephane.rothen.rchrono.controller;
+package com.stephane.rothen.rchrono.model;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
-import com.stephane.rothen.rchrono.model.ElementSequence;
-import com.stephane.rothen.rchrono.model.Exercice;
-import com.stephane.rothen.rchrono.model.LibrairieExercices;
-import com.stephane.rothen.rchrono.model.Morceau;
-import com.stephane.rothen.rchrono.model.NotificationExercice;
-import com.stephane.rothen.rchrono.model.Playlist;
-import com.stephane.rothen.rchrono.model.Sequence;
-import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
 import java.util.ArrayList;
 
@@ -483,8 +474,8 @@ public class DAOBase {
      * Récupère et renvois la librairie des sequences
      * @return
      *      Arraylist contenant les sequences récupéréss
-     */
-    public ArrayList<Sequence> restoreLibrairieSequences(LibrairieExercices libExercices)
+     *//*
+    public ArrayList<Sequence> restoreLibrairieSequences()
     {
         ArrayList<Sequence> tab = new ArrayList<>();
 
@@ -551,6 +542,6 @@ public class DAOBase {
             tab.add(seq);
         }
         return tab;
-    }
+    }*/
 
 }

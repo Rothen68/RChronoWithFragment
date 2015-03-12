@@ -63,7 +63,7 @@ public class ChronometreActivity extends ActionBarActivity implements Chronometr
     private ChronometreFragment mFragment;
 
 
- 
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
