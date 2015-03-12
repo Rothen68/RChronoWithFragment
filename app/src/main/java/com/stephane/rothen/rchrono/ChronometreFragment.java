@@ -58,15 +58,15 @@ public class ChronometreFragment extends Fragment {
     /**
      * Instance de l'interface OnClickListener
      */
-    OnClickListener mClickListener;
+    private OnClickListener mClickListener;
     /**
      * Instance de l'interface OnItemClickListener
      */
-    OnItemClickListener mItemClickListener;
+    private OnItemClickListener mItemClickListener;
     /**
      * Instance de l'interface OnItemLongClickListener
      */
-    OnItemLongClickListener mItemLongClickListener;
+    private OnItemLongClickListener mItemLongClickListener;
 
 
     /**

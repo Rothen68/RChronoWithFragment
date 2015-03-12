@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -119,18 +120,20 @@ public class ChronometreActivity extends ActionBarActivity implements Chronometr
     }
 
     /**
-     * Lancement du ChronoService dans onStart()
+     * Lancement du ChronoService dans onResume()
      */
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
+        Log.d("Service", "Dans onResume");
         //Lancement du service ChronoService
         mConnexion =new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
 
                 chronoService =  ((ChronoService.MonBinder) service).getService();
-                chronoService.setChronometre(mChrono);
+                if(chronoService.getChronometre()==null)
+                    chronoService.setChronometre(mChrono);
             }
 
             @Override
@@ -140,9 +143,17 @@ public class ChronometreActivity extends ActionBarActivity implements Chronometr
         };
         Intent intent = new Intent(getApplicationContext(),ChronoService.class);
         intent.putExtra(ChronoService.SER_ACTION, 0);
+        startService(intent);
         bindService(intent,mConnexion,BIND_AUTO_CREATE);
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Log.d("Service", "Dans onPause");
+    }
 
     /**
      * Arrêt du service ChronoService dans onStop()
@@ -150,13 +161,22 @@ public class ChronometreActivity extends ActionBarActivity implements Chronometr
     @Override
     protected void onStop() {
         super.onStop();
-        stopService(new Intent(this,ChronoService.class));
-        chronoService=null;
-        mConnexion=null;
+        Log.d("Service", "Dans onStop");
+        unbindService(mConnexion);
 
 
     }
 
+
+    @Override
+    protected void onDestroy() {
+        Log.d("Service", "Dans onDestroy");
+
+        stopService(new Intent(this,ChronoService.class));
+        chronoService=null;
+        mConnexion=null;
+        super.onDestroy();
+    }
 
     /**
      * Implémentation de l'interface permettant de détecter le click sur un bouton d'un fragment

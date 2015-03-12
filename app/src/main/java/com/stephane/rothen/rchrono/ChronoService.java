@@ -1,13 +1,21 @@
 package com.stephane.rothen.rchrono;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.stephane.rothen.rchrono.controller.Chronometre;
 import com.stephane.rothen.rchrono.model.ElementSequence;
+import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
 
 /**
@@ -22,6 +30,7 @@ public class ChronoService extends Service {
     public static final String SER_TEMPS_RESTANT="temps_restant";
     public static final String SER_UPDATE_LISTVIEW="update_ListView";
     public static final String SER_FIN_LISTESEQUENCE ="fin_liste_sequence";
+    private static final int IDNOTIFICATION = 1 ;
 
     /**
      * Permet la communication depuis l'interface
@@ -34,7 +43,7 @@ public class ChronoService extends Service {
      * Instance de la classe Chronometre
      * @see com.stephane.rothen.rchrono.controller.Chronometre
      */
-    private Chronometre mChrono;
+    private Chronometre mChrono=null;
     /**
      * Stocke l'état actif ou pas du timer
      * @see com.stephane.rothen.rchrono.ChronoService#mTimer
@@ -45,7 +54,12 @@ public class ChronoService extends Service {
      */
     private CountDownTimer mTimer;
 
+    private NotificationManager mNotificationManager;
+    NotificationCompat.Builder mNotificationBuilder;
 
+
+
+    
 
 
     /**
@@ -65,6 +79,18 @@ public class ChronoService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        mNotificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationBuilder = new NotificationCompat.Builder(this);
+        mNotificationBuilder.setSmallIcon(R.drawable.pause);
+        mNotificationBuilder.setContentTitle("RChrono");
+        mNotificationBuilder.setContentText("Chronomètre arrêté");
+        Intent i = new Intent(this,ChronometreActivity.class);
+        PendingIntent nPi = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
+        mNotificationBuilder.setContentIntent(nPi);
+
+
+
+        mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
 
     }
 
@@ -80,15 +106,22 @@ public class ChronoService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("Service"," dans Service onDestroy");
         if( mTimer!=null)
         {
             mTimer.cancel();
             mTimer=null;
         }
-
+        if (mNotificationManager!=null)
+        {
+            mNotificationManager.cancel(IDNOTIFICATION);
+            mNotificationManager=null;
+            mNotificationBuilder=null;
+        }
     }
 
     /**
@@ -101,6 +134,10 @@ public class ChronoService extends Service {
             chronoStart=true;
             lancerTimer();
             updateListView();
+            mNotificationBuilder.setSmallIcon(R.drawable.fleche);
+            mNotificationBuilder.setContentText("Chronomètre lancé");
+            mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
+
         }
     }
 
@@ -126,6 +163,9 @@ public class ChronoService extends Service {
             if(mTimer!=null)
                 mTimer.cancel();
         }
+        mNotificationBuilder.setSmallIcon(R.drawable.pause);
+        mNotificationBuilder.setContentText("Chronomètre arrêté");
+        mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
     }
 
     /**
@@ -142,6 +182,9 @@ public class ChronoService extends Service {
         Intent i = new Intent();
         i.setAction(SER_FIN_LISTESEQUENCE);
         sendBroadcast(i);
+        mNotificationBuilder.setSmallIcon(R.drawable.pause);
+        mNotificationBuilder.setContentText("Chronomètre arrêté");
+        mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
     }
 
     /**
@@ -169,12 +212,13 @@ public class ChronoService extends Service {
     {
         mChrono=c;
     }
+    public Chronometre getChronometre(){return mChrono;}
 
 
     /**
      * Envois une demande d'actualisation de la zone de texte txtChrono de l'interface
 
-     *@see com.stephane.rothen.rchrono.ChronometreActivity#txtChrono
+     *@see com.stephane.rothen.rchrono.ChronometreFragment#mtxtChrono
      * @see com.stephane.rothen.rchrono.ChronometreActivity#myReceiver
      */
     public void updateChrono()
@@ -202,7 +246,7 @@ public class ChronoService extends Service {
     /**
      * Envois une demande d'actualisation de la ListView de l'interface
      *
-     *@see com.stephane.rothen.rchrono.ChronometreActivity#mLv
+     *@see com.stephane.rothen.rchrono.ChronometreFragment#mLv
      * @see com.stephane.rothen.rchrono.ChronometreActivity#myReceiver
      */
     public void updateListView()
@@ -240,8 +284,13 @@ public class ChronoService extends Service {
         mTimer = new CountDownTimer(duree*1000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                if (!mChrono.tick())
+
+                if (!mChrono.tick()) {
                     updateListView();
+
+
+
+                }
                 updateChrono();
 
 
@@ -255,5 +304,7 @@ public class ChronoService extends Service {
         }.start();
 
     }
+
+
 
 }
