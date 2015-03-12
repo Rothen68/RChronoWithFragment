@@ -5,7 +5,9 @@ import android.content.Context;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.LibrairieExercices;
 import com.stephane.rothen.rchrono.model.LibrairieSequences;
+import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.Sequence;
+import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
 import java.util.ArrayList;
 
@@ -143,11 +145,11 @@ public class Chronometre {
             if ( s!=null)
                 m_tabSequence.add(s);
         }*/
-        ElementSequence e = new ElementSequence("Exercice 1","",10,null,10,null,null,null);
-        ElementSequence e2 = new ElementSequence("Exercice 2","",60,null,5,null,null,null);
-        ElementSequence e3 = new ElementSequence("Exercice 3","",30,null,5,null,null,null);
-        ElementSequence e4 = new ElementSequence("Exercice 4","",30,null,7,null,null,null);
-        ElementSequence e5 = new ElementSequence("Exercice 5","",30,null,7,null,null,null);
+        ElementSequence e = new ElementSequence("Exercice 1","",10,null,10,null,new NotificationExercice(0x01,0),new SyntheseVocale(0));
+        ElementSequence e2 = new ElementSequence("Exercice 2","",60,null,5,null,new NotificationExercice(0x01,0),new SyntheseVocale(0));
+        ElementSequence e3 = new ElementSequence("Exercice 3","",30,null,5,null,new NotificationExercice(0,0),new SyntheseVocale(0));
+        ElementSequence e4 = new ElementSequence("Exercice 4","",30,null,7,null,new NotificationExercice(0x01,0),new SyntheseVocale(0));
+        ElementSequence e5 = new ElementSequence("Exercice 5","",30,null,7,null,new NotificationExercice(0x01,0),new SyntheseVocale(0));
         Sequence s = new Sequence("Sequence 1", 2,null);
         s.ajouterElement(e);
         s.ajouterElement(e2);

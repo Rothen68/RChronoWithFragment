@@ -4,24 +4,26 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.stephane.rothen.rchrono.controller.Chronometre;
 import com.stephane.rothen.rchrono.model.ElementSequence;
+import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
 
 /**
  * Created by stéphane on 23/02/2015.
  */
-public class ChronoService extends Service {
+public class ChronoService extends Service  {
 
     public static final String SER_ACTION="action";
 
@@ -59,7 +61,10 @@ public class ChronoService extends Service {
 
 
 
-    
+    private NotificationExercice mNotificationExercice;
+    private SyntheseVocale mSyntheseVocaleExercice;
+    private SyntheseVocale mSyntheseVocaleSequence;
+
 
 
     /**
@@ -132,6 +137,11 @@ public class ChronoService extends Service {
         if(!chronoStart)
         {
             chronoStart=true;
+
+            updateNotificationSynthVocaleActives();
+            gestionSyntheseVocale();
+
+
             lancerTimer();
             updateListView();
             mNotificationBuilder.setSmallIcon(R.drawable.fleche);
@@ -285,8 +295,12 @@ public class ChronoService extends Service {
             @Override
             public void onTick(long millisUntilFinished) {
 
+
                 if (!mChrono.tick()) {
                     updateListView();
+                    gestionNotification();
+                    updateNotificationSynthVocaleActives();
+                    gestionSyntheseVocale();
 
 
 
@@ -296,6 +310,9 @@ public class ChronoService extends Service {
 
             }
 
+
+
+
             @Override
             public void onFinish() {
                 resetChrono();
@@ -303,8 +320,28 @@ public class ChronoService extends Service {
             }
         }.start();
 
+
+
     }
 
+    private void gestionSyntheseVocale() {
+    }
+
+    private void gestionNotification() {
+        if (mNotificationExercice.getVibreur())
+        {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
+        }
+
+    }
+
+    private void updateNotificationSynthVocaleActives()
+    {
+        mNotificationExercice = mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getNotification();
+        mSyntheseVocaleExercice =mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getSyntheseVocale();
+        mSyntheseVocaleSequence=mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getSyntheseVocale();
+    }
 
 
 }

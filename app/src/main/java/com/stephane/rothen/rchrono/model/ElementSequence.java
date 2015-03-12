@@ -22,9 +22,9 @@ public class ElementSequence extends Exercice {
     /**
      * Nofitications de l'exercice
      *
-     * @see Notification
+     * @see NotificationExercice
      */
-    protected Notification m_notification;
+    protected NotificationExercice m_notificationExercice;
 
     /**
      * Synthèse vocale de l'exercice
@@ -42,14 +42,14 @@ public class ElementSequence extends Exercice {
      * @param playlistParDefaut
      * @param dureeExercice
      * @param playlistExercice
-     * @param notification
+     * @param notificationExercice
      * @param syntheseVocale
      */
-    public ElementSequence(String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut, int dureeExercice, Playlist playlistExercice, Notification notification, SyntheseVocale syntheseVocale) {
+    public ElementSequence(String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut, int dureeExercice, Playlist playlistExercice, NotificationExercice notificationExercice, SyntheseVocale syntheseVocale) {
         super(nomExercice, descriptionExercice, dureeParDefaut, playlistParDefaut);
         this.m_dureeExercice = dureeExercice;
         this.m_playlistExercice = playlistExercice;
-        this.m_notification = notification;
+        this.m_notificationExercice = notificationExercice;
         this.m_syntheseVocale = syntheseVocale;
     }
 
@@ -61,9 +61,9 @@ public class ElementSequence extends Exercice {
         return m_syntheseVocale;
     }
 
-    public Notification getNotification()
+    public NotificationExercice getNotification()
     {
-        return m_notification;
+        return m_notificationExercice;
     }
 
 

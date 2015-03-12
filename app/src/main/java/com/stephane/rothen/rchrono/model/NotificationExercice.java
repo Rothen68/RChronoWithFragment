@@ -5,7 +5,7 @@ package com.stephane.rothen.rchrono.model;
  *
  * Created by Stéphane on 14/02/2015.
  */
-public class Notification {
+public class NotificationExercice {
     private static final int VIBREUR = 0x01;
     private static final int POPUP = 0x02;
     private static final int SONNERIE = 0x04;
@@ -24,11 +24,11 @@ public class Notification {
     protected boolean m_sonnerie;
     /**
      * Chemin vers le fichier de sonnerie si la notification est du type sonnerie
-     * @see Notification#m_sonnerie
+     * @see NotificationExercice#m_sonnerie
      */
     protected long m_idFichierSonnerie;
 
-    public Notification(int notificationFromBdd,long idFichierSonnerie) {
+    public NotificationExercice(int notificationFromBdd, long idFichierSonnerie) {
 
 
         if((notificationFromBdd & VIBREUR)>0)
@@ -69,6 +69,11 @@ public class Notification {
         r=r+ ((m_sonnerie)?(SONNERIE):(0));
         return r;
     }
+
+    public boolean getVibreur(){return m_vibreur;}
+    public boolean getSonnerie(){return m_sonnerie;}
+    public boolean getPopup(){return m_popup;}
+
 
     public long getFichierSonnerie()
     {

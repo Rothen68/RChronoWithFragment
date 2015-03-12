@@ -10,7 +10,7 @@ import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Exercice;
 import com.stephane.rothen.rchrono.model.LibrairieExercices;
 import com.stephane.rothen.rchrono.model.Morceau;
-import com.stephane.rothen.rchrono.model.Notification;
+import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.Playlist;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
@@ -146,7 +146,7 @@ public class DAOBase {
                             while (cPlaylist.moveToNext()) {
                                 pElement.ajouterMorceau(new Morceau(cPlaylist.getLong(cPlaylist.getColumnIndex(DatabaseHelper.MORCEAU_IDENTIFIANT)),cPlaylist.getString(cPlaylist.getColumnIndex(DatabaseHelper.MORCEAU_TITRE)),cPlaylist.getString(cPlaylist.getColumnIndex(DatabaseHelper.MORCEAU_ARTISTE))));
                             }
-                            ElementSequence element = new ElementSequence(nom, description, dureeParDefaut, pDefaut, duree, pElement, new Notification(notification, fichierAudio), new SyntheseVocale(syntheseVocale));
+                            ElementSequence element = new ElementSequence(nom, description, dureeParDefaut, pDefaut, duree, pElement, new NotificationExercice(notification, fichierAudio), new SyntheseVocale(syntheseVocale));
                             seq.ajouterElement(element);
                         }
                     }
@@ -545,7 +545,7 @@ public class DAOBase {
                     pl.ajouterMorceau(new Morceau(cPlaylist.getLong(cPlaylist.getColumnIndex(DatabaseHelper.MORCEAU_IDENTIFIANT)),cPlaylist.getString(cPlaylist.getColumnIndex(DatabaseHelper.MORCEAU_TITRE)),cPlaylist.getString(cPlaylist.getColumnIndex(DatabaseHelper.MORCEAU_ARTISTE))));
                 }
 
-                ElementSequence element = new ElementSequence(exercice.getNomExercice(),exercice.getDescriptionExercice(),exercice.getDureeParDefaut(),exercice.getPlaylistParDefaut(),dureeElement,pl,new Notification(notificationElement,idFichierNotifElement),new SyntheseVocale(syntheseVocaleElement));
+                ElementSequence element = new ElementSequence(exercice.getNomExercice(),exercice.getDescriptionExercice(),exercice.getDureeParDefaut(),exercice.getPlaylistParDefaut(),dureeElement,pl,new NotificationExercice(notificationElement,idFichierNotifElement),new SyntheseVocale(syntheseVocaleElement));
                 seq.ajouterElement(element);
             }
             tab.add(seq);
