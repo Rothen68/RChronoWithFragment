@@ -1,4 +1,4 @@
-package com.stephane.rothen.rchrono;
+package com.stephane.rothen.rchrono.controller;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,23 +9,25 @@ import android.widget.BaseAdapter;
 import com.stephane.rothen.rchrono.views.ItemListeExercice;
 import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
-
 import java.util.ArrayList;
 import java.util.TreeSet;
 
 /**
  * Classe permettant de faire la liaison entre une instance de ListView et une instance de Chronometre
- *
- *
+ * <p/>
+ * <p/>
  * Created by stéphane on 23/02/2015.
  */
 public class CustomAdapter extends BaseAdapter {
+    private static final int TYPE_SEPARATOR = 0;
+    private static final int TYPE_ITEM = 1;
     /**
      * Tableau contenant les données à afficher
-      */
-    private ArrayList<String> m_Data= new ArrayList<>();
+     */
+    private ArrayList<String> m_Data = new ArrayList<>();
     /**
      * TreeSet contenant les positions des séquences dans le tableau de donnée
+     *
      * @see CustomAdapter#m_Data
      */
     private TreeSet<Integer> sectionHeader = new TreeSet<>();
@@ -33,31 +35,28 @@ public class CustomAdapter extends BaseAdapter {
      * Permet de creer les deux View à afficher dans la ListView selon que ce soit une séquence ou un exercice
      */
     private LayoutInflater m_inflater;
-    private static final int TYPE_SEPARATOR = 0;
-    private static final int TYPE_ITEM = 1;
     /**
      * Stocke l'index de l'item qui à le focus
      */
-    private int mfocusPosition=0;
+    private int mfocusPosition = 0;
 
 
     /**
      * Constructeur
      * <p>Initialise le LayoutInflater avec le context de l'application</p>
-     * @param context
-     *      Context de l'application
      *
-     *@see CustomAdapter#m_inflater
+     * @param context Context de l'application
+     * @see CustomAdapter#m_inflater
      */
     public CustomAdapter(Context context) {
-        m_inflater=(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        m_inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     /**
      * renvois le nombre d'éléments à afficher
-     * @return
-     *      nombre d'éléments à afficher
-     *@see CustomAdapter#m_Data
+     *
+     * @return nombre d'éléments à afficher
+     * @see CustomAdapter#m_Data
      */
     @Override
     public int getCount() {
@@ -66,57 +65,53 @@ public class CustomAdapter extends BaseAdapter {
 
     /**
      * Ajoute un item dans le tableau de donnée
-     * @param item
-     *      item représentant un Exercice
-     *@see CustomAdapter#m_Data
-     * @see com.stephane.rothen.rchrono.model.Exercice
      *
+     * @param item item représentant un Exercice
+     * @see CustomAdapter#m_Data
+     * @see com.stephane.rothen.rchrono.model.Exercice
      */
-    public void addItem(final String item)
-    {
+    public void addItem(final String item) {
         m_Data.add(item);
         notifyDataSetChanged();
     }
 
     /**
      * Ajoute un item de section dans le tableau de donnée
-     * @param item
-     *      item représentant une Sequence
-     *@see CustomAdapter#m_Data
+     *
+     * @param item item représentant une Sequence
+     * @see CustomAdapter#m_Data
      * @see com.stephane.rothen.rchrono.model.Sequence
      */
-    public void addSectionHeaderItem(final String item)
-    {
+    public void addSectionHeaderItem(final String item) {
         m_Data.add(item);
-        sectionHeader.add(m_Data.size()-1);
+        sectionHeader.add(m_Data.size() - 1);
         notifyDataSetChanged();
 
     }
 
     /**
      * Définit l'index de l'item qui a le focus
-     * @param focus
-     * index de l'item
+     *
+     * @param focus index de l'item
      */
-    public void setFocusPosition(int focus)
-    {
-        mfocusPosition=focus;
+    public void setFocusPosition(int focus) {
+        mfocusPosition = focus;
     }
 
     /**
      * Vide le tableau de donnée
+     *
      * @see CustomAdapter#m_Data
      */
-    public void deleteAll()
-    {
+    public void deleteAll() {
         m_Data.clear();
         sectionHeader.clear();
     }
 
     /**
      * retourne le nombre de type de View
-     * @return
-     *      2
+     *
+     * @return 2
      */
     @Override
     public int getViewTypeCount() {
@@ -125,25 +120,22 @@ public class CustomAdapter extends BaseAdapter {
 
     /**
      * Renvois le type de View en fonction de la position
-     * @param position
-     *      position dans m_Data
-     * @return
-     *      type de View
      *
-     *@see CustomAdapter#TYPE_ITEM
+     * @param position position dans m_Data
+     * @return type de View
+     * @see CustomAdapter#TYPE_ITEM
      * @see CustomAdapter#TYPE_SEPARATOR
      */
     @Override
     public int getItemViewType(int position) {
-        return sectionHeader.contains(position)?TYPE_SEPARATOR:TYPE_ITEM;
+        return sectionHeader.contains(position) ? TYPE_SEPARATOR : TYPE_ITEM;
     }
 
     /**
      * Renvois la valeur de l'item à la position donnée
-     * @param position
-     *      position de l'item dans m_Data
-     * @return
-     *      String contenant l'item récupéré
+     *
+     * @param position position de l'item dans m_Data
+     * @return String contenant l'item récupéré
      */
     @Override
     public Object getItem(int position) {
@@ -153,10 +145,9 @@ public class CustomAdapter extends BaseAdapter {
 
     /**
      * Renvois l'id de l'item à la position donnée
-     * @param position
-     *      position dans m_Data
-     * @return
-     *      id de l'item
+     *
+     * @param position position dans m_Data
+     * @return id de l'item
      */
     @Override
     public long getItemId(int position) {
@@ -165,13 +156,11 @@ public class CustomAdapter extends BaseAdapter {
 
     /**
      * Renvois la View à ajouter à la ListView
-     * @param position
-     *      position dans m_Data
-     * @param convertView
-     *      View
+     *
+     * @param position    position dans m_Data
+     * @param convertView View
      * @param parent
-     * @return
-     *      View initialisée
+     * @return View initialisée
      */
 
 
@@ -181,33 +170,27 @@ public class CustomAdapter extends BaseAdapter {
         int rowType = getItemViewType(position);
 
 
-        switch(rowType)
-        {
+        switch (rowType) {
 
             case TYPE_ITEM:
-                if(!(convertView instanceof ItemListeExercice))
-                {
+                if (!(convertView instanceof ItemListeExercice)) {
                     //Si la View à afficher est de type Exercice et que la vue présente dans convertView ne l'est pas alors créer une nouvelle ItemListeExercice
-                    convertView= new ItemListeExercice(m_inflater.getContext());
+                    convertView = new ItemListeExercice(m_inflater.getContext());
                 }
                 // met à jour les valeurs de la vue
-                if(position == mfocusPosition)
-                {
+                if (position == mfocusPosition) {
 
-                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position),true,false);
-                }
-                else
-                {
-                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position),false,false);
+                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position), true, false);
+                } else {
+                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position), false, false);
 
                 }
-            break;
+                break;
             case TYPE_SEPARATOR:
-                if(!(convertView instanceof ItemListeSequence))
-                {
+                if (!(convertView instanceof ItemListeSequence)) {
                     convertView = new ItemListeSequence(m_inflater.getContext());
                 }
-                ((ItemListeSequence) convertView).setUpView(m_Data.get(position),false);
+                ((ItemListeSequence) convertView).setUpView(m_Data.get(position), false);
                 break;
         }
 

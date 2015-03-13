@@ -3,7 +3,6 @@ package com.stephane.rothen.rchrono.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,8 +40,8 @@ public class ItemListeExercice extends LinearLayout {
     /**
      * Fonction qui permet d'initialiser l'objet, cette fonction est appelée dans les trois constructeurs
      */
-    private void init (){
-        LayoutInflater.from(getContext()).inflate(R.layout.lv_exercice_focused_layout,this, true);
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.lv_exercice_focused_layout, this, true);
         setOrientation(HORIZONTAL);
         m_Text = (TextView) findViewById(R.id.txtLvExercice);
         m_Fleche = (ImageView) findViewById(R.id.imageView);
@@ -51,17 +50,15 @@ public class ItemListeExercice extends LinearLayout {
 
     /**
      * Permet de mettre à jour les valeurs de l'objet
-     * @param txt
-     *      Texte à afficher dans la TextView
-     * @param visibiliteFleche
-     *      Affiche ou non la fleche de focus
-     * @param visibiliteBouton
-     *      Affiche ou non le bouton suppression
+     *
+     * @param txt              Texte à afficher dans la TextView
+     * @param visibiliteFleche Affiche ou non la fleche de focus
+     * @param visibiliteBouton Affiche ou non le bouton suppression
      */
-    public void setUpView(String txt,boolean visibiliteFleche, boolean visibiliteBouton){
+    public void setUpView(String txt, boolean visibiliteFleche, boolean visibiliteBouton) {
         m_Text.setText(txt);
-        m_Fleche.setVisibility((visibiliteFleche)?VISIBLE:INVISIBLE);
-        m_btnSuppr.setVisibility((visibiliteBouton)?VISIBLE:INVISIBLE);
+        m_Fleche.setVisibility((visibiliteFleche) ? VISIBLE : INVISIBLE);
+        m_btnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
 
     }
 }

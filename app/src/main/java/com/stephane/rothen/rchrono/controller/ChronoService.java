@@ -1,6 +1,5 @@
-package com.stephane.rothen.rchrono;
+package com.stephane.rothen.rchrono.controller;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -14,7 +13,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.stephane.rothen.rchrono.controller.Chronometre;
+import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
@@ -38,35 +37,36 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
     /**
      * Permet la communication depuis l'interface
-     * @see com.stephane.rothen.rchrono.ChronometreActivity#mConnexion
-     * @see com.stephane.rothen.rchrono.ChronoService.MonBinder
+     * @see ChronometreActivity#mConnexion
+     * @see ChronoService.MonBinder
      */
     private final IBinder mBinder = new MonBinder();
-
-    /**
-     * Instance de la classe Chronometre
-     * @see com.stephane.rothen.rchrono.controller.Chronometre
-     */
-    private Chronometre mChrono=null;
-    /**
-     * Stocke l'état actif ou pas du timer
-     * @see com.stephane.rothen.rchrono.ChronoService#mTimer
-     */
-    private Boolean chronoStart=false;
-    /**
-     * Instance de la classe CountDownTimer permettant de gérer le temps
-     */
-    private CountDownTimer mTimer;
-
-    /**
-     * Manager de notification
-     */
-    private NotificationManager mNotificationManager;
     /**
      * Notification builder pour l'affichage de la notification
      */
     NotificationCompat.Builder mNotificationBuilder;
-
+    /**
+     * Instance de la classe Chronometre
+     * @see com.stephane.rothen.rchrono.controller.Chronometre
+     */
+    private Chronometre mChrono = null;
+    /**
+     * Stocke l'état actif ou pas du timer
+     * @see ChronoService#mTimer
+     */
+    private Boolean chronoStart = false;
+    /**
+     * Stocke l'état de l'activity appelante pour détecter la fermeture de l'application ou la destruction/recréation de l'activity par le systeme
+     */
+    private Boolean mPersistance = false;
+    /**
+     * Instance de la classe CountDownTimer permettant de gérer le temps
+     */
+    private CountDownTimer mTimer;
+    /**
+     * Manager de notification
+     */
+    private NotificationManager mNotificationManager;
     /**
      * Instance de l'objet TextToSpeech pour la synthèse vocale
      */
@@ -74,7 +74,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     /**
      * Variable permettant de controler l'état de la synthese vocale
      *
-     * @see com.stephane.rothen.rchrono.ChronoService#mTextToSpeach
+     * @see ChronoService#mTextToSpeach
      */
     private boolean mTextToSpeachReady=false;
 
@@ -102,7 +102,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * @param status
      *      Status du TextToSpeech
      *
-     *  @see com.stephane.rothen.rchrono.ChronoService#mTextToSpeach
+     *  @see ChronoService#mTextToSpeach
      */
     @Override
     public void onInit(int status) {
@@ -119,38 +119,30 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     }
 
 
-    /**
-     * Classe permettant la communication depuis l'interface
-     *
-     * @see com.stephane.rothen.rchrono.ChronoService#mBinder
-     * @see com.stephane.rothen.rchrono.ChronometreActivity#mConnexion
-     */
-    public class MonBinder extends Binder  {
-        ChronoService getService(){
-            return ChronoService.this;
-        }
+    public boolean getPersistance() {
+        return mPersistance;
     }
 
-
-
+    public void setPersistance(boolean p) {
+        mPersistance = p;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        mNotificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationBuilder = new NotificationCompat.Builder(this);
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentTitle("RChrono");
         mNotificationBuilder.setContentText("Chronomètre arrêté");
-        Intent i = new Intent(this,ChronometreActivity.class);
-        PendingIntent nPi = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent i = new Intent(this, ChronometreActivity.class);
+        PendingIntent nPi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationBuilder.setContentIntent(nPi);
-        mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
+        mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
 
-        mTextToSpeach= new TextToSpeech(this,this);
+        mTextToSpeach = new TextToSpeech(this, this);
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -163,24 +155,19 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         return super.onStartCommand(intent, flags, startId);
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("Service"," dans Service onDestroy");
-        if( mTimer!=null)
-        {
+        if (mTimer != null) {
             mTimer.cancel();
-            mTimer=null;
+            mTimer = null;
         }
-        if (mNotificationManager!=null)
-        {
+        if (mNotificationManager != null) {
             mNotificationManager.cancel(IDNOTIFICATION);
-            mNotificationManager=null;
-            mNotificationBuilder=null;
+            mNotificationManager = null;
+            mNotificationBuilder = null;
         }
-        if(mTextToSpeach!=null)
-        {
+        if (mTextToSpeach != null) {
             mTextToSpeach.stop();
             mTextToSpeach.shutdown();
         }
@@ -189,11 +176,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     /**
      * Fonction gérant le lancement du chrono
      */
-    public void startChrono()
-    {
-        if(!chronoStart)
-        {
-            chronoStart=true;
+    public void startChrono() {
+        if (!chronoStart) {
+            chronoStart = true;
 
             updateNotificationSynthVocaleActives();
             gestionSyntheseVocale();
@@ -203,7 +188,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             updateListView();
             mNotificationBuilder.setSmallIcon(R.drawable.fleche);
             mNotificationBuilder.setContentText("Chronomètre lancé");
-            mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
+            mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
 
         }
     }
@@ -224,15 +209,14 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     public void stopChrono()
     {
-        if(chronoStart)
-        {
-            chronoStart=false;
-            if(mTimer!=null)
+        if (chronoStart) {
+            chronoStart = false;
+            if (mTimer != null)
                 mTimer.cancel();
         }
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentText("Chronomètre arrêté");
-        mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
+        mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
     }
 
     /**
@@ -240,10 +224,10 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     public void resetChrono()
     {
-        chronoStart=false;
+        chronoStart = false;
         mChrono.resetChrono();
-        mIndexSequenceSyntheseVocaleEnnoncee=-1;
-        if(mTimer!=null)
+        mIndexSequenceSyntheseVocaleEnnoncee = -1;
+        if (mTimer != null)
             mTimer.cancel();
         updateChrono();
         updateListView();
@@ -255,7 +239,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
 
     }
-//todo rendre mChrono threadSafe multithread
+
     /**
      * Permet de positionner les curseurs du chronometre à une position définie
      * @param sequence
@@ -263,50 +247,50 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * @param exercice
      *          index de l'exercice actif
      *
-     * @see com.stephane.rothen.rchrono.ChronoService#mChrono
+     * @see ChronoService#mChrono
      * @see com.stephane.rothen.rchrono.controller.Chronometre#setChronoAt(int, int)
      */
     public void setChronoAt(int sequence, int exercice)
     {
-        mChrono.setChronoAt(sequence,exercice);
+        mChrono.setChronoAt(sequence, exercice);
+    }
+//todo rendre mChrono threadSafe multithread
+
+    public Chronometre getChronometre() {
+        return mChrono;
     }
 
     /**
      * Permet d'affecter un chronometre au service
      * @param c
      *      instance de la classe Chronometre
-     *@see com.stephane.rothen.rchrono.ChronoService#mChrono
+     *@see ChronoService#mChrono
      */
     public void setChronometre(Chronometre c)
     {
         mChrono=c;
     }
-    public Chronometre getChronometre(){return mChrono;}
-
 
     /**
      * Envois une demande d'actualisation de la zone de texte txtChrono de l'interface
-
-     *@see com.stephane.rothen.rchrono.ChronometreFragment#mtxtChrono
-     * @see com.stephane.rothen.rchrono.ChronometreActivity#myReceiver
+     *
+     * @see ChronometreActivity#myReceiver
      */
-    public void updateChrono()
-    {
+    public void updateChrono() {
         Intent i = new Intent();
         int type = mChrono.getTypeAffichage();
         i.setAction(SER_TEMPS_RESTANT);
-        switch (type)
-        {
+        switch (type) {
             case Chronometre.AFFICHAGE_TEMPS_EX:
-                i.putExtra(SER_TEMPS_RESTANT,mChrono.getDureeRestanteExerciceActif());
+                i.putExtra(SER_TEMPS_RESTANT, mChrono.getDureeRestanteExerciceActif());
                 break;
             case Chronometre.AFFICHAGE_TEMPS_SEQ:
-                i.putExtra(SER_TEMPS_RESTANT,mChrono.getDureeRestanteSequenceActive());
+                i.putExtra(SER_TEMPS_RESTANT, mChrono.getDureeRestanteSequenceActive());
                 break;
             case Chronometre.AFFICHAGE_TEMPS_TOTAL:
-                i.putExtra(SER_TEMPS_RESTANT,mChrono.getDureeRestanteTotale());
+                i.putExtra(SER_TEMPS_RESTANT, mChrono.getDureeRestanteTotale());
                 break;
-            default :
+            default:
                 break;
         }
         sendBroadcast(i);
@@ -314,17 +298,15 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
     /**
      * Envois une demande d'actualisation de la ListView de l'interface
-     *
-     *@see com.stephane.rothen.rchrono.ChronometreFragment#mLv
-     * @see com.stephane.rothen.rchrono.ChronometreActivity#myReceiver
+     * @see ChronometreActivity#myReceiver
      */
     public void updateListView()
     {
         Intent i = new Intent();
         i.setAction(SER_UPDATE_LISTVIEW);
-        int exercice =mChrono.getIndexExerciceActif();
+        int exercice = mChrono.getIndexExerciceActif();
         int seq = mChrono.getIndexSequenceActive();
-        if(exercice>=0) {
+        if (exercice >= 0) {
             int position = 1;
             for (int j = 0; j < seq; j++) {
                 position++;
@@ -334,23 +316,20 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             }
             position = position + exercice;
             i.putExtra(SER_UPDATE_LISTVIEW, position);
-        }
-        else
+        } else
             i.putExtra(SER_UPDATE_LISTVIEW,0);
         sendBroadcast(i);
 
     }
 
-
     /**
      * Fonction appelée pour lancer le timer
-     * @see com.stephane.rothen.rchrono.ChronoService#mTimer
+     * @see ChronoService#mTimer
      */
-    private void lancerTimer()
-    {
+    private void lancerTimer() {
         //todo corriger le bug d'affichage de la durée des séquences
         int duree = mChrono.getDureeRestanteTotale();
-        mTimer = new CountDownTimer(duree*1000,1000) {
+        mTimer = new CountDownTimer(duree * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -378,7 +357,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private void gestionSyntheseVocale() {
         if (mTextToSpeachReady) {
-            if(mIndexSequenceSyntheseVocaleEnnoncee!=mChrono.getIndexSequenceActive()) {
+            if (mIndexSequenceSyntheseVocaleEnnoncee != mChrono.getIndexSequenceActive()) {
                 if (mSyntheseVocaleSequence.getNom()) {
                     mTextToSpeach.speak(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getNomSequence(), TextToSpeech.QUEUE_ADD, null);
                 }
@@ -387,13 +366,11 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                 }
                 mIndexSequenceSyntheseVocaleEnnoncee = mChrono.getIndexSequenceActive();
             }
-            if(mSyntheseVocaleExercice.getNom())
-            {
-                mTextToSpeach.speak(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getNomExercice(),TextToSpeech.QUEUE_ADD,null);
+            if (mSyntheseVocaleExercice.getNom()) {
+                mTextToSpeach.speak(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getNomExercice(), TextToSpeech.QUEUE_ADD, null);
             }
-            if(mSyntheseVocaleExercice.getDuree())
-            {
-                mTextToSpeach.speak(String.valueOf(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getDureeExercice()) + " secondes",TextToSpeech.QUEUE_ADD,null);
+            if (mSyntheseVocaleExercice.getDuree()) {
+                mTextToSpeach.speak(String.valueOf(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getDureeExercice()) + " secondes", TextToSpeech.QUEUE_ADD, null);
             }
 
         }
@@ -403,8 +380,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * Gestion des notifications de l'exercice actif
      */
     private void gestionNotification() {
-        if (mNotificationExercice.getVibreur())
-        {
+        if (mNotificationExercice.getVibreur()) {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
         }
@@ -414,15 +390,26 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     /**
      * Mise à jours des notifications et syntheses vocales des exercices et sequences actifs
      *
-     * @see com.stephane.rothen.rchrono.ChronoService#mNotificationExercice
-     * @see com.stephane.rothen.rchrono.ChronoService#mSyntheseVocaleExercice
-     * @see com.stephane.rothen.rchrono.ChronoService#mSyntheseVocaleSequence
+     * @see ChronoService#mNotificationExercice
+     * @see ChronoService#mSyntheseVocaleExercice
+     * @see ChronoService#mSyntheseVocaleSequence
      */
-    private void updateNotificationSynthVocaleActives()
-    {
+    private void updateNotificationSynthVocaleActives() {
         mNotificationExercice = mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getNotification();
-        mSyntheseVocaleExercice =mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getSyntheseVocale();
-        mSyntheseVocaleSequence=mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getSyntheseVocale();
+        mSyntheseVocaleExercice = mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getSyntheseVocale();
+        mSyntheseVocaleSequence = mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getSyntheseVocale();
+    }
+
+    /**
+     * Classe permettant la communication depuis l'interface
+     *
+     * @see ChronoService#mBinder
+     * @see ChronometreActivity#mConnexion
+     */
+    public class MonBinder extends Binder {
+        ChronoService getService() {
+            return ChronoService.this;
+        }
     }
 
 
