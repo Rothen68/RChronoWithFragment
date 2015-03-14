@@ -19,6 +19,7 @@ import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -46,10 +47,12 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     NotificationCompat.Builder mNotificationBuilder;
     /**
-     * Instance de la classe Chronometre
+     * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
+     *
      * @see com.stephane.rothen.rchrono.controller.Chronometre
+     * @see java.util.concurrent.atomic.AtomicReference
      */
-    private Chronometre mChrono = null;
+    private AtomicReference<Chronometre> mChrono = null;
     /**
      * Stocke l'état actif ou pas du timer
      * @see ChronoService#mTimer
@@ -225,7 +228,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     public void resetChrono()
     {
         chronoStart = false;
-        mChrono.resetChrono();
+        mChrono.get().resetChrono();
         mIndexSequenceSyntheseVocaleEnnoncee = -1;
         if (mTimer != null)
             mTimer.cancel();
@@ -252,11 +255,11 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     public void setChronoAt(int sequence, int exercice)
     {
-        mChrono.setChronoAt(sequence, exercice);
+        mChrono.get().setChronoAt(sequence, exercice);
     }
 //todo rendre mChrono threadSafe multithread
 
-    public Chronometre getChronometre() {
+    public AtomicReference<Chronometre> getAtomicChronometre() {
         return mChrono;
     }
 
@@ -266,7 +269,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      *      instance de la classe Chronometre
      *@see ChronoService#mChrono
      */
-    public void setChronometre(Chronometre c)
+    public void setAtomicChronometre(AtomicReference<Chronometre> c)
     {
         mChrono=c;
     }
@@ -278,17 +281,17 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     public void updateChrono() {
         Intent i = new Intent();
-        int type = mChrono.getTypeAffichage();
+        int type = mChrono.get().getTypeAffichage();
         i.setAction(SER_TEMPS_RESTANT);
         switch (type) {
             case Chronometre.AFFICHAGE_TEMPS_EX:
-                i.putExtra(SER_TEMPS_RESTANT, mChrono.getDureeRestanteExerciceActif());
+                i.putExtra(SER_TEMPS_RESTANT, mChrono.get().getDureeRestanteExerciceActif());
                 break;
             case Chronometre.AFFICHAGE_TEMPS_SEQ:
-                i.putExtra(SER_TEMPS_RESTANT, mChrono.getDureeRestanteSequenceActive());
+                i.putExtra(SER_TEMPS_RESTANT, mChrono.get().getDureeRestanteSequenceActive());
                 break;
             case Chronometre.AFFICHAGE_TEMPS_TOTAL:
-                i.putExtra(SER_TEMPS_RESTANT, mChrono.getDureeRestanteTotale());
+                i.putExtra(SER_TEMPS_RESTANT, mChrono.get().getDureeRestanteTotale());
                 break;
             default:
                 break;
@@ -304,13 +307,13 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     {
         Intent i = new Intent();
         i.setAction(SER_UPDATE_LISTVIEW);
-        int exercice = mChrono.getIndexExerciceActif();
-        int seq = mChrono.getIndexSequenceActive();
+        int exercice = mChrono.get().getIndexExerciceActif();
+        int seq = mChrono.get().getIndexSequenceActive();
         if (exercice >= 0) {
             int position = 1;
             for (int j = 0; j < seq; j++) {
                 position++;
-                for (ElementSequence e : mChrono.getListeSequence().get(j).getTabElement()) {
+                for (ElementSequence e : mChrono.get().getListeSequence().get(j).getTabElement()) {
                     position++;
                 }
             }
@@ -328,13 +331,13 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private void lancerTimer() {
         //todo corriger le bug d'affichage de la durée des séquences
-        int duree = mChrono.getDureeRestanteTotale();
+        int duree = mChrono.get().getDureeRestanteTotale();
         mTimer = new CountDownTimer(duree * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
 
-                if (!mChrono.tick()) {
+                if (!mChrono.get().tick()) {
                     updateListView();
                     gestionNotification();
                     updateNotificationSynthVocaleActives();
@@ -357,20 +360,20 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private void gestionSyntheseVocale() {
         if (mTextToSpeachReady) {
-            if (mIndexSequenceSyntheseVocaleEnnoncee != mChrono.getIndexSequenceActive()) {
+            if (mIndexSequenceSyntheseVocaleEnnoncee != mChrono.get().getIndexSequenceActive()) {
                 if (mSyntheseVocaleSequence.getNom()) {
-                    mTextToSpeach.speak(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getNomSequence(), TextToSpeech.QUEUE_ADD, null);
+                    mTextToSpeach.speak(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getNomSequence(), TextToSpeech.QUEUE_ADD, null);
                 }
                 if (mSyntheseVocaleSequence.getDuree()) {
-                    mTextToSpeach.speak(String.valueOf(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getDureeSequence()) + " secondes", TextToSpeech.QUEUE_ADD, null);
+                    mTextToSpeach.speak(String.valueOf(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getDureeSequence()) + " secondes", TextToSpeech.QUEUE_ADD, null);
                 }
-                mIndexSequenceSyntheseVocaleEnnoncee = mChrono.getIndexSequenceActive();
+                mIndexSequenceSyntheseVocaleEnnoncee = mChrono.get().getIndexSequenceActive();
             }
             if (mSyntheseVocaleExercice.getNom()) {
-                mTextToSpeach.speak(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getNomExercice(), TextToSpeech.QUEUE_ADD, null);
+                mTextToSpeach.speak(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getNomExercice(), TextToSpeech.QUEUE_ADD, null);
             }
             if (mSyntheseVocaleExercice.getDuree()) {
-                mTextToSpeach.speak(String.valueOf(mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getDureeExercice()) + " secondes", TextToSpeech.QUEUE_ADD, null);
+                mTextToSpeach.speak(String.valueOf(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice()) + " secondes", TextToSpeech.QUEUE_ADD, null);
             }
 
         }
@@ -395,9 +398,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * @see ChronoService#mSyntheseVocaleSequence
      */
     private void updateNotificationSynthVocaleActives() {
-        mNotificationExercice = mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getNotification();
-        mSyntheseVocaleExercice = mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getTabElement().get(mChrono.getIndexExerciceActif()).getSyntheseVocale();
-        mSyntheseVocaleSequence = mChrono.getListeSequence().get(mChrono.getIndexSequenceActive()).getSyntheseVocale();
+        mNotificationExercice = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getNotification();
+        mSyntheseVocaleExercice = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getSyntheseVocale();
+        mSyntheseVocaleSequence = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getSyntheseVocale();
     }
 
     /**

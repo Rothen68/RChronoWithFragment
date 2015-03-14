@@ -16,6 +16,8 @@ import com.stephane.rothen.rchrono.controller.Chronometre;
 import com.stephane.rothen.rchrono.controller.CustomAdapter;
 import com.stephane.rothen.rchrono.model.Sequence;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Fragment stockant la listView de la fenetre RChrono
  * Created by stéphane on 13/03/2015.
@@ -128,30 +130,33 @@ public class Frag_Chrono_Liste extends Fragment {
      *
      * @param positionFocus Permet de définir quel item de la ListView est mis en surbrillance
      */
-    public void afficheListView(int positionFocus, Chronometre mChrono) {
+    public void afficheListView(int positionFocus, AtomicReference<Chronometre> mChrono) {
         if (mAdapter.getCount() > 0) {
             mAdapter.deleteAll();
         }
         mAdapter.setFocusPosition(positionFocus);
         //Parcours la liste des séquences et des exercices pour chaque séquence et les ajoute dans mAdapter
-        for (int i = 0; i < mChrono.getListeSequence().size(); i++) {
-            Sequence s = mChrono.getListeSequence().get(i);
+        for (int i = 0; i < mChrono.get().getListeSequence().size(); i++) {
+            Sequence s = mChrono.get().getListeSequence().get(i);
             //si s est la séquence active, afficher le nombre de répétitions restantes
-            if (mChrono.getIndexSequenceActive() == i) {
-                if (mChrono.getNbreRepetition() == 0) {
-                    mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + Fonctions.convertSversHMS(mChrono.getDureeRestanteSequenceActive()));
+            if (mChrono.get().getIndexSequenceActive() == i) {
+                if (mChrono.get().getNbreRepetition() == 0) {
+                    mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + Fonctions.convertSversHMSSansZeros(mChrono.get().getDureeRestanteSequenceActive()));
                 } else {
-                    mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + mChrono.getNbreRepetition() + "x" + " - " + Fonctions.convertSversHMS(mChrono.getDureeRestanteSequenceActive()));
+                    mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + mChrono.get().getNbreRepetition() + "x" + " - " + Fonctions.convertSversHMSSansZeros(mChrono.get().getDureeRestanteSequenceActive()));
                 }
             }
-            //si s est avant la séquence active, donc est déjà passée, met 0 à la durée de la séquence
-            else if (mChrono.getIndexSequenceActive() > i) {
-                mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + Fonctions.convertSversHMS(0));
+            //si s est avant la séquence active, donc est déjà passée, met 0 à la durée de la séquence et des exercices qui la composent
+            else if (mChrono.get().getIndexSequenceActive() > i) {
+                mAdapter.addSectionHeaderItem(s.getNomSequence());
             } else {
-                mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + s.getNombreRepetition() + "x" + " - " + Fonctions.convertSversHMS(s.getDureeSequence()));
+                mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + s.getNombreRepetition() + "x" + " - " + Fonctions.convertSversHMSSansZeros(s.getDureeSequence()));
             }
             for (int j = 0; j < s.getTabElement().size(); j++) {
-                mAdapter.addItem(s.getTabElement().get(j).getNomExercice() + " - " + Fonctions.convertSversHMS(s.getTabElement().get(j).getDureeExercice()));
+                if (mChrono.get().getIndexSequenceActive() > i)
+                    mAdapter.addItem(s.getTabElement().get(j).getNomExercice());
+                else
+                    mAdapter.addItem(s.getTabElement().get(j).getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(s.getTabElement().get(j).getDureeExercice()));
             }
         }
         mAdapter.notifyDataSetChanged();

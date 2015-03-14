@@ -22,17 +22,20 @@ import com.stephane.rothen.rchrono.views.Frag_Chrono_Affichage;
 import com.stephane.rothen.rchrono.views.Frag_Chrono_Boutons;
 import com.stephane.rothen.rchrono.views.Frag_Chrono_Liste;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 
 public class ChronometreActivity extends ActionBarActivity implements Frag_Chrono_Affichage.Frag_Chrono_Affichage_Callback, Frag_Chrono_Liste.Frag_Chrono_Liste_Callback,
         Frag_Chrono_Boutons.Frag_Chrono_Boutons_Callback {
 
 
     /**
-     * Instance de la classe Chronometre
+     * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *
      * @see com.stephane.rothen.rchrono.controller.Chronometre
+     * @see java.util.concurrent.atomic.AtomicReference
      */
-    private Chronometre mChrono;
+    private AtomicReference<Chronometre> mChrono;
     /**
      * Objet permettant de récupérer l'instance du service ChronoService
      *
@@ -77,9 +80,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chrono_host_frag);
         if (savedInstanceState == null) {
-
         }
-
         getSupportFragmentManager().executePendingTransactions();
         mFragAffichage = (Frag_Chrono_Affichage) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Affichage);
         mFragListe = (Frag_Chrono_Liste) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Liste);
@@ -123,12 +124,12 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
             public void onServiceConnected(ComponentName name, IBinder service) {
 
                 chronoService = ((ChronoService.MonBinder) service).getService();
-                if (chronoService.getChronometre() == null) {
-                    mChrono = new Chronometre(getApplication());
-                    chronoService.setChronometre(mChrono);
+                if (chronoService.getAtomicChronometre() == null) {
+                    mChrono = new AtomicReference<>(new Chronometre(getApplication()));
+                    chronoService.setAtomicChronometre(mChrono);
                     chronoService.updateListView();
                 } else {
-                    mChrono = chronoService.getChronometre();
+                    mChrono = chronoService.getAtomicChronometre();
                     chronoService.updateListView();
                     chronoService.updateChrono();
                     if (chronoService.getChronoStart())
@@ -217,34 +218,34 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
 
                 break;
             case R.id.txtChrono:
-                int type = mChrono.getTypeAffichage();
+                int type = mChrono.get().getTypeAffichage();
                 switch (type) {
                     case Chronometre.AFFICHAGE_TEMPS_EX:
-                        mChrono.setTypeAffichage(Chronometre.AFFICHAGE_TEMPS_SEQ);
+                        mChrono.get().setTypeAffichage(Chronometre.AFFICHAGE_TEMPS_SEQ);
                         ((TextView) findViewById(R.id.txtDescChrono)).setText(R.string.descChronometre_Sequence);
-                        mFragAffichage.setTxtChrono(mChrono.getDureeRestanteSequenceActive());
+                        mFragAffichage.setTxtChrono(mChrono.get().getDureeRestanteSequenceActive());
 
                         break;
                     case Chronometre.AFFICHAGE_TEMPS_SEQ:
-                        mChrono.setTypeAffichage(Chronometre.AFFICHAGE_TEMPS_TOTAL);
+                        mChrono.get().setTypeAffichage(Chronometre.AFFICHAGE_TEMPS_TOTAL);
                         ((TextView) findViewById(R.id.txtDescChrono)).setText(R.string.descChronometre_Total);
-                        mFragAffichage.setTxtChrono(mChrono.getDureeRestanteTotale());
+                        mFragAffichage.setTxtChrono(mChrono.get().getDureeRestanteTotale());
                         break;
                     case Chronometre.AFFICHAGE_TEMPS_TOTAL:
-                        mChrono.setTypeAffichage(Chronometre.AFFICHAGE_TEMPS_EX);
+                        mChrono.get().setTypeAffichage(Chronometre.AFFICHAGE_TEMPS_EX);
                         ((TextView) findViewById(R.id.txtDescChrono)).setText(R.string.descChronometre_Exercice);
-                        mFragAffichage.setTxtChrono(mChrono.getDureeRestanteExerciceActif());
+                        mFragAffichage.setTxtChrono(mChrono.get().getDureeRestanteExerciceActif());
                         break;
                     default:
                         break;
                 }
                 int position = 1;
-                int exercice = mChrono.getIndexExerciceActif();
-                int seq = mChrono.getIndexSequenceActive();
+                int exercice = mChrono.get().getIndexExerciceActif();
+                int seq = mChrono.get().getIndexSequenceActive();
                 if (exercice >= 0) {
                     for (int j = 0; j < seq; j++) {
                         position++;
-                        for (ElementSequence e : mChrono.getListeSequence().get(j).getTabElement()) {
+                        for (ElementSequence e : mChrono.get().getListeSequence().get(j).getTabElement()) {
                             position++;
                         }
                     }
@@ -275,7 +276,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
              */
             case R.id.lstChrono:
                 chronoService.stopChrono();
-                int posExercice = mChrono.setChronoAt(position);
+                int posExercice = mChrono.get().setChronoAt(position);
                 if (posExercice > -1)
                     mFragListe.afficheListView(posExercice, mChrono);
                 mFragBoutons.setTexteBtnStart(R.string.chronometre_start);

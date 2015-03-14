@@ -31,4 +31,28 @@ public class Fonctions {
         valeur = valeur + String.valueOf(seconde);
         return valeur;
     }
+
+    public static String convertSversHMSSansZeros(int s) {
+        int heure = (int) s / 3600;
+        int minute = (int) (s - 3600 * heure) / 60;
+        int seconde = (int) s - 3600 * heure - 60 * minute;
+        String valeur = new String();
+        valeur = "";
+        if (heure != 0) {
+            if (heure < 10)
+                valeur = valeur + "0";
+            valeur = valeur + String.valueOf(heure) + " : ";
+        }
+        if ((minute == 0 && heure > 0) || (minute != 0)) {
+            if (minute < 10 && heure != 0)
+                valeur = valeur + "0";
+            valeur = valeur + String.valueOf(minute) + " : ";
+        }
+        if ((seconde == 0 && (minute != 0 || heure != 0) || (seconde != 0))) {
+            if (seconde < 10 && (heure != 0 || minute != 0))
+                valeur = valeur + "0";
+            valeur = valeur + String.valueOf(seconde) + " s";
+        }
+        return valeur;
+    }
 }
