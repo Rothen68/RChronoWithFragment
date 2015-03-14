@@ -102,6 +102,16 @@ public class Chronometre {
         return m_indexExerciceActif;
     }
 
+    public void supprimeExerciceActif() {
+        m_chronoModel.getListeSequences().get(m_indexSequenceActive).getTabElement().remove(m_indexExerciceActif);
+        if (m_chronoModel.getListeSequences().get(m_indexSequenceActive).getTabElement().size() == 0)
+            supprimeSequenceActive();
+    }
+
+    public void supprimeSequenceActive() {
+        m_chronoModel.getListeSequences().remove(m_indexSequenceActive);
+    }
+
 
     /**
      * Met à jour les curseurs et renvois true si la liste des séquences n'est pas finie

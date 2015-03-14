@@ -42,6 +42,7 @@ public class Frag_Chrono_Liste extends Fragment {
      */
     private CustomAdapter mAdapter;
 
+
     public Frag_Chrono_Liste() {
     }
 
@@ -78,6 +79,7 @@ public class Frag_Chrono_Liste extends Fragment {
         View rootView = inflater.inflate(R.layout.chrono_frag_liste, container, false);
         mLv = (ListView) rootView.findViewById(R.id.lstChrono);
         mAdapter = new CustomAdapter(getActivity().getApplicationContext());
+        mAdapter.setCallback(mCallback);
         mLv.setAdapter(mAdapter);
 
         mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -123,6 +125,35 @@ public class Frag_Chrono_Liste extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * Affiche ou non le bouton Supprimer sur les éléments de la listView
+     *
+     * @param etat Etat de l'affichage du bouton
+     */
+    public void setAfficheBtnSuppr(boolean etat) {
+        if (mAdapter != null) {
+            mAdapter.setAfficheBtnSuppr(etat);
+            if (etat)
+                mAdapter.setCallback(mCallback);
+            else
+                mAdapter.setCallback(null);
+        }
+    }
+
+    public CustomAdapter getAdapter() {
+        return mAdapter;
+    }
+
+    /**
+     * Affiche ou non le curseur sur l'exercice actif
+     *
+     * @param etat Etat de l'affichage du curseur
+     */
+    public void setAfficheCurseur(boolean etat) {
+        if (mAdapter != null)
+            mAdapter.setAfficheCurseur(etat);
     }
 
     /**
@@ -197,6 +228,13 @@ public class Frag_Chrono_Liste extends Fragment {
      * <p>Cette interface permet d'envoyer l'évenement OnClick d'un Button vers la classe activité qui a lancé le fragment</p>
      */
     public interface Frag_Chrono_Liste_Callback {
+        /**
+         * Evenement OnClick sur un button
+         *
+         * @param v View sur laquelle l'utilisateur aa cliqué
+         */
+        public void onClickListener(View v);
+
         /**
          * Evenement OnItemClickListener
          *

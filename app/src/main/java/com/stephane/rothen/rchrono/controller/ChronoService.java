@@ -13,6 +13,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.NotificationExercice;
@@ -257,7 +258,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     {
         mChrono.get().setChronoAt(sequence, exercice);
     }
-//todo rendre mChrono threadSafe multithread
+
 
     public AtomicReference<Chronometre> getAtomicChronometre() {
         return mChrono;
@@ -266,7 +267,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     /**
      * Permet d'affecter un chronometre au service
      * @param c
-     *      instance de la classe Chronometre
+     *      instance de la classe AtomicReference<Chronometre>
      *@see ChronoService#mChrono
      */
     public void setAtomicChronometre(AtomicReference<Chronometre> c)
@@ -365,7 +366,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                     mTextToSpeach.speak(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getNomSequence(), TextToSpeech.QUEUE_ADD, null);
                 }
                 if (mSyntheseVocaleSequence.getDuree()) {
-                    mTextToSpeach.speak(String.valueOf(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getDureeSequence()) + " secondes", TextToSpeech.QUEUE_ADD, null);
+                    int duree = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getDureeSequence();
+                    String texte = Fonctions.convertSversVocale(duree);
+                    mTextToSpeach.speak(texte, TextToSpeech.QUEUE_ADD, null);
                 }
                 mIndexSequenceSyntheseVocaleEnnoncee = mChrono.get().getIndexSequenceActive();
             }
@@ -373,7 +376,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                 mTextToSpeach.speak(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getNomExercice(), TextToSpeech.QUEUE_ADD, null);
             }
             if (mSyntheseVocaleExercice.getDuree()) {
-                mTextToSpeach.speak(String.valueOf(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice()) + " secondes", TextToSpeech.QUEUE_ADD, null);
+                int duree = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice();
+                String texte = Fonctions.convertSversVocale(duree);
+                mTextToSpeach.speak(texte, TextToSpeech.QUEUE_ADD, null);
             }
 
         }

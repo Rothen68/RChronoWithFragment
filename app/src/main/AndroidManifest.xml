@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.stephane.rothen.rchrono">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,9 +19,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".controller.ChronoService" />
-    </application>
 
-    <uses-permission android:name="android.permission.VIBRATE" />
+        <service android:name=".controller.ChronoService" />
+
+        <activity
+            android:name=".controller.ListeSequencesActivity"
+            android:label="@string/title_activity_liste_sequences"
+            android:parentActivityName=".controller.ChronometreActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
+        </activity>
+    </application>
 
 </manifest>

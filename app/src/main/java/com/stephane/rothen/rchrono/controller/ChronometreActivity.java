@@ -84,6 +84,8 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         getSupportFragmentManager().executePendingTransactions();
         mFragAffichage = (Frag_Chrono_Affichage) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Affichage);
         mFragListe = (Frag_Chrono_Liste) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Liste);
+        mFragListe.setAfficheCurseur(true);
+        mFragListe.setAfficheBtnSuppr(false);
         mFragBoutons = (Frag_Chrono_Boutons) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Boutons);
 
 
@@ -300,6 +302,8 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
     public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
         chronoService.stopChrono();
         //TODO : ouvrir la fenetre ListeSequenceActivity
+        Intent i = new Intent(this, ListeSequencesActivity.class);
+        startActivity(i);
         return true;
     }
 
@@ -335,6 +339,9 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                     case ChronoService.SER_FIN_LISTESEQUENCE:
                         mFragBoutons.setTexteBtnStart(R.string.chronometre_start);
                         mFragListe.afficheListView(0, mChrono);
+                        break;
+                    default:
+                        break;
                 }
             }
         }

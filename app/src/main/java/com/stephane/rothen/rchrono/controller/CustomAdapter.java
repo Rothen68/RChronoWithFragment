@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.stephane.rothen.rchrono.views.Frag_Chrono_Liste;
 import com.stephane.rothen.rchrono.views.ItemListeExercice;
 import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
@@ -39,6 +40,16 @@ public class CustomAdapter extends BaseAdapter {
      * Stocke l'index de l'item qui à le focus
      */
     private int mfocusPosition = 0;
+    /**
+     * Permet de spécifier si le bouton suppr doit s'afficher sur chaque ligne
+     */
+    private boolean mAfficheBtnSuppr = false;
+    /**
+     * Permet de spécifier si le curseur doit s'afficher sur la ligne active
+     */
+    private boolean mAfficheCurseur = false;
+
+    private Frag_Chrono_Liste.Frag_Chrono_Liste_Callback mCallback;
 
 
     /**
@@ -50,6 +61,18 @@ public class CustomAdapter extends BaseAdapter {
      */
     public CustomAdapter(Context context) {
         m_inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public void setAfficheBtnSuppr(boolean etat) {
+        mAfficheBtnSuppr = etat;
+    }
+
+    public void setAfficheCurseur(boolean etat) {
+        mAfficheCurseur = etat;
+    }
+
+    public void setCallback(Frag_Chrono_Liste.Frag_Chrono_Liste_Callback callback) {
+        mCallback = callback;
     }
 
     /**
@@ -178,11 +201,10 @@ public class CustomAdapter extends BaseAdapter {
                     convertView = new ItemListeExercice(m_inflater.getContext());
                 }
                 // met à jour les valeurs de la vue
-                if (position == mfocusPosition) {
-
-                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position), true, false);
+                if (position == mfocusPosition && mAfficheCurseur) {
+                    ((ItemListeExercice) convertView).setUpView(position, m_Data.get(position), true, mAfficheBtnSuppr, mCallback);
                 } else {
-                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position), false, false);
+                    ((ItemListeExercice) convertView).setUpView(position, m_Data.get(position), false, mAfficheBtnSuppr, mCallback);
 
                 }
                 break;
@@ -190,7 +212,7 @@ public class CustomAdapter extends BaseAdapter {
                 if (!(convertView instanceof ItemListeSequence)) {
                     convertView = new ItemListeSequence(m_inflater.getContext());
                 }
-                ((ItemListeSequence) convertView).setUpView(m_Data.get(position), false);
+                ((ItemListeSequence) convertView).setUpView(position, m_Data.get(position), mAfficheBtnSuppr, mCallback);
                 break;
         }
 

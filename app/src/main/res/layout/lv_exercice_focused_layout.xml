@@ -9,33 +9,47 @@ Définit le layout d'un exercice qui a le focus dans la listView
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="15dp"
-        android:background="@drawable/fleche"
-        android:visibility="visible" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/txtLvExercice"
-        android:layout_width="fill_parent"
-        android:layout_height="42dp"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/fleche"
+            android:visibility="visible" />
 
-        android:layout_gravity="center"
-        android:layout_marginLeft="5dp"
-        android:layout_weight="1"
-        android:gravity="left|center_vertical"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/material_blue_grey_800" />
+        <TextView
+            android:id="@+id/txtLvExercice"
+            android:layout_width="fill_parent"
+            android:layout_height="42dp"
 
-    <ImageButton
-        android:id="@+id/btnSuppr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/suppr"
-        android:visibility="invisible" />
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:gravity="left|center_vertical"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/material_blue_grey_800" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|right"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnSuppr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/suppr"
+                android:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+
 </merge>
