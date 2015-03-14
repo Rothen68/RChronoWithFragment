@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.stephane.rothen.rchrono.views.Frag_Chrono_Liste;
+import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
 import com.stephane.rothen.rchrono.views.ItemListeExercice;
 import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
@@ -19,37 +19,37 @@ import java.util.TreeSet;
  * <p/>
  * Created by stéphane on 23/02/2015.
  */
-public class CustomAdapter extends BaseAdapter {
-    private static final int TYPE_SEPARATOR = 0;
-    private static final int TYPE_ITEM = 1;
+public abstract class CustomAdapter extends BaseAdapter {
+    public static final int TYPE_SEPARATOR = 0;
+    public static final int TYPE_ITEM = 1;
     /**
      * Tableau contenant les données à afficher
      */
-    private ArrayList<String> m_Data = new ArrayList<>();
+    protected ArrayList<String> m_Data = new ArrayList<>();
     /**
      * TreeSet contenant les positions des séquences dans le tableau de donnée
      *
      * @see CustomAdapter#m_Data
      */
-    private TreeSet<Integer> sectionHeader = new TreeSet<>();
+    protected TreeSet<Integer> sectionHeader = new TreeSet<>();
     /**
      * Permet de creer les deux View à afficher dans la ListView selon que ce soit une séquence ou un exercice
      */
-    private LayoutInflater m_inflater;
+    protected LayoutInflater m_inflater;
     /**
      * Stocke l'index de l'item qui à le focus
      */
-    private int mfocusPosition = 0;
+    protected int mfocusPosition = 0;
     /**
      * Permet de spécifier si le bouton suppr doit s'afficher sur chaque ligne
      */
-    private boolean mAfficheBtnSuppr = false;
+    protected boolean mAfficheBtnSuppr = false;
     /**
      * Permet de spécifier si le curseur doit s'afficher sur la ligne active
      */
-    private boolean mAfficheCurseur = false;
+    protected boolean mAfficheCurseur = false;
 
-    private Frag_Chrono_Liste.Frag_Chrono_Liste_Callback mCallback;
+    protected Frag_Liste_Callback mCallback;
 
 
     /**
@@ -71,9 +71,8 @@ public class CustomAdapter extends BaseAdapter {
         mAfficheCurseur = etat;
     }
 
-    public void setCallback(Frag_Chrono_Liste.Frag_Chrono_Liste_Callback callback) {
-        mCallback = callback;
-    }
+    public abstract void setCallback(Frag_Liste_Callback callback);
+
 
     /**
      * renvois le nombre d'éléments à afficher

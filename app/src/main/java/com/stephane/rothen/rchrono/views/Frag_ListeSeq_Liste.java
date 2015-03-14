@@ -12,9 +12,9 @@ import android.widget.ListView;
 
 import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
-import com.stephane.rothen.rchrono.controller.ChronoCustomAdapter;
 import com.stephane.rothen.rchrono.controller.Chronometre;
 import com.stephane.rothen.rchrono.controller.CustomAdapter;
+import com.stephane.rothen.rchrono.controller.ListeSeqCustomAdapter;
 import com.stephane.rothen.rchrono.model.Sequence;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Fragment stockant la listView de la fenetre RChrono
  * Created by stéphane on 13/03/2015.
  */
-public class Frag_Chrono_Liste extends Fragment {
+public class Frag_ListeSeq_Liste extends Fragment {
 
     public static final String FRAG_CHRONO_LISTE = "FRAG_CHRONO_LISTE";
 
@@ -31,7 +31,7 @@ public class Frag_Chrono_Liste extends Fragment {
     /**
      * Instance de l'interface OnClickListener
      */
-    private Frag_Liste_Callback.Frag_Chrono_Liste_Callback mCallback;
+    private Frag_Liste_Callback.Frag_ListeSeq_Liste_Callback mCallback;
     /**
      * Objet de l'interface, ListView qui contient la liste des séquences et des exercices
      */
@@ -44,7 +44,7 @@ public class Frag_Chrono_Liste extends Fragment {
     private CustomAdapter mAdapter;
 
 
-    public Frag_Chrono_Liste() {
+    public Frag_ListeSeq_Liste() {
     }
 
     /**
@@ -57,7 +57,7 @@ public class Frag_Chrono_Liste extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (Frag_Liste_Callback.Frag_Chrono_Liste_Callback) activity;
+            mCallback = (Frag_Liste_Callback.Frag_ListeSeq_Liste_Callback) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implements Frag_Chrono_Liste_Callback");
         }
@@ -77,9 +77,9 @@ public class Frag_Chrono_Liste extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.chrono_frag_liste, container, false);
-        mLv = (ListView) rootView.findViewById(R.id.lstChrono);
-        mAdapter = new ChronoCustomAdapter(getActivity().getApplicationContext());
+        View rootView = inflater.inflate(R.layout.listeseq_frag_liste, container, false);
+        mLv = (ListView) rootView.findViewById(R.id.Frag_ListeSeq_Liste);
+        mAdapter = new ListeSeqCustomAdapter(getActivity().getApplicationContext());
         mAdapter.setCallback(mCallback);
         mLv.setAdapter(mAdapter);
 
@@ -222,4 +222,6 @@ public class Frag_Chrono_Liste extends Fragment {
         }, 100L);
 
     }
+
+
 }

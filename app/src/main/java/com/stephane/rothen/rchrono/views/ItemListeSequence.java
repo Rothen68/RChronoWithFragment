@@ -58,7 +58,7 @@ public class ItemListeSequence extends LinearLayout {
      * @param txt              valeur à affecter à la zone de texte
      * @param visibiliteBouton visibilité du bouton
      */
-    public void setUpView(int position, String txt, boolean visibiliteBouton, final Frag_Chrono_Liste.Frag_Chrono_Liste_Callback callback) {
+    public void setUpView(int position, String txt, boolean visibiliteBouton, final Frag_Liste_Callback callback) {
         mText.setText(txt);
         mbtnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
         if (callback != null) {

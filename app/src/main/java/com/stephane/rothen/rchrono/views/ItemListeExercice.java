@@ -62,7 +62,7 @@ public class ItemListeExercice extends LinearLayout {
      * @param visibiliteFleche Affiche ou non la fleche de focus
      * @param visibiliteBouton Affiche ou non le bouton suppression
      */
-    public void setUpView(int position, String txt, boolean visibiliteFleche, boolean visibiliteBouton, final Frag_Chrono_Liste.Frag_Chrono_Liste_Callback callback) {
+    public void setUpView(int position, String txt, boolean visibiliteFleche, boolean visibiliteBouton, final Frag_Liste_Callback callback) {
         m_Text.setText(txt);
         m_Fleche.setVisibility((visibiliteFleche) ? VISIBLE : INVISIBLE);
         m_btnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);

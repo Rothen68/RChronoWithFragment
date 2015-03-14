@@ -25,9 +25,11 @@ import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
-import com.stephane.rothen.rchrono.views.Frag_Chrono_Liste;
+import com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition;
 import com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonAjoutSeq;
 import com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonRetour;
+import com.stephane.rothen.rchrono.views.Frag_ListeSeq_Liste;
+import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
 import com.stephane.rothen.rchrono.views.ItemListeExercice;
 import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
@@ -36,8 +38,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ListeSequencesActivity extends ActionBarActivity implements Frag_ListeSeq_BoutonRetour.Frag_ListeSeq_BoutonRetour_Callback,
         Frag_ListeSeq_BoutonAjoutSeq.Frag_ListeSeq_BoutonAjoutSeq_Callback,
-        Frag_Chrono_Liste.Frag_Chrono_Liste_Callback,
-        Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
+        Frag_Liste_Callback.Frag_ListeSeq_Liste_Callback,
+        Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback,
+        Frag_Dialog_Repetition.Frag_Dialog_Repetition_Callback
+
+{
     private static final int TYPESEQUENCE = 1;
     private static final int TYPEEXERCICE = 2;
     /**
@@ -68,7 +73,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
     /**
      * Instance de la classe du fragment affichant la liste des séquences
      */
-    private Frag_Chrono_Liste mFragListe;
+    private Frag_ListeSeq_Liste mFragListe;
     /**
      * Instance de la classe du fragment affichant le bouton ajouter sequence
      */
@@ -89,8 +94,8 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
         if (savedInstanceState == null) {
         }
         getSupportFragmentManager().executePendingTransactions();
-        mFragListe = (Frag_Chrono_Liste) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Liste);
-        mFragListe.setAfficheBtnSuppr(true);
+        mFragListe = (Frag_ListeSeq_Liste) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
+        mFragListe.setAfficheBtnSuppr(false);
         mFragBtnAjouterSeq = (Frag_ListeSeq_BoutonAjoutSeq) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
         mFragBtnRetour = (Frag_ListeSeq_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
 
@@ -170,7 +175,19 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
 
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
+        LinearLayout p = (LinearLayout) view;
+        mChrono.get().setChronoAt(position);
+        switch (mFragListe.getAdapter().getItemViewType(position)) {
+            case CustomAdapter.TYPE_ITEM:
 
+                break;
+            case CustomAdapter.TYPE_SEPARATOR:
+                DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+                df.show(getFragmentManager(), "dialog");
+                break;
+            default:
+                throw new ClassCastException("View suppr non reconnue");
+        }
     }
 
     @Override
@@ -239,6 +256,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
 
     public void doDialogFragCancelClick() {
 
+    }
+
+    @Override
+    public void onClickListener(View v, int valeur) {
+        mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).setM_nombreRepetition(valeur);
     }
 
     /**
