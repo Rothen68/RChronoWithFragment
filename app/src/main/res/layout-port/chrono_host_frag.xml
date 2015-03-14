@@ -16,11 +16,11 @@
 
     <fragment
         android:id="@+id/Frag_Chrono_Liste"
-        android:name="com.stephane.rothen.rchrono.views.Frag_Chrono_Liste"
+        android:name="com.stephane.rothen.rchrono.views.Frag_ListeItems"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
-        tools:layout="@layout/chrono_frag_liste" />
+        tools:layout="@layout/frag_liste" />
 
     <fragment
         android:id="@+id/Frag_Chrono_Boutons"

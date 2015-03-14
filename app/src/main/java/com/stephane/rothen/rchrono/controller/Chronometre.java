@@ -250,7 +250,10 @@ public class Chronometre {
      * @see Chronometre#m_indexExerciceActif
      */
     public int getDureeRestanteExerciceActif() {
-        return m_positionDansExerciceActif;
+        if (m_chronoModel.getListeSequences().size() > 0)
+            return m_positionDansExerciceActif;
+        else
+            return 0;
     }
 
     /**
@@ -285,17 +288,20 @@ public class Chronometre {
      * @see Chronometre#m_indexSequenceActive
      */
     public int getDureeRestanteSequenceActive() {
-        Sequence s = m_chronoModel.getListeSequences().get(m_indexSequenceActive);
-        int duree = 0;
-        for (ElementSequence e : s.getTabElement()) {
-            duree = duree + e.getDureeExercice();
-        }
-        duree = duree * (m_nbreRepetition - 1);
-        for (int i = m_indexExerciceActif + 1; i < s.getTabElement().size(); i++)
-            duree = duree + s.getTabElement().get(i).getDureeExercice();
+        if (m_chronoModel.getListeSequences().size() > 0) {
+            Sequence s = m_chronoModel.getListeSequences().get(m_indexSequenceActive);
+            int duree = 0;
+            for (ElementSequence e : s.getTabElement()) {
+                duree = duree + e.getDureeExercice();
+            }
+            duree = duree * (m_nbreRepetition - 1);
+            for (int i = m_indexExerciceActif + 1; i < s.getTabElement().size(); i++)
+                duree = duree + s.getTabElement().get(i).getDureeExercice();
 
-        duree += getDureeRestanteExerciceActif();
-        return duree;
+            duree += getDureeRestanteExerciceActif();
+            return duree;
+        } else
+            return 0;
     }
 
     /**

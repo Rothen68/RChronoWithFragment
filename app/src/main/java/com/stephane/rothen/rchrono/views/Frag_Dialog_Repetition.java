@@ -23,6 +23,7 @@ public class Frag_Dialog_Repetition extends DialogFragment {
     static public Frag_Dialog_Repetition newInstance(int num) {
         Frag_Dialog_Repetition f = new Frag_Dialog_Repetition();
 
+
         // Supply num input as an argument.
         Bundle args = new Bundle();
         args.putInt("num", num);
@@ -56,13 +57,15 @@ public class Frag_Dialog_Repetition extends DialogFragment {
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(1000);
         numberPicker.setValue(mNum);
-
+        getDialog().setTitle(R.string.dialogRep_Repetition);
         // Watch for button clicks.
         Button button = (Button) v.findViewById(R.id.dialFragRepbtnOk);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
                 mCallback.onClickListener(v, numberPicker.getValue());
+                getDialog().dismiss();
+
             }
         });
 

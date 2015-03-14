@@ -26,9 +26,9 @@ import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition;
+import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonAjoutSeq;
 import com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonRetour;
-import com.stephane.rothen.rchrono.views.Frag_ListeSeq_Liste;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
 import com.stephane.rothen.rchrono.views.ItemListeExercice;
 import com.stephane.rothen.rchrono.views.ItemListeSequence;
@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ListeSequencesActivity extends ActionBarActivity implements Frag_ListeSeq_BoutonRetour.Frag_ListeSeq_BoutonRetour_Callback,
         Frag_ListeSeq_BoutonAjoutSeq.Frag_ListeSeq_BoutonAjoutSeq_Callback,
-        Frag_Liste_Callback.Frag_ListeSeq_Liste_Callback,
+        Frag_Liste_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback,
         Frag_Dialog_Repetition.Frag_Dialog_Repetition_Callback
 
@@ -73,7 +73,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
     /**
      * Instance de la classe du fragment affichant la liste des séquences
      */
-    private Frag_ListeSeq_Liste mFragListe;
+    private Frag_ListeItems mFragListe;
     /**
      * Instance de la classe du fragment affichant le bouton ajouter sequence
      */
@@ -94,8 +94,8 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
         if (savedInstanceState == null) {
         }
         getSupportFragmentManager().executePendingTransactions();
-        mFragListe = (Frag_ListeSeq_Liste) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(false);
+        mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
+        mFragListe.setAfficheBtnSuppr(true);
         mFragBtnAjouterSeq = (Frag_ListeSeq_BoutonAjoutSeq) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
         mFragBtnRetour = (Frag_ListeSeq_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
 
@@ -229,10 +229,27 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
                 DialogFragment df = Frag_AlertDialog_Suppr.newInstance(nom);
                 df.show(getFragmentManager(), "dialog");
                 break;
-            default:
+
+            case R.id.txtLvExercice:
+                Toast.makeText(this, "Exercice", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.txtLvSequence:
+                parent = v.getParent();
+                parent = parent.getParent();
+                p = (LinearLayout) parent;
+                position = -2;
+                if (p instanceof ItemListeExercice) {
+                    position = ((ItemListeExercice) p).getPosition();
+                    //todo afficher popup duree exercice
 
-
+                } else if (p instanceof ItemListeSequence) {
+                    position = ((ItemListeSequence) p).getPosition();
+                    mChrono.get().setChronoAt(position);
+                    df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+                    df.show(getFragmentManager(), "dialog");
+                } else {
+                    throw new ClassCastException("View Item non reconnue");
+                }
         }
 
     }
@@ -261,6 +278,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
     @Override
     public void onClickListener(View v, int valeur) {
         mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).setM_nombreRepetition(valeur);
+        chronoService.resetChrono();
     }
 
     /**

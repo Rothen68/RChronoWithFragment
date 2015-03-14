@@ -34,13 +34,5 @@ public interface Frag_Liste_Callback {
      */
     public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id);
 
-
-    public interface Frag_Chrono_Liste_Callback extends Frag_Liste_Callback {
-
-    }
-
-    public interface Frag_ListeSeq_Liste_Callback extends Frag_Liste_Callback {
-
-    }
 }
 

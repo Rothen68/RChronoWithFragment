@@ -16,6 +16,7 @@
     <string name="alertDialog_annuler">Annuler</string>
 
     <string name="dialogRep_Ok">Valider</string>
+    <string name="dialogRep_Repetition">Répétitions :</string>
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_liste_sequences">Liste des séquences</string>

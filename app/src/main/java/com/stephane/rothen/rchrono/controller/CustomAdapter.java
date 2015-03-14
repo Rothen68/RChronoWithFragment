@@ -19,7 +19,7 @@ import java.util.TreeSet;
  * <p/>
  * Created by stéphane on 23/02/2015.
  */
-public abstract class CustomAdapter extends BaseAdapter {
+public class CustomAdapter extends BaseAdapter {
     public static final int TYPE_SEPARATOR = 0;
     public static final int TYPE_ITEM = 1;
     /**
@@ -71,7 +71,9 @@ public abstract class CustomAdapter extends BaseAdapter {
         mAfficheCurseur = etat;
     }
 
-    public abstract void setCallback(Frag_Liste_Callback callback);
+    public void setCallback(Frag_Liste_Callback callback) {
+        mCallback = callback;
+    }
 
 
     /**

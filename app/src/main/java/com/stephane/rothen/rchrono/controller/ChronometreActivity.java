@@ -20,14 +20,14 @@ import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.views.Frag_Chrono_Affichage;
 import com.stephane.rothen.rchrono.views.Frag_Chrono_Boutons;
-import com.stephane.rothen.rchrono.views.Frag_Chrono_Liste;
+import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 
 public class ChronometreActivity extends ActionBarActivity implements Frag_Chrono_Affichage.Frag_Chrono_Affichage_Callback,
-        Frag_Liste_Callback.Frag_Chrono_Liste_Callback,
+        Frag_Liste_Callback,
         Frag_Chrono_Boutons.Frag_Chrono_Boutons_Callback {
 
 
@@ -63,9 +63,9 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
      */
     private Frag_Chrono_Affichage mFragAffichage;
     /**
-     * Stockage du fragment Frag_Chrono_Liste
+     * Stockage du fragment Frag_ListeItems
      */
-    private Frag_Chrono_Liste mFragListe;
+    private Frag_ListeItems mFragListe;
     /**
      * Stockage du fragment Frag_Chrono_boutons
      */
@@ -85,7 +85,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         }
         getSupportFragmentManager().executePendingTransactions();
         mFragAffichage = (Frag_Chrono_Affichage) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Affichage);
-        mFragListe = (Frag_Chrono_Liste) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Liste);
+        mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Liste);
         mFragListe.setAfficheCurseur(true);
         mFragListe.setAfficheBtnSuppr(false);
         mFragBoutons = (Frag_Chrono_Boutons) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Boutons);
@@ -162,6 +162,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         ifilter.addAction(ChronoService.SER_FIN_LISTESEQUENCE);
         registerReceiver(myReceiver, ifilter);
         myReceiver.isRegistered = true;
+
     }
 
 
@@ -205,14 +206,19 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
     public void onClickListener(View v) {
         switch (v.getId()) {
             case R.id.btnStart:
-                if (chronoService != null) {
-                    if (chronoService.getChronoStart()) {
-                        chronoService.stopChrono();
-                        ((Button) v).setText(R.string.chronometre_start);
-                    } else {
-                        chronoService.startChrono();
-                        ((Button) v).setText(R.string.chronometre_pause);
+                if (mChrono.get().getListeSequence().size() > 0) {
+                    if (chronoService != null) {
+                        if (chronoService.getChronoStart()) {
+                            chronoService.stopChrono();
+                            ((Button) v).setText(R.string.chronometre_start);
+                        } else {
+                            chronoService.startChrono();
+                            ((Button) v).setText(R.string.chronometre_pause);
+                        }
                     }
+                } else {
+                    //todo aller directement a la fenetre AjoutSequence
+                    goToListeSequencesActivity();
                 }
                 break;
             case R.id.btnReset:
@@ -278,7 +284,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
              * Lors d'un appuis court sur un item de la ListView, arrête le chrono et le place sur l'exercice sélectionné, ou en cas de séquence sélectionnée, sur le premier exercice de la séquence
              * @param parent
              */
-            case R.id.lstChrono:
+            case R.id.Frag_Liste_listView:
                 chronoService.stopChrono();
                 int posExercice = mChrono.get().setChronoAt(position);
                 if (posExercice > -1)
@@ -302,13 +308,16 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
      */
     @Override
     public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
-        chronoService.stopChrono();
-        //TODO : ouvrir la fenetre ListeSequenceActivity
-        Intent i = new Intent(this, ListeSequencesActivity.class);
-        startActivity(i);
+        goToListeSequencesActivity();
         return true;
     }
 
+    private void goToListeSequencesActivity() {
+        chronoService.stopChrono();
+
+        Intent i = new Intent(this, ListeSequencesActivity.class);
+        startActivity(i);
+    }
 
     /**
      * Classe privée MyReceiver
@@ -335,6 +344,12 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                         int position = intent.getIntExtra(ChronoService.SER_UPDATE_LISTVIEW, -1);
                         if (position != -1) {
                             mFragListe.afficheListView(position, mChrono);
+                            if (mChrono.get().getListeSequence().size() == 0) {
+                                mFragBoutons.setTexteBtnStart(R.string.listesequences_ajoutsequence);
+                            } else if (chronoService.getChronoStart())
+                                mFragBoutons.setTexteBtnStart(R.string.chronometre_pause);
+                            else
+                                mFragBoutons.setTexteBtnStart(R.string.chronometre_start);
 
                         }
                         break;

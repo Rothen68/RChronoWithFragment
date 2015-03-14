@@ -73,7 +73,14 @@ public class ItemListeExercice extends LinearLayout {
                     callback.onClickListener(v);
                 }
             });
+            m_Text.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callback.onClickListener(v);
+                }
+            });
         }
+
         mPosition = position;
 
     }

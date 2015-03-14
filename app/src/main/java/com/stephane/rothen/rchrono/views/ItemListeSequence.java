@@ -60,9 +60,16 @@ public class ItemListeSequence extends LinearLayout {
      */
     public void setUpView(int position, String txt, boolean visibiliteBouton, final Frag_Liste_Callback callback) {
         mText.setText(txt);
+
         mbtnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
         if (callback != null) {
             mbtnSuppr.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callback.onClickListener(v);
+                }
+            });
+            mText.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     callback.onClickListener(v);

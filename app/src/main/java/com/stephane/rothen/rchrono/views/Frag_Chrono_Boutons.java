@@ -58,6 +58,7 @@ public class Frag_Chrono_Boutons extends Fragment {
         mbtnStart.setText(texte);
     }
 
+
     /**
      * Initialisation de l'interface du fragment
      *
