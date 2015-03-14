@@ -52,7 +52,7 @@ public class ChronoModel {
         s.ajouterElement(e2);
         Sequence s2 = new Sequence("Sequence 2", 1, new SyntheseVocale(0x03));
         s2.ajouterElement(e3);
-        Sequence s3 = new Sequence("Sequence 3", 1000, new SyntheseVocale(0x03));
+        Sequence s3 = new Sequence("Sequence 3", 100, new SyntheseVocale(0x03));
         s3.ajouterElement(e4);
         s3.ajouterElement(e5);
         m_listeSequences.add(s);

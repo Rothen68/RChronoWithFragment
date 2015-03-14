@@ -21,6 +21,9 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_liste_sequences">Liste des séquences</string>
     <string name="hello_world">Hello world!</string>
+    <string name="dialogDuree_duree">Durée :</string>
+
+    <string name="alert_dureeTotaleTropGrande">100 heures maximum</string>
 
 
 </resources>

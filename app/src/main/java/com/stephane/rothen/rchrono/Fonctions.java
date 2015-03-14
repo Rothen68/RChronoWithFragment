@@ -72,4 +72,6 @@ public class Fonctions {
         }
         return valeur;
     }
+
+
 }

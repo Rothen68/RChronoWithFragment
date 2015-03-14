@@ -14,14 +14,16 @@ import com.stephane.rothen.rchrono.R;
 /**
  * Created by stéphane on 14/03/2015.
  */
-public class Frag_Dialog_Repetition extends DialogFragment {
+public class Frag_Dialog_Duree extends DialogFragment
+
+{
 
     private int mNum;
 
-    private Frag_Dialog_Repetition_Callback mCallback;
+    private Frag_Dialog_Duree_Callback mCallback;
 
-    static public Frag_Dialog_Repetition newInstance(int num) {
-        Frag_Dialog_Repetition f = new Frag_Dialog_Repetition();
+    static public Frag_Dialog_Duree newInstance(int num) {
+        Frag_Dialog_Duree f = new Frag_Dialog_Duree();
 
 
         // Supply num input as an argument.
@@ -36,7 +38,7 @@ public class Frag_Dialog_Repetition extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (Frag_Dialog_Repetition_Callback) activity;
+            mCallback = (Frag_Dialog_Duree_Callback) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implements Frag_Dialog_Repetition_Callback");
         }
@@ -47,23 +49,36 @@ public class Frag_Dialog_Repetition extends DialogFragment {
         super.onCreate(savedInstanceState);
         mNum = getArguments().getInt("num");
 
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_frag_repetition, container, false);
-        final NumberPicker numberPicker = (NumberPicker) v.findViewById(R.id.dialFragRepNumPicker);
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(100);
-        numberPicker.setValue(mNum);
-        getDialog().setTitle(R.string.dialogRep_Repetition);
+        View v = inflater.inflate(R.layout.dialog_frag_duree, container, false);
+        final NumberPicker tpMinute = (NumberPicker) v.findViewById(R.id.dialFragDureePickMinute);
+        final NumberPicker tpSecondes = (NumberPicker) v.findViewById(R.id.dialFragDureePickSeconde);
+
+        int minutes = mNum / 60;
+        int secondes = mNum - (60 * minutes);
+
+        tpMinute.setMinValue(0);
+        tpMinute.setMaxValue(59);
+        tpMinute.setValue(minutes);
+
+        tpSecondes.setMinValue(1);
+        tpSecondes.setMaxValue(59);
+        tpSecondes.setValue(secondes);
+
+        getDialog().setTitle(R.string.dialogDuree_duree);
         // Watch for button clicks.
-        Button button = (Button) v.findViewById(R.id.dialFragRepbtnOk);
+        Button button = (Button) v.findViewById(R.id.dialFragDureebtnOk);
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
-                mCallback.onRetourDialogRepetition(numberPicker.getValue());
+                int res = tpMinute.getValue() * 60 + tpSecondes.getValue();
+                mCallback.onRetourDialogDuree(res);
                 getDialog().dismiss();
 
             }
@@ -76,8 +91,7 @@ public class Frag_Dialog_Repetition extends DialogFragment {
      * Frag_Dialog_Repetition_Callback
      * <p>Cette interface permet de gerer les callback du fragment vers l'activity</p>
      */
-    public interface Frag_Dialog_Repetition_Callback {
-        public void onRetourDialogRepetition(int valeur);
+    public interface Frag_Dialog_Duree_Callback {
+        public void onRetourDialogDuree(int valeur);
     }
 }
-

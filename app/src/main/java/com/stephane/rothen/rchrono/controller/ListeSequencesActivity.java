@@ -1,6 +1,7 @@
 package com.stephane.rothen.rchrono.controller;
 
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,13 +10,10 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -25,6 +23,7 @@ import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
+import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonAjoutSeq;
@@ -40,7 +39,8 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
         Frag_ListeSeq_BoutonAjoutSeq.Frag_ListeSeq_BoutonAjoutSeq_Callback,
         Frag_Liste_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback,
-        Frag_Dialog_Repetition.Frag_Dialog_Repetition_Callback
+        Frag_Dialog_Repetition.Frag_Dialog_Repetition_Callback,
+        Frag_Dialog_Duree.Frag_Dialog_Duree_Callback
 
 {
     private static final int TYPESEQUENCE = 1;
@@ -226,13 +226,10 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
                 } else {
                     throw new ClassCastException("View suppr non reconnue");
                 }
-                DialogFragment df = Frag_AlertDialog_Suppr.newInstance(nom);
-                df.show(getFragmentManager(), "dialog");
+                afficheDialogSuppr(nom);
                 break;
 
             case R.id.txtLvExercice:
-                Toast.makeText(this, "Exercice", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.txtLvSequence:
                 parent = v.getParent();
                 parent = parent.getParent();
@@ -240,18 +237,42 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
                 position = -2;
                 if (p instanceof ItemListeExercice) {
                     position = ((ItemListeExercice) p).getPosition();
-                    //todo afficher popup duree exercice
+                    mChrono.get().setChronoAt(position);
+                    afficheDialogDuree();
 
                 } else if (p instanceof ItemListeSequence) {
                     position = ((ItemListeSequence) p).getPosition();
                     mChrono.get().setChronoAt(position);
-                    df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
-                    df.show(getFragmentManager(), "dialog");
+                    afficheDialogRepetition();
                 } else {
                     throw new ClassCastException("View Item non reconnue");
                 }
         }
 
+    }
+
+    private void afficheDialogSuppr(String nom) {
+        FragmentManager fm = getFragmentManager();
+        if (fm.findFragmentByTag("dialog") == null) {
+            DialogFragment df = Frag_AlertDialog_Suppr.newInstance(nom);
+            df.show(getFragmentManager(), "dialog");
+        }
+    }
+
+    private void afficheDialogRepetition() {
+        FragmentManager fm = getFragmentManager();
+        if (fm.findFragmentByTag("dialog") == null) {
+            DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+            df.show(getFragmentManager(), "dialog");
+        }
+    }
+
+    private void afficheDialogDuree() {
+        FragmentManager fm = getFragmentManager();
+        if (fm.findFragmentByTag("dialog") == null) {
+            DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice());
+            df.show(getFragmentManager(), "dialog");
+        }
     }
 
     public void doDialogFragSupprClick() {
@@ -275,27 +296,35 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
 
     }
 
+
     @Override
-    public void onClickListener(View v, int valeur) {
-        mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).setM_nombreRepetition(valeur);
+    public void onRetourDialogDuree(int valeur) {
+        int duree = mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice();
+        int seq = mChrono.get().getIndexSequenceActive();
+        int ex = mChrono.get().getIndexExerciceActif();
+        mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).setDureeExercice(valeur);
+        mChrono.get().resetChrono();
+        if (mChrono.get().getDureeRestanteTotale() > 100 * 60 * 60) {
+            Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
+            mChrono.get().getListeSequence().get(seq).getTabElement().get(ex).setDureeExercice(duree);
+        }
         chronoService.resetChrono();
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
+    @Override
+    public void onRetourDialogRepetition(int valeur) {
+        int rep = mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition();
+        int seq = mChrono.get().getIndexSequenceActive();
+        mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).setM_nombreRepetition(valeur);
+        mChrono.get().resetChrono();
+        if (mChrono.get().getDureeRestanteTotale() > 100 * 60 * 60) {
+            Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
+            mChrono.get().getListeSequence().get(seq).setM_nombreRepetition(rep);
         }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_liste_sequences, container, false);
-            return rootView;
-        }
+        chronoService.resetChrono();
     }
+
 
     /**
      * Classe privée MyReceiver

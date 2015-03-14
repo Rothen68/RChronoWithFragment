@@ -28,17 +28,17 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ChronoService extends Service implements TextToSpeech.OnInitListener {
 
-    public static final String SER_ACTION="action";
+    public static final String SER_ACTION = "action";
 
 
-
-    public static final String SER_TEMPS_RESTANT="temps_restant";
-    public static final String SER_UPDATE_LISTVIEW="update_ListView";
-    public static final String SER_FIN_LISTESEQUENCE ="fin_liste_sequence";
-    private static final int IDNOTIFICATION = 1 ;
+    public static final String SER_TEMPS_RESTANT = "temps_restant";
+    public static final String SER_UPDATE_LISTVIEW = "update_ListView";
+    public static final String SER_FIN_LISTESEQUENCE = "fin_liste_sequence";
+    private static final int IDNOTIFICATION = 1;
 
     /**
      * Permet la communication depuis l'interface
+     *
      * @see ChronometreActivity#mConnexion
      * @see ChronoService.MonBinder
      */
@@ -46,7 +46,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     /**
      * Notification builder pour l'affichage de la notification
      */
-    NotificationCompat.Builder mNotificationBuilder;
+    private NotificationCompat.Builder mNotificationBuilder;
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *
@@ -56,6 +56,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     private AtomicReference<Chronometre> mChrono = null;
     /**
      * Stocke l'état actif ou pas du timer
+     *
      * @see ChronoService#mTimer
      */
     private Boolean chronoStart = false;
@@ -80,7 +81,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      *
      * @see ChronoService#mTextToSpeach
      */
-    private boolean mTextToSpeachReady=false;
+    private boolean mTextToSpeachReady = false;
 
 
     /**
@@ -98,26 +99,24 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     /**
      * Stocke l'index de la synthese vocale qui a été énnoncé
      */
-    private int mIndexSequenceSyntheseVocaleEnnoncee=-1;
+    private int mIndexSequenceSyntheseVocaleEnnoncee = -1;
 
 
     /**
      * Implémente l'interface TextToSpeech.OnInitListener, active lors de la fin de l'initialisation du TextToSpeech
-     * @param status
-     *      Status du TextToSpeech
      *
-     *  @see ChronoService#mTextToSpeach
+     * @param status Status du TextToSpeech
+     * @see ChronoService#mTextToSpeach
      */
     @Override
     public void onInit(int status) {
-        if (status==TextToSpeech.SUCCESS)
-        {
+        if (status == TextToSpeech.SUCCESS) {
             int result = mTextToSpeach.setLanguage(Locale.FRANCE);
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-                mTextToSpeachReady=true;
+                mTextToSpeachReady = true;
             }
         }
     }
@@ -199,20 +198,18 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
     /**
      * Retourne l'état du chrono, actif ou inactif
-     * @return
-     *      true : actif
-     *      false : inactif
+     *
+     * @return true : actif
+     * false : inactif
      */
-    public boolean getChronoStart()
-    {
+    public boolean getChronoStart() {
         return chronoStart;
     }
 
     /**
      * Permet d'arreter le chrono
      */
-    public void stopChrono()
-    {
+    public void stopChrono() {
         if (chronoStart) {
             chronoStart = false;
             if (mTimer != null)
@@ -226,8 +223,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     /**
      * Remet le chronometre à zéro et transmet les demande d'actualisation de l'interface
      */
-    public void resetChrono()
-    {
+    public void resetChrono() {
         chronoStart = false;
         mChrono.get().resetChrono();
         mIndexSequenceSyntheseVocaleEnnoncee = -1;
@@ -240,22 +236,19 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         sendBroadcast(i);
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentText("Chronomètre arrêté");
-        mNotificationManager.notify(IDNOTIFICATION,mNotificationBuilder.build());
+        mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
 
     }
 
     /**
      * Permet de positionner les curseurs du chronometre à une position définie
-     * @param sequence
-     *          index de la séquence active
-     * @param exercice
-     *          index de l'exercice actif
      *
+     * @param sequence index de la séquence active
+     * @param exercice index de l'exercice actif
      * @see ChronoService#mChrono
      * @see com.stephane.rothen.rchrono.controller.Chronometre#setChronoAt(int, int)
      */
-    public void setChronoAt(int sequence, int exercice)
-    {
+    public void setChronoAt(int sequence, int exercice) {
         mChrono.get().setChronoAt(sequence, exercice);
     }
 
@@ -266,13 +259,12 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
     /**
      * Permet d'affecter un chronometre au service
-     * @param c
-     *      instance de la classe AtomicReference<Chronometre>
-     *@see ChronoService#mChrono
+     *
+     * @param c instance de la classe AtomicReference<Chronometre>
+     * @see ChronoService#mChrono
      */
-    public void setAtomicChronometre(AtomicReference<Chronometre> c)
-    {
-        mChrono=c;
+    public void setAtomicChronometre(AtomicReference<Chronometre> c) {
+        mChrono = c;
     }
 
     /**
@@ -302,10 +294,10 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
     /**
      * Envois une demande d'actualisation de la ListView de l'interface
+     *
      * @see ChronometreActivity#myReceiver
      */
-    public void updateListView()
-    {
+    public void updateListView() {
         Intent i = new Intent();
         i.setAction(SER_UPDATE_LISTVIEW);
         int exercice = mChrono.get().getIndexExerciceActif();
@@ -321,13 +313,14 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             position = position + exercice;
             i.putExtra(SER_UPDATE_LISTVIEW, position);
         } else
-            i.putExtra(SER_UPDATE_LISTVIEW,0);
+            i.putExtra(SER_UPDATE_LISTVIEW, 0);
         sendBroadcast(i);
 
     }
 
     /**
      * Fonction appelée pour lancer le timer
+     *
      * @see ChronoService#mTimer
      */
     private void lancerTimer() {

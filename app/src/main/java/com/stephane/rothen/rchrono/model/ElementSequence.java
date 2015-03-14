@@ -2,7 +2,7 @@ package com.stephane.rothen.rchrono.model;
 
 /**
  * Classe métier héritant d'Exercice et stockant les caractéristiques spécifiques d'un exercice
- *
+ * <p/>
  * Created by Stéphane on 14/02/2015.
  */
 public class ElementSequence extends Exercice {
@@ -36,6 +36,7 @@ public class ElementSequence extends Exercice {
 
     /**
      * Constructeur
+     *
      * @param nomExercice
      * @param descriptionExercice
      * @param dureeParDefaut
@@ -54,18 +55,23 @@ public class ElementSequence extends Exercice {
     }
 
 
-    public int getDureeExercice(){ return m_dureeExercice; }
+    public int getDureeExercice() {
+        return m_dureeExercice;
+    }
 
-    public SyntheseVocale getSyntheseVocale()
-    {
+    public void setDureeExercice(int duree) {
+        if (duree > 0) {
+            m_dureeExercice = duree;
+        }
+    }
+
+    public SyntheseVocale getSyntheseVocale() {
         return m_syntheseVocale;
     }
 
-    public NotificationExercice getNotification()
-    {
+    public NotificationExercice getNotification() {
         return m_notificationExercice;
     }
-
 
 
 }

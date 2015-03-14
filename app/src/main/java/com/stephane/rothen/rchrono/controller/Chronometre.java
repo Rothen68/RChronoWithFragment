@@ -63,15 +63,21 @@ public class Chronometre {
      * @see #AFFICHAGE_TEMPS_EX
      */
     protected int m_typeAffichage;
+
+    /**
+     * Objet global model
+     *
+     * @see com.stephane.rothen.rchrono.model.ChronoModel
+     */
     protected ChronoModel m_chronoModel;
     /**
      * durée restante dans la séquence active
      */
-    private int m_dureeRestanteSequenceActive;
+    protected int m_dureeRestanteSequenceActive;
     /**
      * durée restante totale
      */
-    private int m_dureeRestanteTotale;
+    protected int m_dureeRestanteTotale;
 
 
     /**
@@ -102,12 +108,18 @@ public class Chronometre {
         return m_indexExerciceActif;
     }
 
+    /**
+     * Supprime l'exercice actif
+     */
     public void supprimeExerciceActif() {
         m_chronoModel.getListeSequences().get(m_indexSequenceActive).getTabElement().remove(m_indexExerciceActif);
         if (m_chronoModel.getListeSequences().get(m_indexSequenceActive).getTabElement().size() == 0)
             supprimeSequenceActive();
     }
 
+    /**
+     * Supprime la sequence active
+     */
     public void supprimeSequenceActive() {
         m_chronoModel.getListeSequences().remove(m_indexSequenceActive);
     }
@@ -344,6 +356,11 @@ public class Chronometre {
         m_dureeRestanteTotale = duree;
     }
 
+    /**
+     * Gere le tick du chronometre
+     *
+     * @return false si fin de l'exercice
+     */
     public boolean tick() {
         m_positionDansExerciceActif--;
         if (m_positionDansExerciceActif <= 0) {
