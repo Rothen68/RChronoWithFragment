@@ -28,6 +28,19 @@
     <string name="ajoutexercicee_creer">Créer un exercice</string>
 
 
+    <string name="title_activity_editionSequence">Edition de la séquence</string>
+    <string name="editionseq_exercice">Exercices :</string>
+
+    <string name="editionseq_frag_detail_nom">Nom :</string>
+    <string name="editionseq_frag_detail_repetitions">Nombre de répétitions :</string>
+    <string name="editionseq_frag_detail_sythesevocale">Sythèse vocale :</string>
+    <string name="editionseq_frag_detail_svnom">Nom</string>
+    <string name="editionseq_frag_detail_svduree">Durée</string>
+
+    <string name="editionseq_frag_btnexercice_creer">Créer</string>
+    <string name="editionseq_frag_btnexercice_ajouter">Ajouter</string>
+
+
     <string name="action_settings">Settings</string>
 
 
@@ -35,6 +48,9 @@
     <string name="dialogDuree_duree">Durée :</string>
 
     <string name="alert_dureeTotaleTropGrande">100 heures maximum</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

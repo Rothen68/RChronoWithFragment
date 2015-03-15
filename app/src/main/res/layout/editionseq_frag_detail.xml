@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editionseq_frag_detail_nom" />
+
+        <EditText
+            android:id="@+id/editionseq_frag_detail_etxtNom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:text="@string/editionseq_frag_detail_repetitions" />
+
+        <EditText
+            android:id="@+id/editionseq_frag_detail_etxtRepetitions"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:ems="10"
+            android:inputType="number" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/editionseq_frag_detail_sythesevocale" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <ToggleButton
+            android:id="@+id/editionseq_frag_detail_tbNom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/editionseq_frag_detail_svnom"
+            android:textOff="@string/editionseq_frag_detail_svnom"
+            android:textOn="@string/editionseq_frag_detail_svnom" />
+
+        <ToggleButton
+            android:id="@+id/editionseq_frag_detail_tbDuree"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/editionseq_frag_detail_svduree"
+            android:textOff="@string/editionseq_frag_detail_svduree"
+            android:textOn="@string/editionseq_frag_detail_svduree" />
+    </LinearLayout>
+</LinearLayout>

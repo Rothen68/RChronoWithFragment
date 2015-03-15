@@ -14,6 +14,7 @@ import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.controller.Chronometre;
 import com.stephane.rothen.rchrono.controller.CustomAdapter;
+import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Exercice;
 import com.stephane.rothen.rchrono.model.Sequence;
 
@@ -30,6 +31,8 @@ public class Frag_ListeItems extends Fragment {
     public static final int AFFICHE_LISTVIEW = 1;
     public static final int AFFICHE_LIBEXERCICE = 2;
     public static final int AFFICHE_LIBSEQUENCE = 3;
+    public static final int AFFICHE_EXERCICESEQACTIVE = 4;
+    private static final int NBRE_TYPE_AFFICHAGE = 4;
 
 
     /**
@@ -150,7 +153,7 @@ public class Frag_ListeItems extends Fragment {
     }
 
     public void setTypeAffichage(int t) {
-        if (t > 0 && t < 4)
+        if (t > 0 && t <= NBRE_TYPE_AFFICHAGE)
             mTypeAffichage = t;
     }
 
@@ -188,10 +191,27 @@ public class Frag_ListeItems extends Fragment {
             case AFFICHE_LIBEXERCICE:
                 affiche_LibExercice(mChrono);
                 break;
+            case AFFICHE_EXERCICESEQACTIVE:
+                affiche_ExerciceSeqActive(mChrono);
             default:
                 break;
         }
 
+    }
+
+    /**
+     * Affiche la liste des exercices de la séquence active
+     *
+     * @param mChrono
+     */
+    private void affiche_ExerciceSeqActive(AtomicReference<Chronometre> mChrono) {
+        mAdapter.setFocusPosition(0);
+        Sequence s = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive());
+        for (int i = 0; i < s.getTabElement().size(); i++) {
+            ElementSequence e = s.getTabElement().get(i);
+            mAdapter.addItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeExercice()));
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     private void affiche_LibSequence(AtomicReference<Chronometre> mChrono) {

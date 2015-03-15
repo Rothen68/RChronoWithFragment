@@ -267,10 +267,10 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
             throw new ClassCastException("View Item non reconnue");
         }
         mChrono.get().setChronoAt(position);
-        Toast.makeText(this, "EditionSequence : " + mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getNomSequence(), Toast.LENGTH_LONG).show();
-        mChrono.get().resetChrono();
+        goToEditionSequenceActivity();
         return true;
     }
+
 
     private void afficheDialogSuppr(String nom) {
         FragmentManager fm = getFragmentManager();
@@ -348,6 +348,12 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     private void goToAjoutSequenceActivity() {
         Intent i = new Intent(this, AjoutSequenceActivity.class);
+        startActivity(i);
+    }
+
+
+    private void goToEditionSequenceActivity() {
+        Intent i = new Intent(this, EditionSequenceActivity.class);
         startActivity(i);
     }
 
