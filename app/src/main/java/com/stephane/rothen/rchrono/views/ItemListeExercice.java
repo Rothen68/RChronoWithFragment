@@ -17,9 +17,9 @@ import com.stephane.rothen.rchrono.R;
  */
 public class ItemListeExercice extends LinearLayout {
 
-    protected ImageView m_Fleche;
-    protected ImageButton m_btnSuppr;
-    protected TextView m_Text;
+    protected ImageView mFleche;
+    protected ImageButton mBtnSuppr;
+    protected TextView mText;
     protected int mPosition;
 
 
@@ -48,9 +48,9 @@ public class ItemListeExercice extends LinearLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.lv_exercice_focused_layout, this, true);
         setOrientation(HORIZONTAL);
-        m_Text = (TextView) findViewById(R.id.txtLvExercice);
-        m_Fleche = (ImageView) findViewById(R.id.imageView);
-        m_btnSuppr = (ImageButton) findViewById(R.id.btnSuppr);
+        mText = (TextView) findViewById(R.id.txtLvExercice);
+        mFleche = (ImageView) findViewById(R.id.imageView);
+        mBtnSuppr = (ImageButton) findViewById(R.id.btnSuppr);
         mPosition = -1;
     }
 
@@ -63,22 +63,29 @@ public class ItemListeExercice extends LinearLayout {
      * @param visibiliteBouton Affiche ou non le bouton suppression
      */
     public void setUpView(int position, String txt, boolean visibiliteFleche, boolean visibiliteBouton, final Frag_Liste_Callback callback) {
-        m_Text.setText(txt);
-        m_Fleche.setVisibility((visibiliteFleche) ? VISIBLE : INVISIBLE);
-        m_btnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
+        mText.setText(txt);
+        mFleche.setVisibility((visibiliteFleche) ? VISIBLE : INVISIBLE);
+        mBtnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
         if (callback != null) {
-            m_btnSuppr.setOnClickListener(new OnClickListener() {
+            mBtnSuppr.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     callback.onClickListener(v);
                 }
             });
-            m_Text.setOnClickListener(new OnClickListener() {
+            mText.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     callback.onClickListener(v);
                 }
             });
+            mText.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return callback.onLongClickListener(v);
+                }
+            });
+
         }
 
         mPosition = position;

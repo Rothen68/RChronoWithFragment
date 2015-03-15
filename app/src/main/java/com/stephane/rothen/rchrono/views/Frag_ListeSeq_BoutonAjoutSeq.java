@@ -21,7 +21,7 @@ public class Frag_ListeSeq_BoutonAjoutSeq extends Fragment {
     /**
      * Instance de l'interface OnClickListener
      */
-    private Frag_ListeSeq_BoutonAjoutSeq_Callback mCallback;
+    private Frag_Bouton_Callback mCallback;
 
     /**
      * Bouton Ajouter du fragment
@@ -42,9 +42,9 @@ public class Frag_ListeSeq_BoutonAjoutSeq extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (Frag_ListeSeq_BoutonAjoutSeq_Callback) activity;
+            mCallback = (Frag_Bouton_Callback) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implements *");
+            throw new ClassCastException(activity.toString() + " must implements Frag_Bouton_Callback");
         }
 
 
@@ -103,16 +103,5 @@ public class Frag_ListeSeq_BoutonAjoutSeq extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     * interface OnClickListener
-     * <p>Cette interface permet d'envoyer l'évenement OnClick d'un Button vers la classe activité qui a lancé le fragment</p>
-     */
-    public interface Frag_ListeSeq_BoutonAjoutSeq_Callback {
-        /**
-         * Evenement OnClick sur un button
-         *
-         * @param v View sur laquelle l'utilisateur aa cliqué
-         */
-        public void onClickListener(View v);
-    }
+
 }

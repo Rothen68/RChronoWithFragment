@@ -23,6 +23,7 @@ import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
+import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
@@ -35,8 +36,7 @@ import com.stephane.rothen.rchrono.views.ItemListeSequence;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class ListeSequencesActivity extends ActionBarActivity implements Frag_ListeSeq_BoutonRetour.Frag_ListeSeq_BoutonRetour_Callback,
-        Frag_ListeSeq_BoutonAjoutSeq.Frag_ListeSeq_BoutonAjoutSeq_Callback,
+public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bouton_Callback,
         Frag_Liste_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback,
         Frag_Dialog_Repetition.Frag_Dialog_Repetition_Callback,
@@ -202,6 +202,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
                 finish();
                 break;
             case R.id.btnAjouterSequence:
+                //todo ouvrir AjoutSequence
                 break;
             case R.id.btnSuppr:
                 //gestion du click sur le bouton supprimer d'un élément de la listView
@@ -249,6 +250,26 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Li
                 }
         }
 
+    }
+
+    @Override
+    public boolean onLongClickListener(View v) {
+        //todo ouvrir EditionSequence
+        ViewParent parent = v.getParent();
+        parent = parent.getParent();
+        LinearLayout p = (LinearLayout) parent;
+        int position = -2;
+        if (p instanceof ItemListeExercice) {
+            position = ((ItemListeExercice) p).getPosition();
+        } else if (p instanceof ItemListeSequence) {
+            position = ((ItemListeSequence) p).getPosition();
+        } else {
+            throw new ClassCastException("View Item non reconnue");
+        }
+        mChrono.get().setChronoAt(position);
+        Toast.makeText(this, "EditionSequence : " + mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getNomSequence(), Toast.LENGTH_LONG).show();
+        mChrono.get().resetChrono();
+        return true;
     }
 
     private void afficheDialogSuppr(String nom) {

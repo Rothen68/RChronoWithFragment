@@ -21,7 +21,7 @@ public class Frag_Chrono_Boutons extends Fragment {
     /**
      * Instance de l'interface OnClickListener
      */
-    private Frag_Chrono_Boutons_Callback mCallback;
+    private Frag_Bouton_Callback mCallback;
     private Button mbtnStart;
     /**
      * Objet de l'inteface, Button qui est l'instance du bouton Reset
@@ -41,7 +41,7 @@ public class Frag_Chrono_Boutons extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (Frag_Chrono_Boutons_Callback) activity;
+            mCallback = (Frag_Bouton_Callback) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implements Frag_Chrono_Boutons_Callback");
         }
@@ -121,16 +121,5 @@ public class Frag_Chrono_Boutons extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     * interface OnClickListener
-     * <p>Cette interface permet d'envoyer l'évenement OnClick d'un Button vers la classe activité qui a lancé le fragment</p>
-     */
-    public interface Frag_Chrono_Boutons_Callback {
-        /**
-         * Evenement OnClick sur un button
-         *
-         * @param v View sur laquelle l'utilisateur aa cliqué
-         */
-        public void onClickListener(View v);
-    }
+
 }

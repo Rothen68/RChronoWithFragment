@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
+import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_Chrono_Affichage;
 import com.stephane.rothen.rchrono.views.Frag_Chrono_Boutons;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
@@ -28,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ChronometreActivity extends ActionBarActivity implements Frag_Chrono_Affichage.Frag_Chrono_Affichage_Callback,
         Frag_Liste_Callback,
-        Frag_Chrono_Boutons.Frag_Chrono_Boutons_Callback {
+        Frag_Bouton_Callback {
 
 
     /**
@@ -267,6 +268,11 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
             default:
                 break;
         }
+    }
+
+    @Override
+    public boolean onLongClickListener(View v) {
+        return false;
     }
 
     /**

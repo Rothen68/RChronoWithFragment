@@ -17,7 +17,7 @@ import com.stephane.rothen.rchrono.R;
  */
 public class ItemListeSequence extends LinearLayout {
 
-    protected ImageButton mbtnSuppr;
+    protected ImageButton mBtnSuppr;
     protected TextView mText;
     protected int mPosition;
 
@@ -47,7 +47,7 @@ public class ItemListeSequence extends LinearLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.lv_seq_layout, this, true);
         setOrientation(HORIZONTAL);
         mText = (TextView) findViewById(R.id.txtLvSequence);
-        mbtnSuppr = (ImageButton) findViewById(R.id.btnSuppr);
+        mBtnSuppr = (ImageButton) findViewById(R.id.btnSuppr);
     }
 
 
@@ -61,9 +61,9 @@ public class ItemListeSequence extends LinearLayout {
     public void setUpView(int position, String txt, boolean visibiliteBouton, final Frag_Liste_Callback callback) {
         mText.setText(txt);
 
-        mbtnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
+        mBtnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
         if (callback != null) {
-            mbtnSuppr.setOnClickListener(new OnClickListener() {
+            mBtnSuppr.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     callback.onClickListener(v);
@@ -73,6 +73,12 @@ public class ItemListeSequence extends LinearLayout {
                 @Override
                 public void onClick(View v) {
                     callback.onClickListener(v);
+                }
+            });
+            mText.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return callback.onLongClickListener(v);
                 }
             });
         }
