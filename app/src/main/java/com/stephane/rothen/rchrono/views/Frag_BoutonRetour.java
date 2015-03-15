@@ -14,7 +14,7 @@ import com.stephane.rothen.rchrono.R;
 /**
  * Created by stéphane on 14/03/2015.
  */
-public class Frag_ListeSeq_BoutonAjoutSeq extends Fragment {
+public class Frag_BoutonRetour extends Fragment {
 
     public static final String FRAG_LISTESEQ_BOUTONAJOUT_CALLBACK = "FRAG_LISTESEQ_BOUTONAJOUT_CALLBACK";
 
@@ -24,12 +24,12 @@ public class Frag_ListeSeq_BoutonAjoutSeq extends Fragment {
     private Frag_Bouton_Callback mCallback;
 
     /**
-     * Bouton Ajouter du fragment
+     * Bouton Retour du fragment
      */
-    private Button mBtnAjouterSequ;
+    private Button mBtnRetour;
 
 
-    public Frag_ListeSeq_BoutonAjoutSeq() {
+    public Frag_BoutonRetour() {
     }
 
     /**
@@ -62,9 +62,9 @@ public class Frag_ListeSeq_BoutonAjoutSeq extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.listeseq_frag_bouton_ajouter, container, false);
-        mBtnAjouterSequ = (Button) rootView.findViewById(R.id.btnAjouterSequence);
-        mBtnAjouterSequ.setOnClickListener(new View.OnClickListener() {
+        View rootView = inflater.inflate(R.layout.listeseq_frag_bouton_retour, container, false);
+        mBtnRetour = (Button) rootView.findViewById(R.id.btnRetour);
+        mBtnRetour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCallback.onClickListener(v);

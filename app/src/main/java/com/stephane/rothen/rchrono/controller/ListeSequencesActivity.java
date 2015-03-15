@@ -23,12 +23,12 @@ import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
+import com.stephane.rothen.rchrono.views.Frag_BoutonAjout;
+import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
-import com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonAjoutSeq;
-import com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
 import com.stephane.rothen.rchrono.views.ItemListeExercice;
 import com.stephane.rothen.rchrono.views.ItemListeSequence;
@@ -77,11 +77,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     /**
      * Instance de la classe du fragment affichant le bouton ajouter sequence
      */
-    private Frag_ListeSeq_BoutonAjoutSeq mFragBtnAjouterSeq;
+    private Frag_BoutonAjout mFragBtnAjouterSeq;
     /**
      * Instance de la classe du fragment affichant le bouton retour
      */
-    private Frag_ListeSeq_BoutonRetour mFragBtnRetour;
+    private Frag_BoutonRetour mFragBtnRetour;
     private int mTypeASuppr = 0;
 
     @Override
@@ -96,8 +96,8 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
         mFragListe.setAfficheBtnSuppr(true);
-        mFragBtnAjouterSeq = (Frag_ListeSeq_BoutonAjoutSeq) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
-        mFragBtnRetour = (Frag_ListeSeq_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
+        mFragBtnAjouterSeq = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
+        mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
 
 
     }
@@ -202,7 +202,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                 finish();
                 break;
             case R.id.btnAjouterSequence:
-                //todo ouvrir AjoutSequence
+                goToAjoutSequenceActivity();
                 break;
             case R.id.btnSuppr:
                 //gestion du click sur le bouton supprimer d'un élément de la listView
@@ -308,7 +308,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
             default:
                 break;
         }
-        mChrono.get().setChronoAt(0);
+        mChrono.get().resetChrono();
         mFragListe.afficheListView(0, mChrono);
 
     }
@@ -344,6 +344,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         }
 
         chronoService.resetChrono();
+    }
+
+    private void goToAjoutSequenceActivity() {
+        Intent i = new Intent(this, AjoutSequenceActivity.class);
+        startActivity(i);
     }
 
 

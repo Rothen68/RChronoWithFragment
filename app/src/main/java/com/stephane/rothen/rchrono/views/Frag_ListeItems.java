@@ -14,6 +14,7 @@ import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.controller.Chronometre;
 import com.stephane.rothen.rchrono.controller.CustomAdapter;
+import com.stephane.rothen.rchrono.model.Exercice;
 import com.stephane.rothen.rchrono.model.Sequence;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,6 +26,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Frag_ListeItems extends Fragment {
 
     public static final String FRAG_CHRONO_LISTE = "FRAG_CHRONO_LISTE";
+
+    public static final int AFFICHE_LISTVIEW = 1;
+    public static final int AFFICHE_LIBEXERCICE = 2;
+    public static final int AFFICHE_LIBSEQUENCE = 3;
 
 
     /**
@@ -41,6 +46,8 @@ public class Frag_ListeItems extends Fragment {
      * @see com.stephane.rothen.rchrono.controller.CustomAdapter
      */
     private CustomAdapter mAdapter;
+
+    private int mTypeAffichage = 1;
 
 
     public Frag_ListeItems() {
@@ -142,6 +149,11 @@ public class Frag_ListeItems extends Fragment {
         }
     }
 
+    public void setTypeAffichage(int t) {
+        if (t > 0 && t < 4)
+            mTypeAffichage = t;
+    }
+
     public CustomAdapter getAdapter() {
         return mAdapter;
     }
@@ -156,6 +168,7 @@ public class Frag_ListeItems extends Fragment {
             mAdapter.setAfficheCurseur(etat);
     }
 
+
     /**
      * Initialise le ListView Adapter mAdapter et l'affecte à la ListView mLv
      *
@@ -165,6 +178,46 @@ public class Frag_ListeItems extends Fragment {
         if (mAdapter.getCount() > 0) {
             mAdapter.deleteAll();
         }
+        switch (mTypeAffichage) {
+            case AFFICHE_LISTVIEW:
+                affiche_ListView(positionFocus, mChrono);
+                break;
+            case AFFICHE_LIBSEQUENCE:
+                affiche_LibSequence(mChrono);
+                break;
+            case AFFICHE_LIBEXERCICE:
+                affiche_LibExercice(mChrono);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void affiche_LibSequence(AtomicReference<Chronometre> mChrono) {
+        mAdapter.setFocusPosition(0);
+        for (int i = 0; i < mChrono.get().getLibSequence().size(); i++) {
+            Sequence s = mChrono.get().getLibSequence().get(i);
+            mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + s.getNombreRepetition() + "x");
+
+        }
+        mAdapter.notifyDataSetChanged();
+
+    }
+
+    private void affiche_LibExercice(AtomicReference<Chronometre> mChrono) {
+        mAdapter.setFocusPosition(0);
+        for (int i = 0; i < mChrono.get().getLibSequence().size(); i++) {
+            Exercice e = mChrono.get().getLibExercice().get(i);
+            mAdapter.addSectionHeaderItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeParDefaut()) + " s");
+
+        }
+        mAdapter.notifyDataSetChanged();
+
+    }
+
+
+    private void affiche_ListView(int positionFocus, AtomicReference<Chronometre> mChrono) {
         mAdapter.setFocusPosition(positionFocus);
         //Parcours la liste des séquences et des exercices pour chaque séquence et les ajoute dans mAdapter
         for (int i = 0; i < mChrono.get().getListeSequence().size(); i++) {
@@ -198,28 +251,28 @@ public class Frag_ListeItems extends Fragment {
             @Override
             public void run() {
 
+                if (mTypeAffichage == AFFICHE_LISTVIEW) {
+                    if (mLv.getLastVisiblePosition() <= position) {
+                        int milieu = (int) ((mLv.getLastVisiblePosition() - mLv.getFirstVisiblePosition()) / 2);
+                        int pos = position + milieu;
+                        if (pos < mLv.getCount()) {
+                            mLv.smoothScrollToPosition(pos);
 
-                if (mLv.getLastVisiblePosition() <= position) {
-                    int milieu = (int) ((mLv.getLastVisiblePosition() - mLv.getFirstVisiblePosition()) / 2);
-                    int pos = position + milieu;
-                    if (pos < mLv.getCount()) {
-                        mLv.smoothScrollToPosition(pos);
+                        } else
+                            mLv.smoothScrollToPosition(mLv.getCount());
+                    } else if (mLv.getFirstVisiblePosition() >= position) {
+                        int milieu = (int) ((mLv.getLastVisiblePosition() - mLv.getFirstVisiblePosition()) / 2);
+                        int pos = position - milieu;
+                        if (pos > 0) {
+                            mLv.smoothScrollToPosition(pos);
 
-                    } else
-                        mLv.smoothScrollToPosition(mLv.getCount());
-                } else if (mLv.getFirstVisiblePosition() >= position) {
-                    int milieu = (int) ((mLv.getLastVisiblePosition() - mLv.getFirstVisiblePosition()) / 2);
-                    int pos = position - milieu;
-                    if (pos > 0) {
-                        mLv.smoothScrollToPosition(pos);
-
-                    } else
-                        mLv.smoothScrollToPosition(0);
+                        } else
+                            mLv.smoothScrollToPosition(0);
+                    }
                 }
 
             }
         }, 100L);
-
     }
 
 

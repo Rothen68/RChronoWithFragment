@@ -5,6 +5,7 @@ import android.content.Context;
 import com.stephane.rothen.rchrono.model.ChronoModel;
 import com.stephane.rothen.rchrono.model.DAOBase;
 import com.stephane.rothen.rchrono.model.ElementSequence;
+import com.stephane.rothen.rchrono.model.Exercice;
 import com.stephane.rothen.rchrono.model.Sequence;
 
 import java.util.ArrayList;
@@ -286,6 +287,14 @@ public class Chronometre {
      */
     public ArrayList<Sequence> getListeSequence() {
         return m_chronoModel.getListeSequences();
+    }
+
+    public ArrayList<Sequence> getLibSequence() {
+        return m_chronoModel.getLibrairieSequences();
+    }
+
+    public ArrayList<Exercice> getLibExercice() {
+        return m_chronoModel.getLibrairieExercices();
     }
 
 

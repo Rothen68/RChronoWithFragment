@@ -19,15 +19,15 @@ public class ChronoModel {
     /**
      * Instance de l'objet contenant la librairie des exercices présent dans la base de données du téléphone
      */
-    protected ArrayList<Exercice> m_libExercices;
+    protected ArrayList<Exercice> mLibExercices;
     /**
      * Instance de l'objet contenant la librairie des séquences présent dans la base de données du téléphone
      */
-    protected ArrayList<Sequence> m_libSequences;
+    protected ArrayList<Sequence> mLibSequences;
     /**
      * Instance de l'objet contenant la liste des séquences à effectuer
      */
-    protected ArrayList<Sequence> m_listeSequences;
+    protected ArrayList<Sequence> mListeSequences;
 
 
     public ChronoModel(Context context) {
@@ -41,7 +41,9 @@ public class ChronoModel {
      * @see DAOBase
      */
     public boolean restore() {
-        m_listeSequences = new ArrayList<>();
+        mListeSequences = new ArrayList<>();
+        mLibSequences = new ArrayList<>();
+        mLibExercices = new ArrayList<>();
         ElementSequence e = new ElementSequence("Exercice 1", "", 10, null, 10, null, new NotificationExercice(0x01, 0), new SyntheseVocale(0));
         ElementSequence e2 = new ElementSequence("Exercice 2", "", 60, null, 5, null, new NotificationExercice(0x01, 0), new SyntheseVocale(0));
         ElementSequence e3 = new ElementSequence("Exercice 3", "", 30, null, 5, null, new NotificationExercice(0, 0), new SyntheseVocale(0x01));
@@ -55,9 +57,19 @@ public class ChronoModel {
         Sequence s3 = new Sequence("Sequence 3", 100, new SyntheseVocale(0x03));
         s3.ajouterElement(e4);
         s3.ajouterElement(e5);
-        m_listeSequences.add(s);
-        m_listeSequences.add(s2);
-        m_listeSequences.add(s3);
+        mListeSequences.add(s);
+        mListeSequences.add(s2);
+        mListeSequences.add(s3);
+
+        mLibSequences.add(s);
+        mLibSequences.add(s2);
+        mLibSequences.add(s3);
+
+        mLibExercices.add(e.getExercice());
+        mLibExercices.add(e2.getExercice());
+        mLibExercices.add(e3.getExercice());
+        mLibExercices.add(e4.getExercice());
+        mLibExercices.add(e5.getExercice());
         return true;
     }
 
@@ -73,14 +85,14 @@ public class ChronoModel {
 
 
     public ArrayList<Sequence> getLibrairieSequences() {
-        return m_libSequences;
+        return mLibSequences;
     }
 
     public ArrayList<Exercice> getLibrairieExercices() {
-        return m_libExercices;
+        return mLibExercices;
     }
 
     public ArrayList<Sequence> getListeSequences() {
-        return m_listeSequences;
+        return mListeSequences;
     }
 }

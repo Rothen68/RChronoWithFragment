@@ -20,43 +20,46 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.stephane.rothen.rchrono.R;
-import com.stephane.rothen.rchrono.model.Sequence;
+import com.stephane.rothen.rchrono.model.Exercice;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
 import com.stephane.rothen.rchrono.views.Frag_BoutonAjout;
 import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
-import com.stephane.rothen.rchrono.views.ItemListeSequence;
+import com.stephane.rothen.rchrono.views.ItemListeExercice;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
+//todo controler fonctionnement de l'activity
+
+
+public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
 
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *
-     * @see com.stephane.rothen.rchrono.controller.Chronometre
+     * @see Chronometre
      * @see java.util.concurrent.atomic.AtomicReference
      */
     private AtomicReference<Chronometre> mChrono;
     /**
      * Objet permettant de récupérer l'instance du service ChronoService
      *
-     * @see com.stephane.rothen.rchrono.controller.ChronoService
+     * @see ChronoService
      */
     private ChronoService chronoService;
     /**
      * Objet permettant la communication entre le service et l'activity
      *
-     * @see ListeSequencesActivity.MyReceiver
+     * @see com.stephane.rothen.rchrono.controller.ListeSequencesActivity.MyReceiver
      */
     private MyReceiver myReceiver;
     /**
      * Objet permettant de gérer la communication de l'interface vers le service, il initialise chronoService
      *
-     * @see ListeSequencesActivity#chronoService
+     * @see com.stephane.rothen.rchrono.controller.ListeSequencesActivity#chronoService
      */
     private ServiceConnection mConnexion;
     /**
@@ -73,9 +76,9 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
     private Frag_BoutonRetour mFragBtnRetour;
 
     /**
-     * index de la séquence a supprimer dans la librairie des séquences
+     * index de l'exercice a supprimer dans la librairie des exercices
      */
-    private int mSeqASuppr = -1;
+    private int mExASuppr = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +92,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
         mFragListe.setAfficheBtnSuppr(true);
-        mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_LIBSEQUENCE);
+        mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_LIBEXERCICE);
 
         mFragBtnCreer = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
         mFragBtnCreer.setTexte(R.string.ajoutsequence_creer);
@@ -182,18 +185,18 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
                 parent = parent.getParent();
                 LinearLayout p = (LinearLayout) parent;
                 String nom = "";
-                if (p instanceof ItemListeSequence) {
-                    mSeqASuppr = ((ItemListeSequence) p).getPosition();
-                    Sequence s = mChrono.get().getLibSequence().get(mSeqASuppr);
-                    nom = s.getNomSequence();
+                if (p instanceof ItemListeExercice) {
+                    mExASuppr = ((ItemListeExercice) p).getPosition();
+                    Exercice e = mChrono.get().getLibExercice().get(mExASuppr);
+                    nom = e.getNomExercice();
                 } else {
                     throw new ClassCastException("View suppr non reconnue");
                 }
                 afficheDialogSuppr(nom);
                 break;
-            case R.id.txtLvSequence:
-                //todo ajouter sequence à listeSequences et afficher EditionSequence
-                Toast.makeText(this, "EditionSequence", Toast.LENGTH_LONG).show();
+            case R.id.txtLvExercice:
+                //todo ajouter exercice à la sequence et afficher EditionExercice
+                Toast.makeText(this, "EditionExercice", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;
@@ -220,8 +223,8 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
     public void doDialogFragSupprClick() {
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
 
-        if (mSeqASuppr >= 0) {
-            mChrono.get().getLibSequence().remove(mSeqASuppr);
+        if (mExASuppr >= 0) {
+            mChrono.get().getLibExercice().remove(mExASuppr);
         }
         mFragListe.afficheListView(0, mChrono);
 
@@ -229,7 +232,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     @Override
     public void doDialogFragCancelClick() {
-        mSeqASuppr = -1;
+        mExASuppr = -1;
     }
 
     @Override
@@ -247,7 +250,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
      * Classe privée MyReceiver
      * <p>Elle permet de récupérer et de traiter des broadcast venant de chronoService</p>
      *
-     * @see com.stephane.rothen.rchrono.controller.ChronoService
+     * @see ChronoService
      */
     private class MyReceiver extends BroadcastReceiver {
 

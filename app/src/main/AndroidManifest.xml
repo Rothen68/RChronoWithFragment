@@ -30,6 +30,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
         </activity>
+        <activity
+            android:name=".controller.AjoutSequenceActivity"
+            android:label="@string/title_activity_ajout_sequence"
+            android:parentActivityName=".controller.ListeSequencesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
+        </activity>
     </application>
 
 </manifest>

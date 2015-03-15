@@ -22,7 +22,7 @@
 
         <fragment
             android:id="@+id/Frag_ListeSeq_BtnAjouterSeq"
-            android:name="com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonAjoutSeq"
+            android:name="com.stephane.rothen.rchrono.views.Frag_BoutonAjout"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -30,7 +30,7 @@
 
         <fragment
             android:id="@+id/Frag_ListeSeq_BtnRetour"
-            android:name="com.stephane.rothen.rchrono.views.Frag_ListeSeq_BoutonRetour"
+            android:name="com.stephane.rothen.rchrono.views.Frag_BoutonRetour"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"

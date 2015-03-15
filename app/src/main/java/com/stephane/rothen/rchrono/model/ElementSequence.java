@@ -73,5 +73,10 @@ public class ElementSequence extends Exercice {
         return m_notificationExercice;
     }
 
+    public Exercice getExercice() {
+        Exercice e = new Exercice(getNomExercice(), getDescriptionExercice(), getDureeParDefaut(), getPlaylistParDefaut());
+        return e;
+    }
+
 
 }

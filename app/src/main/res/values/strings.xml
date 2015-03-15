@@ -9,17 +9,28 @@
     <string name="descChronometre_Sequence">Séquence</string>
     <string name="descChronometre_Total">Total</string>
 
+    <string name="title_activity_liste_sequences">Programme</string>
     <string name="listesequences_retour">Retour</string>
     <string name="listesequences_ajoutsequence">Ajouter une séquence</string>
 
+
     <string name="alertDialog_suppr">Supprimer</string>
+    <string name="alertDialog_dutelephone">du téléphone ?</string>
     <string name="alertDialog_annuler">Annuler</string>
 
     <string name="dialogRep_Ok">Valider</string>
     <string name="dialogRep_Repetition">Répétitions :</string>
 
+    <string name="title_activity_ajout_sequence">Liste des séquences</string>
+    <string name="ajoutsequence_creer">Créer une séquence</string>
+
+    <string name="title_activity_ajout_exercice">Liste des exercices</string>
+    <string name="ajoutexercicee_creer">Créer un exercice</string>
+
+
     <string name="action_settings">Settings</string>
-    <string name="title_activity_liste_sequences">Liste des séquences</string>
+
+
     <string name="hello_world">Hello world!</string>
     <string name="dialogDuree_duree">Durée :</string>
 
