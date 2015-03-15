@@ -325,6 +325,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private void lancerTimer() {
         //todo corriger le bug d'affichage de la durée des séquences
+        updateListView();
         int duree = mChrono.get().getDureeRestanteTotale();
         mTimer = new CountDownTimer(duree * 1000, 1000) {
             @Override
@@ -360,6 +361,8 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                 }
                 if (mSyntheseVocaleSequence.getDuree()) {
                     int duree = mChrono.get().getSequenceActive().getDureeSequence();
+                    for (int i = 0; i < mChrono.get().getIndexExerciceActif(); i++)
+                        duree -= mChrono.get().getSequenceActive().getTabElement().get(i).getDureeExercice();
                     String texte = Fonctions.convertSversVocale(duree);
                     mTextToSpeach.speak(texte, TextToSpeech.QUEUE_ADD, null);
                 }

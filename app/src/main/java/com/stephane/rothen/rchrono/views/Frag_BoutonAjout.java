@@ -68,7 +68,7 @@ public class Frag_BoutonAjout extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.listeseq_frag_bouton_ajouter, container, false);
+        View rootView = inflater.inflate(R.layout.frag_bouton_ajouter, container, false);
         mBtnAjouter = (Button) rootView.findViewById(R.id.btnAjouterSequence);
         mBtnAjouter.setOnClickListener(new View.OnClickListener() {
             @Override

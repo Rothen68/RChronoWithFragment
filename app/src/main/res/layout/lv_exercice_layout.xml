@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-lv_exercice_focused_layout.xml
-
-Définit le layout d'un exercice qui a le focus dans la listView
+lv_exercice_layout.xmlt le layout d'un exercice qui a le focus dans la listView
 
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"

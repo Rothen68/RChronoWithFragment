@@ -16,13 +16,6 @@
         android:background="@drawable/txtchronobackground"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/ListeSeq_txtDuree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="test"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1" />
 
         <fragment
             android:id="@+id/Frag_ListeSeq_Liste"

@@ -70,7 +70,7 @@
             android:name="com.stephane.rothen.rchrono.views.Frag_BoutonRetour"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout="@layout/listeseq_frag_bouton_retour" />
+            tools:layout="@layout/frag_bouton_retour" />
     </LinearLayout>
 
 </LinearLayout>

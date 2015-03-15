@@ -46,7 +46,7 @@ public class ItemListeExercice extends LinearLayout {
      * Fonction qui permet d'initialiser l'objet, cette fonction est appelée dans les trois constructeurs
      */
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.lv_exercice_focused_layout, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.lv_exercice_layout, this, true);
         setOrientation(HORIZONTAL);
         mText = (TextView) findViewById(R.id.txtLvExercice);
         mFleche = (ImageView) findViewById(R.id.imageView);

@@ -46,7 +46,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
      *
      * @see com.stephane.rothen.rchrono.controller.ChronoService
      */
-    private ChronoService chronoService;
+    private ChronoService mChronoService;
     /**
      * Objet permettant la communication entre le service et l'activity
      *
@@ -54,9 +54,9 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
      */
     private MyReceiver myReceiver;
     /**
-     * Objet permettant de gérer la communication de l'interface vers le service, il initialise chronoService
+     * Objet permettant de gérer la communication de l'interface vers le service, il initialise mChronoService
      *
-     * @see ListeSequencesActivity#chronoService
+     * @see com.stephane.rothen.rchrono.controller.AjoutSequenceActivity#mChronoService
      */
     private ServiceConnection mConnexion;
     /**
@@ -77,13 +77,18 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
      */
     private int mSeqASuppr = -1;
 
+    /**
+     * Gestion de la creation de la vue
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
 
         }
-        setContentView(R.layout.listeseq_host_frag);
+        setContentView(R.layout.ajout_host_frag);
         if (savedInstanceState == null) {
         }
         getSupportFragmentManager().executePendingTransactions();
@@ -98,7 +103,9 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     }
 
-
+    /**
+     * Gestion de la reprise de l'activity, reconnexion au ChronoService et actualisation de la vue
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -107,12 +114,12 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
 
-                chronoService = ((ChronoService.MonBinder) service).getService();
-                if (chronoService.getAtomicChronometre() == null) {
+                mChronoService = ((ChronoService.MonBinder) service).getService();
+                if (mChronoService.getAtomicChronometre() == null) {
                     //todo gérer erreur dans service
                 } else {
-                    mChrono = chronoService.getAtomicChronometre();
-                    chronoService.setPersistance(false);
+                    mChrono = mChronoService.getAtomicChronometre();
+                    mChronoService.setPersistance(false);
                     mFragListe.afficheListView(0, mChrono);
                 }
 
@@ -120,14 +127,14 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
-                chronoService = null;
+                mChronoService = null;
             }
         };
         Intent intent = new Intent(getApplicationContext(), ChronoService.class);
         intent.putExtra(ChronoService.SER_ACTION, 0);
         startService(intent);
         bindService(intent, mConnexion, BIND_AUTO_CREATE);
-        //initialisation du receiver qui permet la communication vers l'interface depuis chronoService
+        //initialisation du receiver qui permet la communication vers l'interface depuis mChronoService
         myReceiver = new MyReceiver();
         IntentFilter ifilter = new IntentFilter();
         ifilter.addAction(ChronoService.SER_UPDATE_LISTVIEW);
@@ -135,7 +142,9 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         myReceiver.isRegistered = true;
     }
 
-
+    /**
+     * Gestion de la mise en pause de l'activity, déconnexion du ChronoService
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -167,6 +176,22 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
+        //bouton actif donc pas utilisé
+    }
+
+    @Override
+    public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
+        //bouton actif donc pas utilisé
+        return false;
+    }
+
+    /**
+     * Gestion du Callback onclickListener des vues filles
+     *
+     * @param v View sur laquelle l'utilisateur a cliqué
+     */
     @Override
     public void onClickListener(View v) {
         switch (v.getId()) {
@@ -207,7 +232,11 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         return false;
     }
 
-
+    /**
+     * Affiche la popup confirmation de suppression
+     * @param nom
+     *      nom du fichier à confirmer
+     */
     private void afficheDialogSuppr(String nom) {
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
@@ -216,7 +245,11 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         }
     }
 
-
+    /**
+     * Gestion de l'appuis sur Supprimer de la popup confirmation de suppression
+     *
+     * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
+     */
     public void doDialogFragSupprClick() {
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
 
@@ -227,25 +260,21 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     }
 
+    /**
+     * Gestion de l'appuis sur Cancel de la popup confirmation de suppression
+     *
+     * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
+     */
     @Override
     public void doDialogFragCancelClick() {
         mSeqASuppr = -1;
     }
 
-    @Override
-    public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        //bouton actif donc pas utilisé
-    }
 
-    @Override
-    public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
-        //bouton actif donc pas utilisé
-        return false;
-    }
 
     /**
      * Classe privée MyReceiver
-     * <p>Elle permet de récupérer et de traiter des broadcast venant de chronoService</p>
+     * <p>Elle permet de récupérer et de traiter des broadcast venant de mChronoService</p>
      *
      * @see com.stephane.rothen.rchrono.controller.ChronoService
      */

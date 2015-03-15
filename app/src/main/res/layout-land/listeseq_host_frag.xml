@@ -25,12 +25,12 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1" />
 
         <fragment
-        android:id="@+id/Frag_ListeSeq_Liste"
-        android:name="com.stephane.rothen.rchrono.views.Frag_ListeItems"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        tools:layout="@layout/frag_liste" />
+            android:id="@+id/Frag_ListeSeq_Liste"
+            android:name="com.stephane.rothen.rchrono.views.Frag_ListeItems"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            tools:layout="@layout/frag_liste" />
     </LinearLayout>
 
     <LinearLayout
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            tools:layout="@layout/listeseq_frag_bouton_ajouter" />
+            tools:layout="@layout/frag_bouton_ajouter" />
 
         <fragment
             android:id="@+id/Frag_ListeSeq_BtnRetour"
@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            tools:layout="@layout/listeseq_frag_bouton_retour" />
+            tools:layout="@layout/frag_bouton_retour" />
     </LinearLayout>
 
 </LinearLayout>
