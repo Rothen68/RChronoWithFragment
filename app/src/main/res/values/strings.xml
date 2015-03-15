@@ -12,6 +12,7 @@
     <string name="title_activity_liste_sequences">Programme</string>
     <string name="listesequences_retour">Retour</string>
     <string name="listesequences_ajoutsequence">Ajouter une séquence</string>
+    <string name="listeSequences_tempstotal">Durée :</string>
 
 
     <string name="alertDialog_suppr">Supprimer</string>
@@ -20,6 +21,11 @@
 
     <string name="dialogRep_Ok">Valider</string>
     <string name="dialogRep_Repetition">Répétitions :</string>
+
+    <string name="dialogEnrSeq_Modifications">Modifications</string>
+    <string name="dialogEnrSeq_Ecraser">Enregistrer</string>
+    <string name="dialogEnrSeq_Nouvelle">Nouvelle séquence</string>
+    <string name="dialogEnrSeq_Cancel">Ne pas enregistrer</string>
 
     <string name="title_activity_ajout_sequence">Liste des séquences</string>
     <string name="ajoutsequence_creer">Créer une séquence</string>
@@ -30,6 +36,7 @@
 
     <string name="title_activity_editionSequence">Edition de la séquence</string>
     <string name="editionseq_exercice">Exercices :</string>
+    <string name="editionseq_listeVide">La sequence est vide\nRetour pour annuler les modifications</string>
 
     <string name="editionseq_frag_detail_nom">Nom :</string>
     <string name="editionseq_frag_detail_repetitions">Nombre de répétitions :</string>

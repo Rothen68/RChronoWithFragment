@@ -78,5 +78,19 @@ public class ElementSequence extends Exercice {
         return e;
     }
 
+    public ElementSequence getClone() {
+        return new ElementSequence(m_nomExercice, m_descriptionExercice, m_dureeParDefaut, m_playlistParDefaut.getClone(), m_dureeExercice, m_playlistExercice.getClone(), m_notificationExercice.getClone(), m_syntheseVocale.getClone());
+    }
+
+    public boolean egale(ElementSequence e) {
+        if (m_nomExercice.equals(e.m_nomExercice) && m_descriptionExercice.equals(e.m_descriptionExercice) &&
+                m_dureeParDefaut == e.m_dureeParDefaut && m_dureeExercice == e.m_dureeExercice &&
+                m_playlistParDefaut.egale(e.m_playlistParDefaut) && m_playlistExercice.egale(m_playlistExercice) &&
+                m_notificationExercice.egale(e.m_notificationExercice) && m_syntheseVocale.egale(e.m_syntheseVocale))
+            return true;
+        else
+            return false;
+
+    }
 
 }

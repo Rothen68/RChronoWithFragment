@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Classe métier permettant de stocker les donnees d'une séquence
- *
+ * <p/>
  * Created by Stéphane on 14/02/2015.
  */
 public class Sequence {
@@ -34,6 +34,7 @@ public class Sequence {
 
     /**
      * Constructeur
+     *
      * @param nomSequence
      * @param nombreRepetition
      * @param syntheseVocale
@@ -42,7 +43,7 @@ public class Sequence {
         this.m_nomSequence = nomSequence;
         this.m_nombreRepetition = nombreRepetition;
         this.m_syntheseVocale = syntheseVocale;
-        m_tabElement=new ArrayList<>();
+        m_tabElement = new ArrayList<>();
     }
 
 
@@ -66,42 +67,56 @@ public class Sequence {
         return m_syntheseVocale;
     }
 
-    public void setM_syntheseVocale(SyntheseVocale syntheseVocale) {this.m_syntheseVocale = syntheseVocale;
+    public void setM_syntheseVocale(SyntheseVocale syntheseVocale) {
+        this.m_syntheseVocale = syntheseVocale;
     }
 
-    public ArrayList<ElementSequence> getTabElement() {return m_tabElement;
+    public ArrayList<ElementSequence> getTabElement() {
+        return m_tabElement;
     }
 
-    public void setTabElement(ArrayList<ElementSequence> tabElement) {this.m_tabElement = tabElement;
+    public void setTabElement(ArrayList<ElementSequence> tabElement) {
+        this.m_tabElement = tabElement;
     }
 
     /**
      * Ajoute un ElementSequence à la séquence
-     * @param e
-     *      ElementSequence à ajouter
-     *@see ElementSequence
+     *
+     * @param e ElementSequence à ajouter
+     * @see ElementSequence
      * @see Sequence#m_tabElement
      */
-    public void ajouterElement ( ElementSequence e)
-    {
+    public void ajouterElement(ElementSequence e) {
         m_tabElement.add(e);
     }
 
 
     /**
      * Fonction qui retourne la durée d'une séquence incluant les répétitions
-     * @return
-     *      durée de la séquence
      *
+     * @return durée de la séquence
      */
-    public int getDureeSequence()
-    {
+    public int getDureeSequence() {
         int duree = 0;
-        for ( ElementSequence e : m_tabElement)
-        {
+        for (ElementSequence e : m_tabElement) {
             duree = duree + e.getDureeExercice();
         }
         duree = duree * m_nombreRepetition;
         return duree;
+    }
+
+    public Sequence getClone() {
+        Sequence s = new Sequence(m_nomSequence, m_nombreRepetition, m_syntheseVocale.getClone());
+        for (ElementSequence e : m_tabElement) {
+            s.ajouterElement(e.getClone());
+        }
+        return s;
+    }
+
+    public boolean egale(Sequence s) {
+        if (m_nomSequence.equals(s.m_nomSequence) && m_nombreRepetition == s.m_nombreRepetition && m_syntheseVocale.egale(s.m_syntheseVocale) && m_tabElement.equals(s.m_tabElement))
+            return true;
+        else
+            return false;
     }
 }

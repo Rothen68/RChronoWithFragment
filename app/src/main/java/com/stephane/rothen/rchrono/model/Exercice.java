@@ -2,7 +2,7 @@ package com.stephane.rothen.rchrono.model;
 
 /**
  * Classe métier permettant de stocker les caractéristiques de base d'un exercice
- *
+ * <p/>
  * Created by Stéphane on 14/02/2015.
  */
 public class Exercice {
@@ -27,8 +27,6 @@ public class Exercice {
     protected Playlist m_playlistParDefaut;
 
 
-
-
     public Exercice(String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut) {
         this.m_nomExercice = nomExercice;
         this.m_descriptionExercice = descriptionExercice;
@@ -37,24 +35,30 @@ public class Exercice {
 
     }
 
-    public String getNomExercice()
-    {
+    public String getNomExercice() {
         return m_nomExercice;
     }
 
-    public String getDescriptionExercice()
-    {
+    public String getDescriptionExercice() {
         return m_descriptionExercice;
     }
 
-    public int getDureeParDefaut()
-    {
+    public int getDureeParDefaut() {
         return m_dureeParDefaut;
     }
 
-    public Playlist getPlaylistParDefaut()
-    {
+    public Playlist getPlaylistParDefaut() {
         return m_playlistParDefaut;
     }
 
+    public Exercice getClone() {
+        return new Exercice(m_nomExercice, m_descriptionExercice, m_dureeParDefaut, m_playlistParDefaut.getClone());
+    }
+
+    public boolean egale(Exercice e) {
+        if (m_nomExercice.equals(e.m_nomExercice) && m_descriptionExercice.equals(e.m_descriptionExercice) && m_dureeParDefaut == e.m_dureeParDefaut && m_playlistParDefaut.egale(e.m_playlistParDefaut))
+            return true;
+        else
+            return false;
+    }
 }

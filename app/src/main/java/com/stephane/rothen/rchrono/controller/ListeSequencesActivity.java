@@ -17,11 +17,14 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Sequence;
+import com.stephane.rothen.rchrono.views.CustomAdapter;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
 import com.stephane.rothen.rchrono.views.Frag_BoutonAjout;
 import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
@@ -79,6 +82,10 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
      */
     private Frag_BoutonAjout mFragBtnAjouterSeq;
     /**
+     * TextView affichant la durée totale de la liste des séquences
+     */
+    private TextView mTxtDuree;
+    /**
      * Instance de la classe du fragment affichant le bouton retour
      */
     private Frag_BoutonRetour mFragBtnRetour;
@@ -98,6 +105,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         mFragListe.setAfficheBtnSuppr(true);
         mFragBtnAjouterSeq = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
         mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
+        mTxtDuree = (TextView) findViewById(R.id.ListeSeq_txtDuree);
 
 
     }
@@ -118,8 +126,10 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                     chronoService.updateListView();
                 } else {
                     mChrono = chronoService.getAtomicChronometre();
+                    mChrono.get().resetChrono();
                     chronoService.updateListView();
                     chronoService.setPersistance(false);
+                    mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
                 }
 
             }
@@ -199,6 +209,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     public void onClickListener(View v) {
         switch (v.getId()) {
             case R.id.btnRetour:
+                mChrono.get().resetChrono();
                 finish();
                 break;
             case R.id.btnAjouterSequence:
@@ -215,7 +226,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                 if (p instanceof ItemListeExercice) {
                     position = ((ItemListeExercice) p).getPosition();
                     mChrono.get().setChronoAt(position);
-                    ElementSequence e = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif());
+                    ElementSequence e = mChrono.get().getElementSequenceActif();
                     nom = e.getNomExercice();
                     mTypeASuppr = TYPEEXERCICE;
                 } else if (p instanceof ItemListeSequence) {
@@ -310,6 +321,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         }
         mChrono.get().resetChrono();
         mFragListe.afficheListView(0, mChrono);
+        mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
 
     }
 
@@ -320,30 +332,36 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     @Override
     public void onRetourDialogDuree(int valeur) {
-        int duree = mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice();
-        int seq = mChrono.get().getIndexSequenceActive();
-        int ex = mChrono.get().getIndexExerciceActif();
-        mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).setDureeExercice(valeur);
-        mChrono.get().resetChrono();
-        if (mChrono.get().getDureeRestanteTotale() > 100 * 60 * 60) {
+        ElementSequence e = mChrono.get().getElementSequenceActif().getClone();
+        Sequence s = mChrono.get().getSequenceActive().getClone();
+        e.setDureeExercice(valeur);
+        s.getTabElement().set(mChrono.get().m_indexExerciceActif, e);
+        if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
             Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
-            mChrono.get().getListeSequence().get(seq).getTabElement().get(ex).setDureeExercice(duree);
+            afficheDialogDuree();
+
+        } else {
+            mChrono.get().remplacerSequenceActive(s);
+            chronoService.resetChrono();
+            mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
         }
-        chronoService.resetChrono();
+
     }
+
 
     @Override
     public void onRetourDialogRepetition(int valeur) {
-        int rep = mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition();
-        int seq = mChrono.get().getIndexSequenceActive();
-        mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).setM_nombreRepetition(valeur);
-        mChrono.get().resetChrono();
-        if (mChrono.get().getDureeRestanteTotale() > 100 * 60 * 60) {
+        Sequence s = mChrono.get().getSequenceActive().getClone();
+        s.setM_nombreRepetition(valeur);
+        if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
             Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
-            mChrono.get().getListeSequence().get(seq).setM_nombreRepetition(rep);
+            afficheDialogRepetition();
+        } else {
+            mChrono.get().remplacerSequenceActive(s);
+            chronoService.resetChrono();
+            mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
         }
 
-        chronoService.resetChrono();
     }
 
     private void goToAjoutSequenceActivity() {
@@ -377,6 +395,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                         int position = intent.getIntExtra(ChronoService.SER_UPDATE_LISTVIEW, -1);
                         if (position != -1) {
                             mFragListe.afficheListView(position, mChrono);
+                            mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
 
                         }
                         break;

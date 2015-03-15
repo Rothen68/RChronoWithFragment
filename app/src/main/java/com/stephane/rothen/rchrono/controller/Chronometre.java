@@ -366,6 +366,30 @@ public class Chronometre {
     }
 
     /**
+     * retourne la durée totale de la Liste des séquences
+     *
+     * @return duree totale
+     */
+    public int getDureeTotale() {
+        int duree = 0;
+        for (Sequence s : m_chronoModel.getListeSequences()) {
+            duree += s.getDureeSequence();
+        }
+        return duree;
+    }
+
+    /**
+     * retourn la durée totale de la liste des séquences sans la séquence active
+     *
+     * @return duree totale sans la séquence active
+     */
+    public int getDureeTotaleSansSeqActive() {
+        int duree = getDureeTotale();
+        duree -= m_chronoModel.getListeSequences().get(m_indexSequenceActive).getDureeSequence();
+        return duree;
+    }
+
+    /**
      * Gere le tick du chronometre
      *
      * @return false si fin de l'exercice
@@ -378,6 +402,23 @@ public class Chronometre {
 
         }
         return true;
+    }
+
+
+    public void ajouterSequenceDansListe(Sequence s) {
+        m_chronoModel.ajouterSequenceDansListe(s);
+    }
+
+    public void remplacerSequenceActive(Sequence s) {
+        m_chronoModel.remplacerSequenceDansListe(m_indexSequenceActive, s);
+    }
+
+    public ElementSequence getElementSequenceActif() {
+        return m_chronoModel.getListeSequences().get(m_indexSequenceActive).getTabElement().get(m_indexExerciceActif);
+    }
+
+    public Sequence getSequenceActive() {
+        return m_chronoModel.getListeSequences().get(m_indexSequenceActive);
     }
 
 }

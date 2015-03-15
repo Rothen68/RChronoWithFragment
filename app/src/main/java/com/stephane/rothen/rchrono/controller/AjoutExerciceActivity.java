@@ -214,7 +214,7 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
     private void afficheDialogSuppr(String nom) {
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
-            DialogFragment df = Frag_AlertDialog_Suppr.newInstance(R.string.alertDialog_suppr + " " + nom + " " + R.string.alertDialog_dutelephone);
+            DialogFragment df = Frag_AlertDialog_Suppr.newInstance(getString(R.string.alertDialog_suppr) + " " + nom + " " + getString(R.string.alertDialog_dutelephone));
             df.show(getFragmentManager(), "dialog");
         }
     }

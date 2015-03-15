@@ -13,7 +13,6 @@ import android.widget.ListView;
 import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.controller.Chronometre;
-import com.stephane.rothen.rchrono.controller.CustomAdapter;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Exercice;
 import com.stephane.rothen.rchrono.model.Sequence;
@@ -46,7 +45,7 @@ public class Frag_ListeItems extends Fragment {
     /**
      * Objet permettant de remplir la ListView
      *
-     * @see com.stephane.rothen.rchrono.controller.CustomAdapter
+     * @see CustomAdapter
      */
     private CustomAdapter mAdapter;
 
@@ -206,7 +205,7 @@ public class Frag_ListeItems extends Fragment {
      */
     private void affiche_ExerciceSeqActive(AtomicReference<Chronometre> mChrono) {
         mAdapter.setFocusPosition(0);
-        Sequence s = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive());
+        Sequence s = mChrono.get().getSequenceActive();
         for (int i = 0; i < s.getTabElement().size(); i++) {
             ElementSequence e = s.getTabElement().get(i);
             mAdapter.addItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeExercice()));
@@ -214,11 +213,22 @@ public class Frag_ListeItems extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
 
+    public void afficheListView(Sequence s) {
+        mAdapter.setFocusPosition(0);
+        mAdapter.deleteAll();
+        for (int i = 0; i < s.getTabElement().size(); i++) {
+            ElementSequence e = s.getTabElement().get(i);
+            mAdapter.addItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeExercice()));
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+
     private void affiche_LibSequence(AtomicReference<Chronometre> mChrono) {
         mAdapter.setFocusPosition(0);
         for (int i = 0; i < mChrono.get().getLibSequence().size(); i++) {
             Sequence s = mChrono.get().getLibSequence().get(i);
-            mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + s.getNombreRepetition() + "x");
+            mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + s.getNombreRepetition() + "x - " + Fonctions.convertSversHMSSansZeros(s.getDureeSequence()));
 
         }
         mAdapter.notifyDataSetChanged();

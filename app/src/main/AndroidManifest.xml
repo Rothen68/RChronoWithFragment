@@ -41,7 +41,8 @@
         <activity
             android:name=".controller.EditionSequenceActivity"
             android:label="@string/title_activity_editionSequence"
-            android:parentActivityName=".controller.ListeSequencesActivity">
+            android:parentActivityName=".controller.ListeSequencesActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />

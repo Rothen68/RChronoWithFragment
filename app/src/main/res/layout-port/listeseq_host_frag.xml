@@ -6,28 +6,46 @@
     android:background="@drawable/background_application"
     android:orientation="vertical">
 
-    <fragment
-        android:id="@+id/Frag_ListeSeq_Liste"
-        android:name="com.stephane.rothen.rchrono.views.Frag_ListeItems"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
         android:layout_weight="1"
-        tools:layout="@layout/frag_liste" />
+        android:background="@drawable/txtchronobackground"
+        android:orientation="vertical">
 
-    <fragment
-        android:id="@+id/Frag_ListeSeq_BtnAjouterSeq"
-        android:name="com.stephane.rothen.rchrono.views.Frag_BoutonAjout"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="3"
-        tools:layout="@layout/listeseq_frag_bouton_ajouter" />
+        <TextView
+            android:id="@+id/ListeSeq_txtDuree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="test"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1" />
+
+        <fragment
+            android:id="@+id/Frag_ListeSeq_Liste"
+            android:name="com.stephane.rothen.rchrono.views.Frag_ListeItems"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            tools:layout="@layout/frag_liste" />
+
+        <fragment
+            android:id="@+id/Frag_ListeSeq_BtnAjouterSeq"
+            android:name="com.stephane.rothen.rchrono.views.Frag_BoutonAjout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/listeseq_frag_bouton_ajouter" />
+    </LinearLayout>
 
     <fragment
         android:id="@+id/Frag_ListeSeq_BtnRetour"
         android:name="com.stephane.rothen.rchrono.views.Frag_BoutonRetour"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="3"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         tools:layout="@layout/listeseq_frag_bouton_retour" />
 
 </LinearLayout>

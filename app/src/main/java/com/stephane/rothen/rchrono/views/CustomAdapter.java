@@ -1,14 +1,10 @@
-package com.stephane.rothen.rchrono.controller;
+package com.stephane.rothen.rchrono.views;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
-import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
-import com.stephane.rothen.rchrono.views.ItemListeExercice;
-import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
 import java.util.ArrayList;
 import java.util.TreeSet;

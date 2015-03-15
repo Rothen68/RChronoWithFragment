@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Classe métier permettant de stocker les données de la playlist
- *
+ * <p/>
  * Created by Stéphane on 14/02/2015.
  */
 public class Playlist {
@@ -17,60 +17,70 @@ public class Playlist {
      */
     protected boolean m_jouerPlaylist;
 
-    public Playlist(){
+    public Playlist() {
         m_listeMorceaux = new ArrayList<>();
-    };
-
-
-
-    public void setJouerPlaylist ( boolean b)
-    {
-        m_jouerPlaylist=b;
     }
 
+    ;
 
-    public int getJouerPlaylist()
-    {
+    public int getJouerPlaylist() {
         if (m_jouerPlaylist)
             return 1;
         else
             return 0;
     }
 
+    public void setJouerPlaylist(boolean b) {
+        m_jouerPlaylist = b;
+    }
+
     /**
      * Ajoute le morceau dont le chemin est passé en parametre
      *
-     * @param m
-     *  Morceau a ajouter
+     * @param m Morceau a ajouter
      */
-    public void ajouterMorceau(Morceau m)
-    {
+    public void ajouterMorceau(Morceau m) {
         m_listeMorceaux.add(m);
     }
 
 
-
     /**
      * Renvois le morceau dont la position est passée en parametre
-     * @param position
-     *  Position du morceau dans la playlist
-     * @return
-     *  Uri du morceau
+     *
+     * @param position Position du morceau dans la playlist
+     * @return Uri du morceau
      */
-    public Morceau getMorceauAt(int position)
-    {
-        if ( position>=0 && position < m_listeMorceaux.size())
+    public Morceau getMorceauAt(int position) {
+        if (position >= 0 && position < m_listeMorceaux.size())
             return m_listeMorceaux.get(position);
         else return null;
     }
 
     /**
      * Renvois le nombre de morceaux dans la playlist
-     * @return
-     * Nombre de morceaux
+     *
+     * @return Nombre de morceaux
      */
-    public int getNbreMorceaux()
-    {
+    public int getNbreMorceaux() {
         return m_listeMorceaux.size();
+    }
+
+    public Playlist getClone() {
+        Playlist pl = new Playlist();
+        pl.setJouerPlaylist(m_jouerPlaylist);
+        for (Morceau m : m_listeMorceaux) {
+            pl.ajouterMorceau(new Morceau(m.getIdMorceau(), m.getTitre(), m.getArtiste()));
+        }
+        return pl;
+
+    }
+
+
+    public boolean egale(Playlist p) {
+        boolean egale = true;
+        if (m_jouerPlaylist != m_jouerPlaylist)
+            egale = false;
+        egale = m_listeMorceaux.equals(p.m_listeMorceaux);
+        return egale;
     }
 }

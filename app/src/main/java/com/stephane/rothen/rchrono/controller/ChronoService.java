@@ -356,20 +356,20 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         if (mTextToSpeachReady) {
             if (mIndexSequenceSyntheseVocaleEnnoncee != mChrono.get().getIndexSequenceActive()) {
                 if (mSyntheseVocaleSequence.getNom()) {
-                    mTextToSpeach.speak(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getNomSequence(), TextToSpeech.QUEUE_ADD, null);
+                    mTextToSpeach.speak(mChrono.get().getSequenceActive().getNomSequence(), TextToSpeech.QUEUE_ADD, null);
                 }
                 if (mSyntheseVocaleSequence.getDuree()) {
-                    int duree = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getDureeSequence();
+                    int duree = mChrono.get().getSequenceActive().getDureeSequence();
                     String texte = Fonctions.convertSversVocale(duree);
                     mTextToSpeach.speak(texte, TextToSpeech.QUEUE_ADD, null);
                 }
                 mIndexSequenceSyntheseVocaleEnnoncee = mChrono.get().getIndexSequenceActive();
             }
             if (mSyntheseVocaleExercice.getNom()) {
-                mTextToSpeach.speak(mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getNomExercice(), TextToSpeech.QUEUE_ADD, null);
+                mTextToSpeach.speak(mChrono.get().getElementSequenceActif().getNomExercice(), TextToSpeech.QUEUE_ADD, null);
             }
             if (mSyntheseVocaleExercice.getDuree()) {
-                int duree = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice();
+                int duree = mChrono.get().getElementSequenceActif().getDureeExercice();
                 String texte = Fonctions.convertSversVocale(duree);
                 mTextToSpeach.speak(texte, TextToSpeech.QUEUE_ADD, null);
             }
@@ -396,9 +396,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * @see ChronoService#mSyntheseVocaleSequence
      */
     private void updateNotificationSynthVocaleActives() {
-        mNotificationExercice = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getNotification();
-        mSyntheseVocaleExercice = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getTabElement().get(mChrono.get().getIndexExerciceActif()).getSyntheseVocale();
-        mSyntheseVocaleSequence = mChrono.get().getListeSequence().get(mChrono.get().getIndexSequenceActive()).getSyntheseVocale();
+        mNotificationExercice = mChrono.get().getElementSequenceActif().getNotification();
+        mSyntheseVocaleExercice = mChrono.get().getElementSequenceActif().getSyntheseVocale();
+        mSyntheseVocaleSequence = mChrono.get().getSequenceActive().getSyntheseVocale();
     }
 
     /**

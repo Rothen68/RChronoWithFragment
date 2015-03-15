@@ -44,11 +44,11 @@ public class ChronoModel {
         mListeSequences = new ArrayList<>();
         mLibSequences = new ArrayList<>();
         mLibExercices = new ArrayList<>();
-        ElementSequence e = new ElementSequence("Exercice 1", "", 10, null, 10, null, new NotificationExercice(0x01, 0), new SyntheseVocale(0));
-        ElementSequence e2 = new ElementSequence("Exercice 2", "", 60, null, 5, null, new NotificationExercice(0x01, 0), new SyntheseVocale(0));
-        ElementSequence e3 = new ElementSequence("Exercice 3", "", 30, null, 5, null, new NotificationExercice(0, 0), new SyntheseVocale(0x01));
-        ElementSequence e4 = new ElementSequence("Exercice 4", "", 30, null, 2, null, new NotificationExercice(0x00, 0), new SyntheseVocale(0));
-        ElementSequence e5 = new ElementSequence("Exercice 5", "", 30, null, 2, null, new NotificationExercice(0x00, 0), new SyntheseVocale(0));
+        ElementSequence e = new ElementSequence("Exercice 1", "", 10, new Playlist(), 10, new Playlist(), new NotificationExercice(0x01, 0), new SyntheseVocale(0));
+        ElementSequence e2 = new ElementSequence("Exercice 2", "", 60, new Playlist(), 5, new Playlist(), new NotificationExercice(0x01, 0), new SyntheseVocale(0));
+        ElementSequence e3 = new ElementSequence("Exercice 3", "", 30, new Playlist(), 5, new Playlist(), new NotificationExercice(0, 0), new SyntheseVocale(0x01));
+        ElementSequence e4 = new ElementSequence("Exercice 4", "", 30, new Playlist(), 2, new Playlist(), new NotificationExercice(0x00, 0), new SyntheseVocale(0));
+        ElementSequence e5 = new ElementSequence("Exercice 5", "", 30, new Playlist(), 2, new Playlist(), new NotificationExercice(0x00, 0), new SyntheseVocale(0));
         Sequence s = new Sequence("Sequence 1", 2, new SyntheseVocale(0x03));
         s.ajouterElement(e);
         s.ajouterElement(e2);
@@ -81,6 +81,28 @@ public class ChronoModel {
      */
     public boolean save() {
         return true;
+    }
+
+    /**
+     * Ajoute une séquence dans la liste des séquences et dans la librairie des séquences
+     *
+     * @param s Séquence à ajouter
+     */
+    public void ajouterSequenceDansListe(Sequence s) {
+        mLibSequences.add(s);
+        mListeSequences.add(s);
+    }
+
+    /**
+     * Remplace la séquence dans la liste des séquences et dans la librairie
+     *
+     * @param indexListeSequence index de la séquence dans la liste des séquences
+     * @param s                  Nouvelle séquence
+     */
+    public void remplacerSequenceDansListe(int indexListeSequence, Sequence s) {
+        int i = mLibSequences.indexOf(mListeSequences.get(indexListeSequence));
+        mListeSequences.set(indexListeSequence, s);
+        mLibSequences.set(i, s);
     }
 
 

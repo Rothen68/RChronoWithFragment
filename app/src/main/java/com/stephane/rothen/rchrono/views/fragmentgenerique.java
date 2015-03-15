@@ -16,7 +16,7 @@
 //import android.widget.ListView;
 //import android.widget.TextView;
 //
-//import com.stephane.rothen.rchrono.controller.CustomAdapter;
+//import com.stephane.rothen.rchrono.views.CustomAdapter;
 //import com.stephane.rothen.rchrono.R;
 //import com.stephane.rothen.rchrono.controller.Chronometre;
 //import com.stephane.rothen.rchrono.model.Sequence;
