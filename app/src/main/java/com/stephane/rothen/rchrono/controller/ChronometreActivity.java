@@ -26,7 +26,9 @@ import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-
+/**
+ * Classe Activity affichant l'écran Chronometre
+ */
 public class ChronometreActivity extends ActionBarActivity implements Frag_Chrono_Affichage.Frag_Chrono_Affichage_Callback,
         Frag_Liste_Callback,
         Frag_Bouton_Callback {
@@ -78,6 +80,11 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         chronoService.setPersistance(true);
     }
 
+    /**
+     * Gestion de la creation de la vue
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +125,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
     }
 
     /**
-     * Lancement du ChronoService dans onResume()
+     * Gestion de la reprise de l'activity, reconnexion au ChronoService et actualisation de la vue
      */
     @Override
     protected void onResume() {
@@ -166,7 +173,9 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
 
     }
 
-
+    /**
+     * Gestion de la mise en pause de l'activity, déconnexion du ChronoService
+     */
     @Override
     protected void onPause() {
         super.onPause();

@@ -33,7 +33,9 @@ import com.stephane.rothen.rchrono.views.ItemListeExercice;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+
 /**
+ * Classe Activity affichant l'écran EditionSequence
  * Created by stéphane on 15/03/2015.
  */
 public class EditionSequenceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
@@ -98,7 +100,11 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
      */
     private boolean mRetourListeVide;
 
-
+    /**
+     * Gestion de la creation de la vue
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +127,9 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
 
     }
 
-
+    /**
+     * Gestion de la reprise de l'activity, reconnexion au ChronoService et actualisation de la vue
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -165,7 +173,9 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         myReceiver.isRegistered = true;
     }
 
-
+    /**
+     * Gestion de la mise en pause de l'activity, déconnexion du ChronoService
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -197,6 +207,11 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Gestion du Callback onclickListener des vues filles
+     *
+     * @param v View sur laquelle l'utilisateur a cliqué
+     */
     @Override
     public void onClickListener(View v) {
         switch (v.getId()) {
@@ -241,7 +256,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                 afficheDialogSuppr(nom);
                 break;
             case R.id.txtLvExercice:
-
+                //todo afficher la popup duree
                 Toast.makeText(this, "duree exercice", Toast.LENGTH_LONG).show();
                 break;
             default:
@@ -261,7 +276,11 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         return false;
     }
 
-
+    /**
+     * Affiche la popup confirmation de suppression
+     *
+     * @param nom nom du fichier à confirmer
+     */
     private void afficheDialogSuppr(String nom) {
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
@@ -270,7 +289,11 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         }
     }
 
-
+    /**
+     * Gestion de l'appuis sur Supprimer de la popup confirmation de suppression
+     *
+     * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
+     */
     public void doDialogFragSupprClick() {
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
 
@@ -278,7 +301,21 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         mFragListe.afficheListView(mSeqTemp);
 
     }
+    /**
+     * Gestion de l'appuis sur Cancel de la popup confirmation de suppression
+     *
+     * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
+     */
+    @Override
+    public void doDialogFragCancelClick() {
 
+    }
+
+    /**
+     * Affiche la popup d'enregistrement de séquence
+     *
+     * @see com.stephane.rothen.rchrono.views.Frag_Dialog_EnregistrementSeq
+     */
     private void afficheDialogEnrSeq() {
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
@@ -288,10 +325,6 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     }
 
 
-    @Override
-    public void doDialogFragCancelClick() {
-//        mSeqASuppr = -1;
-    }
 
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
@@ -352,6 +385,11 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         }
     }
 
+    /**
+     * Vérifie si la séquence a été modifiée
+     * @return
+     *      true si la séquence a été modifiée
+     */
     private boolean isSequenceModifiee() {
         if (mSeqTemp.egale(mChrono.get().getSequenceActive()))
             return false;

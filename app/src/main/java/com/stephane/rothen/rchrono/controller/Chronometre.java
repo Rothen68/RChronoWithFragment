@@ -404,19 +404,38 @@ public class Chronometre {
         return true;
     }
 
-
+    /**
+     * Ajoute la séquence
+     *
+     * @param s séquence à ajouter
+     */
     public void ajouterSequenceDansListe(Sequence s) {
         m_chronoModel.ajouterSequenceDansListe(s);
     }
 
+    /**
+     * Remplace la séquence active par la séquence passée en parametre
+     *
+     * @param s séquence de remplacement
+     */
     public void remplacerSequenceActive(Sequence s) {
         m_chronoModel.remplacerSequenceDansListe(m_indexSequenceActive, s);
     }
 
+    /**
+     * Renvois l'ElementSequence actif
+     *
+     * @return ElementSequence actif
+     */
     public ElementSequence getElementSequenceActif() {
         return m_chronoModel.getListeSequences().get(m_indexSequenceActive).getTabElement().get(m_indexExerciceActif);
     }
 
+    /**
+     * Renvois la Sequence active
+     *
+     * @return Sequence active
+     */
     public Sequence getSequenceActive() {
         return m_chronoModel.getListeSequences().get(m_indexSequenceActive);
     }

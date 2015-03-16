@@ -38,7 +38,9 @@ import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-
+/**
+ * Classe Activity affichant l'écran LsiteSequences
+ */
 public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bouton_Callback,
         Frag_Liste_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback,
@@ -91,6 +93,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     private Frag_BoutonRetour mFragBtnRetour;
     private int mTypeASuppr = 0;
 
+    /**
+     * Gestion de la creation de la vue
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +117,9 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     }
 
-
+    /**
+     * Gestion de la reprise de l'activity, reconnexion au ChronoService et actualisation de la vue
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -151,7 +160,9 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         myReceiver.isRegistered = true;
     }
 
-
+    /**
+     * Gestion de la mise en pause de l'activity, déconnexion du ChronoService
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -183,28 +194,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        LinearLayout p = (LinearLayout) view;
-        mChrono.get().setChronoAt(position);
-        switch (mFragListe.getAdapter().getItemViewType(position)) {
-            case CustomAdapter.TYPE_ITEM:
-
-                break;
-            case CustomAdapter.TYPE_SEPARATOR:
-                DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
-                df.show(getFragmentManager(), "dialog");
-                break;
-            default:
-                throw new ClassCastException("View suppr non reconnue");
-        }
-    }
-
-    @Override
-    public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
-        return false;
-    }
-
+    /**
+     * Gestion du Callback onclickListener des vues filles
+     *
+     * @param v View sur laquelle l'utilisateur a cliqué
+     */
     @Override
     public void onClickListener(View v) {
         switch (v.getId()) {
@@ -264,6 +258,29 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     }
 
     @Override
+    public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
+        LinearLayout p = (LinearLayout) view;
+        mChrono.get().setChronoAt(position);
+        switch (mFragListe.getAdapter().getItemViewType(position)) {
+            case CustomAdapter.TYPE_ITEM:
+
+                break;
+            case CustomAdapter.TYPE_SEPARATOR:
+                DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+                df.show(getFragmentManager(), "dialog");
+                break;
+            default:
+                throw new ClassCastException("View suppr non reconnue");
+        }
+    }
+
+    @Override
+    public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
+        return false;
+    }
+
+
+    @Override
     public boolean onLongClickListener(View v) {
         //todo ouvrir EditionSequence
         ViewParent parent = v.getParent();
@@ -282,7 +299,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         return true;
     }
 
-
+    /**
+     * Affiche la popup confirmation de suppression
+     *
+     * @param nom nom du fichier à confirmer
+     */
     private void afficheDialogSuppr(String nom) {
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
@@ -291,22 +312,14 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         }
     }
 
-    private void afficheDialogRepetition() {
-        FragmentManager fm = getFragmentManager();
-        if (fm.findFragmentByTag("dialog") == null) {
-            DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
-            df.show(getFragmentManager(), "dialog");
-        }
-    }
 
-    private void afficheDialogDuree() {
-        FragmentManager fm = getFragmentManager();
-        if (fm.findFragmentByTag("dialog") == null) {
-            DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice());
-            df.show(getFragmentManager(), "dialog");
-        }
-    }
 
+
+    /**
+     * Gestion de l'appuis sur Supprimer de la popup confirmation de suppression
+     *
+     * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
+     */
     public void doDialogFragSupprClick() {
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
         switch (mTypeASuppr) {
@@ -324,12 +337,66 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
 
     }
-
+    /**
+     * Gestion de l'appuis sur Cancel de la popup confirmation de suppression
+     *
+     * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
+     */
     public void doDialogFragCancelClick() {
 
     }
 
+    /**
+     * Affiche la popup nombre de répétitions
+     * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition
+     */
+    private void afficheDialogRepetition() {
+        FragmentManager fm = getFragmentManager();
+        if (fm.findFragmentByTag("dialog") == null) {
+            DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+            df.show(getFragmentManager(), "dialog");
+        }
+    }
 
+
+    /**
+     * Gestion de l'appuis sur valider de la Dialog nombre de répétitions
+     * @param valeur
+     *      valeur saisie
+     * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition
+     */
+    @Override
+    public void onRetourDialogRepetition(int valeur) {
+        Sequence s = mChrono.get().getSequenceActive().getClone();
+        s.setM_nombreRepetition(valeur);
+        if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
+            Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
+            afficheDialogRepetition();
+        } else {
+            mChrono.get().remplacerSequenceActive(s);
+            chronoService.resetChrono();
+            mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
+        }
+
+    }
+
+    /**
+     * Affiche la popup durée
+     * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Duree
+     */
+    private void afficheDialogDuree() {
+        FragmentManager fm = getFragmentManager();
+        if (fm.findFragmentByTag("dialog") == null) {
+            DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice());
+            df.show(getFragmentManager(), "dialog");
+        }
+    }
+
+    /**
+     * Gestion de l'appuis sur valider de la popup durée
+     *
+     * @param valeur valeur saisie
+     */
     @Override
     public void onRetourDialogDuree(int valeur) {
         ElementSequence e = mChrono.get().getElementSequenceActif().getClone();
@@ -340,22 +407,6 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
             Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
             afficheDialogDuree();
 
-        } else {
-            mChrono.get().remplacerSequenceActive(s);
-            chronoService.resetChrono();
-            mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
-        }
-
-    }
-
-
-    @Override
-    public void onRetourDialogRepetition(int valeur) {
-        Sequence s = mChrono.get().getSequenceActive().getClone();
-        s.setM_nombreRepetition(valeur);
-        if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
-            Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
-            afficheDialogRepetition();
         } else {
             mChrono.get().remplacerSequenceActive(s);
             chronoService.resetChrono();

@@ -33,7 +33,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 //todo controler fonctionnement de l'activity
 
-
+/**
+ * Classe Activity affichant l'écran AjoutExercice
+ */
 public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
 
@@ -238,8 +240,8 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
 
     /**
      * Affiche la popup confirmation de suppression
-     * @param nom
-     *      nom du fichier à confirmer
+     *
+     * @param nom nom du fichier à confirmer
      */
     private void afficheDialogSuppr(String nom) {
         FragmentManager fm = getFragmentManager();
@@ -273,7 +275,6 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
     public void doDialogFragCancelClick() {
         mExASuppr = -1;
     }
-
 
 
     /**

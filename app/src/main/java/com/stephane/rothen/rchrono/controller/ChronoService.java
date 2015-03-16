@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
- * Created by stéphane on 23/02/2015.
+ * Classe gérant le Service en tache de fond
  */
 public class ChronoService extends Service implements TextToSpeech.OnInitListener {
 

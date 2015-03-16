@@ -31,6 +31,9 @@ import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Classe Activity affichant l'écran AjoutSequence
+ */
 public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
 
@@ -234,8 +237,8 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     /**
      * Affiche la popup confirmation de suppression
-     * @param nom
-     *      nom du fichier à confirmer
+     *
+     * @param nom nom du fichier à confirmer
      */
     private void afficheDialogSuppr(String nom) {
         FragmentManager fm = getFragmentManager();
@@ -269,7 +272,6 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
     public void doDialogFragCancelClick() {
         mSeqASuppr = -1;
     }
-
 
 
     /**
