@@ -117,7 +117,11 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_quitter) {
+            chronoService.setPersistance(false);
+            if (chronoService.getChronoStart())
+                chronoService.stopChrono();
+            finish();
             return true;
         }
 

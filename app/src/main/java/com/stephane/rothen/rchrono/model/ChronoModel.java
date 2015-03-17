@@ -89,7 +89,8 @@ public class ChronoModel {
      * @param s Séquence à ajouter
      */
     public void ajouterSequenceDansListe(Sequence s) {
-        mLibSequences.add(s);
+        if (mLibSequences.indexOf(s) < 0)
+            mLibSequences.add(s);
         mListeSequences.add(s);
     }
 

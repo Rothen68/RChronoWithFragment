@@ -50,6 +50,8 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 {
     private static final int TYPESEQUENCE = 1;
     private static final int TYPEEXERCICE = 2;
+    private static final int ACTIVITY_AJOUT_SEQ = 1;
+
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *
@@ -91,7 +93,9 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
      * Instance de la classe du fragment affichant le bouton retour
      */
     private Frag_BoutonRetour mFragBtnRetour;
+
     private int mTypeASuppr = 0;
+
 
     /**
      * Gestion de la creation de la vue
@@ -109,7 +113,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         }
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(true);
+        mFragListe.setAfficheBtnSuppr(false);
         mFragBtnAjouterSeq = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
         mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
         mTxtDuree = (TextView) findViewById(R.id.ListeSeq_txtDuree);
@@ -187,7 +191,15 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_supprimer) {
+            if (mFragListe.getAfficheBtnSuppr()) {
+                mFragListe.setAfficheBtnSuppr(false);
+                mFragListe.afficheListView(0, mChrono);
+            } else {
+                mFragListe.setAfficheBtnSuppr(true);
+                mFragListe.afficheListView(0, mChrono);
+            }
+
             return true;
         }
 
@@ -257,16 +269,25 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     }
 
+    /**
+     * Gère le click sur un item de la listView lorsque le mode suppression n'est pas actif
+     *
+     * @param parent   ListView contenant l'item cliqué
+     * @param view     View sur laquelle l'utilisateur a cliqué
+     * @param position position de la View dans la ListView
+     * @param id
+     */
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
         LinearLayout p = (LinearLayout) view;
         mChrono.get().setChronoAt(position);
         switch (mFragListe.getAdapter().getItemViewType(position)) {
             case CustomAdapter.TYPE_ITEM:
-
+                DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getElementSequenceActif().getDureeExercice());
+                df.show(getFragmentManager(), "dialog");
                 break;
             case CustomAdapter.TYPE_SEPARATOR:
-                DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+                df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
                 df.show(getFragmentManager(), "dialog");
                 break;
             default:
@@ -276,27 +297,16 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     @Override
     public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
-        return false;
+        mChrono.get().setChronoAt(position);
+        goToEditionSequenceActivity();
+        return true;
+
     }
 
 
     @Override
     public boolean onLongClickListener(View v) {
-        //todo ouvrir EditionSequence
-        ViewParent parent = v.getParent();
-        parent = parent.getParent();
-        LinearLayout p = (LinearLayout) parent;
-        int position = -2;
-        if (p instanceof ItemListeExercice) {
-            position = ((ItemListeExercice) p).getPosition();
-        } else if (p instanceof ItemListeSequence) {
-            position = ((ItemListeSequence) p).getPosition();
-        } else {
-            throw new ClassCastException("View Item non reconnue");
-        }
-        mChrono.get().setChronoAt(position);
-        goToEditionSequenceActivity();
-        return true;
+        return false;
     }
 
     /**
@@ -343,7 +353,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
      * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
      */
     public void doDialogFragCancelClick() {
-
+        mChrono.get().resetChrono();
     }
 
     /**
@@ -351,6 +361,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
      * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition
      */
     private void afficheDialogRepetition() {
+        //todo gérer modification d'une séquence ou d'un exercice par creation d'un ou plusieurs doublons
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
             DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
@@ -417,7 +428,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     private void goToAjoutSequenceActivity() {
         Intent i = new Intent(this, AjoutSequenceActivity.class);
-        startActivity(i);
+        startActivityForResult(i, ACTIVITY_AJOUT_SEQ);
     }
 
 
@@ -426,6 +437,17 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         startActivity(i);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ACTIVITY_AJOUT_SEQ) {
+            if (resultCode == AjoutSequenceActivity.RESULT_AJOUT) {
+//                int derniereSeq = mChrono.get().getListeSequence().size()-1;
+//                mChrono.get().setChronoAt(derniereSeq,0);
+//                goToEditionSequenceActivity();
+            }
+        }
+    }
 
     /**
      * Classe privée MyReceiver

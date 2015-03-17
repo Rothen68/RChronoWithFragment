@@ -51,6 +51,11 @@ public class Frag_ListeItems extends Fragment {
 
     private int mTypeAffichage = 1;
 
+    /**
+     * Gère l'état du mode suppression, actif ou non
+     */
+    private boolean mModeSuppression = false;
+
 
     public Frag_ListeItems() {
     }
@@ -136,6 +141,10 @@ public class Frag_ListeItems extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
+    public boolean getAfficheBtnSuppr() {
+        return mModeSuppression;
+    }
+
     /**
      * Affiche ou non le bouton Supprimer sur les éléments de la listView
      *
@@ -148,6 +157,7 @@ public class Frag_ListeItems extends Fragment {
                 mAdapter.setCallback(mCallback);
             else
                 mAdapter.setCallback(null);
+            mModeSuppression = etat;
         }
     }
 

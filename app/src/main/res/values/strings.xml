@@ -24,7 +24,7 @@
 
     <string name="dialogEnrSeq_Modifications">Modifications</string>
     <string name="dialogEnrSeq_Ecraser">Enregistrer</string>
-    <string name="dialogEnrSeq_Nouvelle">Nouvelle séquence</string>
+    <string name="dialogEnrSeq_Nouvelle">Dupliquer la séquence</string>
     <string name="dialogEnrSeq_Cancel">Ne pas enregistrer</string>
 
     <string name="title_activity_ajout_sequence">Liste des séquences</string>
@@ -48,10 +48,10 @@
     <string name="editionseq_frag_btnexercice_ajouter">Ajouter</string>
 
 
-    <string name="action_settings">Settings</string>
+    <string name="menu_supprimer">Supprimer</string>
+    <string name="menu_quitter">Quitter</string>
 
 
-    <string name="hello_world">Hello world!</string>
     <string name="dialogDuree_duree">Durée :</string>
 
     <string name="alert_dureeTotaleTropGrande">100 heures maximum</string>

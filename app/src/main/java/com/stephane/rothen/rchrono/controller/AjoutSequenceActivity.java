@@ -37,6 +37,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
 
+    public static final int RESULT_AJOUT = 2;
+    public static final int RESULT_NONE = 1;
+
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *
@@ -80,6 +83,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
      */
     private int mSeqASuppr = -1;
 
+
     /**
      * Gestion de la creation de la vue
      *
@@ -96,7 +100,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         }
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(true);
+        mFragListe.setAfficheBtnSuppr(false);
         mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_LIBSEQUENCE);
 
         mFragBtnCreer = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
@@ -172,7 +176,14 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_supprimer) {
+            if (mFragListe.getAfficheBtnSuppr()) {
+                mFragListe.setAfficheBtnSuppr(false);
+                mFragListe.afficheListView(0, mChrono);
+            } else {
+                mFragListe.setAfficheBtnSuppr(true);
+                mFragListe.afficheListView(0, mChrono);
+            }
             return true;
         }
 
@@ -181,7 +192,11 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        //bouton actif donc pas utilisé
+        mChrono.get().ajouterSequenceDansListe(mChrono.get().getLibSequence().get(position));
+        setResult(RESULT_AJOUT);
+        finish();
+
+
     }
 
     @Override
@@ -218,10 +233,6 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
                     throw new ClassCastException("View suppr non reconnue");
                 }
                 afficheDialogSuppr(nom);
-                break;
-            case R.id.txtLvSequence:
-                //todo ajouter sequence à listeSequences et afficher EditionSequence
-                Toast.makeText(this, "EditionSequence", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;
