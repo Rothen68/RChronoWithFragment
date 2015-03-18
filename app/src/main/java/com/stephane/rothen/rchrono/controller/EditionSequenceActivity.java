@@ -145,7 +145,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                     mChrono = chronoService.getAtomicChronometre();
                     chronoService.setPersistance(false);
                     Sequence s = mChrono.get().getSequenceActive();
-                    mSeqTemp = s.getClone();
+                    mSeqTemp = (Sequence) s.clone();
                     mFragDetail.setTxtNom(mSeqTemp.getNomSequence());
                     mFragDetail.setTxtRepetition(mSeqTemp.getNombreRepetition());
                     mFragDetail.setTbNom(mSeqTemp.getSyntheseVocale().getNom());
@@ -301,6 +301,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         mFragListe.afficheListView(mSeqTemp);
 
     }
+
     /**
      * Gestion de l'appuis sur Cancel de la popup confirmation de suppression
      *
@@ -325,7 +326,6 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     }
 
 
-
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
         //bouton actif donc pas utilisé
@@ -348,7 +348,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         switch (v.getId()) {
             case R.id.dialFragEnrSeqEcraser:
                 mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-                mSeqTemp.setM_nombreRepetition(mFragDetail.getTxtRepetition());
+                mSeqTemp.setmNombreRepetition(mFragDetail.getTxtRepetition());
                 mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
                 mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
                 //vérifie que le temps total ne dépasse pas 100h
@@ -362,7 +362,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                 break;
             case R.id.dialFragEnrSeqNouvelle:
                 mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-                mSeqTemp.setM_nombreRepetition(mFragDetail.getTxtRepetition());
+                mSeqTemp.setmNombreRepetition(mFragDetail.getTxtRepetition());
                 mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
                 mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
                 //vérifie que le temps total ne dépasse pas 100h
@@ -387,11 +387,11 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
 
     /**
      * Vérifie si la séquence a été modifiée
-     * @return
-     *      true si la séquence a été modifiée
+     *
+     * @return true si la séquence a été modifiée
      */
     private boolean isSequenceModifiee() {
-        if (mSeqTemp.egale(mChrono.get().getSequenceActive()))
+        if (mSeqTemp.equals(mChrono.get().getSequenceActive()))
             return false;
         else
             return true;

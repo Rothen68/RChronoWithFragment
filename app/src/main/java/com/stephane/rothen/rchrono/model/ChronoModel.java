@@ -2,6 +2,8 @@ package com.stephane.rothen.rchrono.model;
 
 import android.content.Context;
 
+import com.stephane.rothen.rchrono.Fonctions;
+
 import java.util.ArrayList;
 
 /**
@@ -14,7 +16,7 @@ public class ChronoModel {
      *
      * @see com.stephane.rothen.rchrono.model.DAOBase
      */
-    protected DAOBase m_bddHelper;
+    protected DAOBase mBddHelper;
 
     /**
      * Instance de l'objet contenant la librairie des exercices présent dans la base de données du téléphone
@@ -31,7 +33,7 @@ public class ChronoModel {
 
 
     public ChronoModel(Context context) {
-        m_bddHelper = new DAOBase(context);
+        mBddHelper = new DAOBase(context);
     }
 
     /**
@@ -44,11 +46,11 @@ public class ChronoModel {
         mListeSequences = new ArrayList<>();
         mLibSequences = new ArrayList<>();
         mLibExercices = new ArrayList<>();
-        ElementSequence e = new ElementSequence("Exercice 1", "", 10, new Playlist(), 10, new Playlist(), new NotificationExercice(0x01, 0), new SyntheseVocale(0));
-        ElementSequence e2 = new ElementSequence("Exercice 2", "", 60, new Playlist(), 5, new Playlist(), new NotificationExercice(0x01, 0), new SyntheseVocale(0));
-        ElementSequence e3 = new ElementSequence("Exercice 3", "", 30, new Playlist(), 5, new Playlist(), new NotificationExercice(0, 0), new SyntheseVocale(0x01));
-        ElementSequence e4 = new ElementSequence("Exercice 4", "", 30, new Playlist(), 2, new Playlist(), new NotificationExercice(0x00, 0), new SyntheseVocale(0));
-        ElementSequence e5 = new ElementSequence("Exercice 5", "", 30, new Playlist(), 2, new Playlist(), new NotificationExercice(0x00, 0), new SyntheseVocale(0));
+        ElementSequence e = new ElementSequence("Exercice 1", "", 10, new Playlist(), 10, new Playlist(), new NotificationExercice(0x01, new Morceau(0, "ding", "")), new SyntheseVocale(0));
+        ElementSequence e2 = new ElementSequence("Exercice 2", "", 60, new Playlist(), 5, new Playlist(), new NotificationExercice(0x01, new Morceau(0, "ding", "")), new SyntheseVocale(0));
+        ElementSequence e3 = new ElementSequence("Exercice 3", "", 30, new Playlist(), 5, new Playlist(), new NotificationExercice(0, new Morceau(0, "ding", "")), new SyntheseVocale(0x01));
+        ElementSequence e4 = new ElementSequence("Exercice 4", "", 30, new Playlist(), 2, new Playlist(), new NotificationExercice(0x00, new Morceau(0, "ding", "")), new SyntheseVocale(0));
+        ElementSequence e5 = new ElementSequence("Exercice 5", "", 30, new Playlist(), 2, new Playlist(), new NotificationExercice(0x00, new Morceau(0, "ding", "")), new SyntheseVocale(0));
         Sequence s = new Sequence("Sequence 1", 2, new SyntheseVocale(0x03));
         s.ajouterElement(e);
         s.ajouterElement(e2);
@@ -95,15 +97,35 @@ public class ChronoModel {
     }
 
     /**
-     * Remplace la séquence dans la liste des séquences et dans la librairie
+     * Modifie la séquence dans la liste des séquences et dans la librairie
+     * Si une séquence est unique dans la liste des séquences alors elle est remplacée
+     * Si une séquence est présente plusieurs fois dans la liste des séquences alors elle est dupliquée dans la liste des séquences et dans la librairie
      *
      * @param indexListeSequence index de la séquence dans la liste des séquences
      * @param s                  Nouvelle séquence
      */
-    public void remplacerSequenceDansListe(int indexListeSequence, Sequence s) {
-        int i = mLibSequences.indexOf(mListeSequences.get(indexListeSequence));
-        mListeSequences.set(indexListeSequence, s);
-        mLibSequences.set(i, s);
+    public void modifierSequenceDansListe(int indexListeSequence, Sequence s) {
+        Sequence ancienneSeq = mListeSequences.get(indexListeSequence);
+        int nbreOccurences = 0;
+        int[] tabIndexOccurences = new int[mListeSequences.size()];
+
+        // recherchce des occurences de la séquence à modifier dans la liste des séquences
+        for (int i = 0; i < mListeSequences.size(); i++) {
+            if (ancienneSeq.equals(mListeSequences.get(i))) {
+
+                tabIndexOccurences = Fonctions.ajouterDansTabInt(tabIndexOccurences, nbreOccurences, i);
+                nbreOccurences++;
+            }
+        }
+        if (nbreOccurences > 1) {
+            // si plusieurs occurences dans listeSequence, ajout d'une nouvelle séquence dans la librairie et modification de la séquence modifiée
+            mLibSequences.add(s);
+            mListeSequences.set(indexListeSequence, s);
+        } else {
+            int i = mLibSequences.indexOf(mListeSequences.get(indexListeSequence));
+            mListeSequences.set(indexListeSequence, s);
+            mLibSequences.set(i, s);
+        }
     }
 
 

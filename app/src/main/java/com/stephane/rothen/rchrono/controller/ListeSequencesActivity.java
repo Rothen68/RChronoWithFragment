@@ -323,8 +323,6 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     }
 
 
-
-
     /**
      * Gestion de l'appuis sur Supprimer de la popup confirmation de suppression
      *
@@ -347,6 +345,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
 
     }
+
     /**
      * Gestion de l'appuis sur Cancel de la popup confirmation de suppression
      *
@@ -358,6 +357,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     /**
      * Affiche la popup nombre de répétitions
+     *
      * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition
      */
     private void afficheDialogRepetition() {
@@ -372,14 +372,14 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     /**
      * Gestion de l'appuis sur valider de la Dialog nombre de répétitions
-     * @param valeur
-     *      valeur saisie
+     *
+     * @param valeur valeur saisie
      * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition
      */
     @Override
     public void onRetourDialogRepetition(int valeur) {
-        Sequence s = mChrono.get().getSequenceActive().getClone();
-        s.setM_nombreRepetition(valeur);
+        Sequence s = (Sequence) mChrono.get().getSequenceActive().clone();
+        s.setmNombreRepetition(valeur);
         if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
             Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
             afficheDialogRepetition();
@@ -393,6 +393,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     /**
      * Affiche la popup durée
+     *
      * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Duree
      */
     private void afficheDialogDuree() {
@@ -410,8 +411,8 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
      */
     @Override
     public void onRetourDialogDuree(int valeur) {
-        ElementSequence e = mChrono.get().getElementSequenceActif().getClone();
-        Sequence s = mChrono.get().getSequenceActive().getClone();
+        ElementSequence e = (ElementSequence) mChrono.get().getElementSequenceActif().clone();
+        Sequence s = (Sequence) mChrono.get().getSequenceActive().clone();
         e.setDureeExercice(valeur);
         s.getTabElement().set(mChrono.get().m_indexExerciceActif, e);
         if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
