@@ -5,7 +5,7 @@ package com.stephane.rothen.rchrono.model;
  * <p/>
  * Created by Stéphane on 14/02/2015.
  */
-public class NotificationExercice {
+public class NotificationExercice implements Cloneable {
     private static final int VIBREUR = 0x01;
     private static final int POPUP = 0x02;
     private static final int SONNERIE = 0x04;
@@ -13,86 +13,183 @@ public class NotificationExercice {
     /**
      * La notification est du type vibreur
      */
-    protected boolean m_vibreur;
+    protected boolean mVibreur;
     /**
      * La notification est du type Popup
      */
-    protected boolean m_popup;
+    protected boolean mPopup;
     /**
      * La notification est du type sonnerie
      */
-    protected boolean m_sonnerie;
+    protected boolean mSonnerie;
     /**
      * Chemin vers le fichier de sonnerie si la notification est du type sonnerie
      *
-     * @see NotificationExercice#m_sonnerie
+     * @see NotificationExercice#mSonnerie
      */
-    protected long m_idFichierSonnerie;
+    protected Morceau mFichierSonnerie;
 
-    public NotificationExercice(int notificationFromBdd, long idFichierSonnerie) {
+    /**
+     * Constructeur
+     *
+     * @param notificationFromBdd entier stockant l'état de la notification stocké dans la base de donnée
+     * @param fichierSonnerie     entier
+     */
+    public NotificationExercice(int notificationFromBdd, Morceau fichierSonnerie) {
 
 
         if ((notificationFromBdd & VIBREUR) > 0) {
-            m_vibreur = true;
+            mVibreur = true;
         } else {
-            m_vibreur = false;
+            mVibreur = false;
         }
 
         if ((notificationFromBdd & POPUP) > 0) {
-            m_popup = true;
+            mPopup = true;
         } else {
-            m_popup = false;
+            mPopup = false;
         }
 
         if ((notificationFromBdd & SONNERIE) > 0) {
-            m_sonnerie = true;
+            mSonnerie = true;
         } else {
-            m_sonnerie = false;
+            mSonnerie = false;
         }
 
-        m_idFichierSonnerie = idFichierSonnerie;
+        mFichierSonnerie = fichierSonnerie;
     }
 
-    public NotificationExercice(boolean vibreur, boolean popup, boolean sonnerie, long idFichier) {
-        m_vibreur = vibreur;
-        m_popup = popup;
-        m_sonnerie = sonnerie;
-        m_idFichierSonnerie = idFichier;
+    /**
+     * Constructeur
+     *
+     * @param vibreur
+     * @param popup
+     * @param sonnerie
+     * @param fichierSonnerie
+     */
+    public NotificationExercice(boolean vibreur, boolean popup, boolean sonnerie, Morceau fichierSonnerie) {
+        mVibreur = vibreur;
+        mPopup = popup;
+        mSonnerie = sonnerie;
+        mFichierSonnerie = fichierSonnerie;
     }
 
+    /**
+     * Renvois la valeur à stocker dans la base de données sous forme d'entier
+     *
+     * @return valeur à stocker dans la base de données
+     */
     public int getNotificationForBdd() {
         int r = 0;
-        r = r + ((m_vibreur) ? (VIBREUR) : (0));
-        r = r + ((m_popup) ? (POPUP) : (0));
-        r = r + ((m_sonnerie) ? (SONNERIE) : (0));
+        r = r + ((mVibreur) ? (VIBREUR) : (0));
+        r = r + ((mPopup) ? (POPUP) : (0));
+        r = r + ((mSonnerie) ? (SONNERIE) : (0));
         return r;
     }
 
+    /**
+     * Renvois l'utilisation du vibreur
+     *
+     * @return utilisation du vibreur
+     */
     public boolean getVibreur() {
-        return m_vibreur;
+        return mVibreur;
     }
 
+    /**
+     * Renvois l'utilisation de la sonnerie
+     *
+     * @return utilisation de la sonnerie
+     */
     public boolean getSonnerie() {
-        return m_sonnerie;
+        return mSonnerie;
     }
 
+    /**
+     * Renvois l'utilisation d'une popup
+     *
+     * @return utilisation d'une popup
+     */
     public boolean getPopup() {
-        return m_popup;
+        return mPopup;
+    }
+
+    /**
+     * Renvois la sonnerie à jouer
+     *
+     * @return morceau à jouer comme sonnerie
+     */
+    public Morceau getFichierSonnerie() {
+        return mFichierSonnerie;
     }
 
 
-    public long getFichierSonnerie() {
-        return m_idFichierSonnerie;
+    /**
+     * Creates and returns a copy of this {@code Object}. The default
+     * implementation returns a so-called "shallow" copy: It creates a new
+     * instance of the same class and then copies the field values (including
+     * object references) from this instance to the new instance. A "deep" copy,
+     * in contrast, would also recursively clone nested objects. A subclass that
+     * needs to implement this kind of cloning should call {@code super.clone()}
+     * to create the new instance and then create deep copies of the nested,
+     * mutable objects.
+     *
+     * @return a copy of this object.
+     */
+    @Override
+    public Object clone() {
+        return new NotificationExercice(mVibreur, mPopup, mSonnerie, (Morceau) mFichierSonnerie.clone());
     }
 
-    public NotificationExercice getClone() {
-        return new NotificationExercice(m_vibreur, m_popup, m_sonnerie, m_idFichierSonnerie);
+    /**
+     * Compares this instance with the specified object and indicates if they
+     * are equal. In order to be equal, {@code o} must represent the same object
+     * as this instance using a class-specific comparison. The general contract
+     * is that this comparison should be reflexive, symmetric, and transitive.
+     * Also, no object reference other than null is equal to null.
+     * <p/>
+     * <p>The default implementation returns {@code true} only if {@code this ==
+     * o}. See <a href="{@docRoot}reference/java/lang/Object.html#writing_equals">Writing a correct
+     * {@code equals} method</a>
+     * if you intend implementing your own {@code equals} method.
+     * <p/>
+     * <p>The general contract for the {@code equals} and {@link
+     * #hashCode()} methods is that if {@code equals} returns {@code true} for
+     * any two objects, then {@code hashCode()} must return the same value for
+     * these objects. This means that subclasses of {@code Object} usually
+     * override either both methods or neither of them.
+     *
+     * @param o the object to compare this instance with.
+     * @return {@code true} if the specified object is equal to this {@code
+     * Object}; {@code false} otherwise.
+     * @see #hashCode
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof NotificationExercice) {
+            NotificationExercice n = (NotificationExercice) o;
+            return (mPopup == n.mPopup && mFichierSonnerie.equals(n.mFichierSonnerie) && mSonnerie == n.mSonnerie && mVibreur == n.mVibreur);
+        }
+        return false;
     }
 
-    public boolean egale(NotificationExercice n) {
-        if (m_popup == n.m_popup && m_idFichierSonnerie == n.m_idFichierSonnerie && m_sonnerie == n.m_sonnerie && m_vibreur == n.m_vibreur)
-            return true;
-        else
-            return false;
+    /**
+     * Returns a string containing a concise, human-readable description of this
+     * object. Subclasses are encouraged to override this method and provide an
+     * implementation that takes into account the object's type and data. The
+     * default implementation is equivalent to the following expression:
+     * <pre>
+     *   getClass().getName() + '@' + Integer.toHexString(hashCode())</pre>
+     * <p>See <a href="{@docRoot}reference/java/lang/Object.html#writing_toString">Writing a useful
+     * {@code toString} method</a>
+     * if you intend implementing your own {@code toString} method.
+     *
+     * @return a printable representation of this object.
+     */
+    @Override
+    public String toString() {
+        String retour = new String();
+        retour = mPopup + " " + mVibreur + " " + mSonnerie + " " + mFichierSonnerie.toString();
+        return retour;
     }
 }

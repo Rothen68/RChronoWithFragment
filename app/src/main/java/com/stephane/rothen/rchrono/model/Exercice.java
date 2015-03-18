@@ -5,60 +5,163 @@ package com.stephane.rothen.rchrono.model;
  * <p/>
  * Created by Stéphane on 14/02/2015.
  */
-public class Exercice {
+public class Exercice implements Cloneable {
     /**
      * Nom de l'exercice
      */
-    protected String m_nomExercice;
+    protected String mNomExercice;
     /**
      * Description de l'exercice
      */
-    protected String m_descriptionExercice;
+    protected String mDescriptionExercice;
     /**
      * Durée par défaut de l'exercice
      */
-    protected int m_dureeParDefaut;
+    protected int mDureeParDefaut;
 
     /**
      * Playlist par défaut de l'exercice
      *
      * @see Playlist
      */
-    protected Playlist m_playlistParDefaut;
+    protected Playlist mPlaylistParDefaut;
 
-
+    /**
+     * Constructeur
+     *
+     * @param nomExercice
+     * @param descriptionExercice
+     * @param dureeParDefaut
+     * @param playlistParDefaut
+     */
     public Exercice(String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut) {
-        this.m_nomExercice = nomExercice;
-        this.m_descriptionExercice = descriptionExercice;
-        this.m_dureeParDefaut = dureeParDefaut;
-        this.m_playlistParDefaut = playlistParDefaut;
+        this.mNomExercice = nomExercice;
+        this.mDescriptionExercice = descriptionExercice;
+        this.mDureeParDefaut = dureeParDefaut;
+        this.mPlaylistParDefaut = playlistParDefaut;
 
     }
 
+    /**
+     * Renvois le nom de l'exercice
+     *
+     * @return nom de l'exercice
+     */
     public String getNomExercice() {
-        return m_nomExercice;
+        return mNomExercice;
     }
 
+    /**
+     * Définit le nom de l'exercice
+     *
+     * @param nom nom de l'exercice
+     */
+    public void setNomExercice(String nom) {
+        mNomExercice = nom;
+    }
+
+    /**
+     * Renvois la description de l'exercice
+     *
+     * @return description de l'exercice
+     */
     public String getDescriptionExercice() {
-        return m_descriptionExercice;
+        return mDescriptionExercice;
     }
 
+    /**
+     * Définit la description de l'exercice
+     *
+     * @param description description de l'exercice
+     */
+    public void setDescriptionExercice(String description) {
+        mDescriptionExercice = description;
+    }
+
+    /**
+     * Renvois la durée par défaut de l'exercice
+     *
+     * @return durée par défaut de l'exercice
+     */
     public int getDureeParDefaut() {
-        return m_dureeParDefaut;
+        return mDureeParDefaut;
     }
 
+    /**
+     * Définit la durée par défaut de l'exercice
+     *
+     * @param dureeParDefaut durée par défaut de l'exercice
+     */
+    public void setDureeParDefaut(int dureeParDefaut) {
+        mDureeParDefaut = dureeParDefaut;
+    }
+
+
+    /**
+     * Renvois la playlist de l'exercice
+     *
+     * @return playlist de l'exercice
+     */
     public Playlist getPlaylistParDefaut() {
-        return m_playlistParDefaut;
+        return mPlaylistParDefaut;
     }
 
-    public Exercice getClone() {
-        return new Exercice(m_nomExercice, m_descriptionExercice, m_dureeParDefaut, m_playlistParDefaut.getClone());
+    /**
+     * Définit la playlist par défaut
+     *
+     * @param playlistParDefaut playlist par défaut
+     */
+    public void setPlaylistParDefaut(Playlist playlistParDefaut) {
+        mPlaylistParDefaut = playlistParDefaut;
     }
 
-    public boolean egale(Exercice e) {
-        if (m_nomExercice.equals(e.m_nomExercice) && m_descriptionExercice.equals(e.m_descriptionExercice) && m_dureeParDefaut == e.m_dureeParDefaut && m_playlistParDefaut.egale(e.m_playlistParDefaut))
-            return true;
-        else
-            return false;
+
+    /**
+     * Creates and returns a copy of this {@code Object}. The default
+     * implementation returns a so-called "shallow" copy: It creates a new
+     * instance of the same class and then copies the field values (including
+     * object references) from this instance to the new instance. A "deep" copy,
+     * in contrast, would also recursively clone nested objects. A subclass that
+     * needs to implement this kind of cloning should call {@code super.clone()}
+     * to create the new instance and then create deep copies of the nested,
+     * mutable objects.
+     *
+     * @return a copy of this object.
+     */
+    @Override
+    protected Object clone() {
+        return new Exercice(mNomExercice, mDescriptionExercice, mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone());
+    }
+
+    /**
+     * Compares this instance with the specified object and indicates if they
+     * are equal. In order to be equal, {@code o} must represent the same object
+     * as this instance using a class-specific comparison. The general contract
+     * is that this comparison should be reflexive, symmetric, and transitive.
+     * Also, no object reference other than null is equal to null.
+     * <p/>
+     * <p>The default implementation returns {@code true} only if {@code this ==
+     * o}. See <a href="{@docRoot}reference/java/lang/Object.html#writing_equals">Writing a correct
+     * {@code equals} method</a>
+     * if you intend implementing your own {@code equals} method.
+     * <p/>
+     * <p>The general contract for the {@code equals} and {@link
+     * #hashCode()} methods is that if {@code equals} returns {@code true} for
+     * any two objects, then {@code hashCode()} must return the same value for
+     * these objects. This means that subclasses of {@code Object} usually
+     * override either both methods or neither of them.
+     *
+     * @param o the object to compare this instance with.
+     * @return {@code true} if the specified object is equal to this {@code
+     * Object}; {@code false} otherwise.
+     * @see #hashCode
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Exercice) {
+            Exercice e = (Exercice) o;
+            return (mNomExercice.equals(e.mNomExercice) && mDescriptionExercice.equals(e.mDescriptionExercice) && mDureeParDefaut == e.mDureeParDefaut && mPlaylistParDefaut.equals(e.mPlaylistParDefaut));
+        }
+        return false;
     }
 }

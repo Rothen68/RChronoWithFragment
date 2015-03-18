@@ -7,9 +7,9 @@
     <Button
         android:id="@+id/btnRetour"
 
+        style="@style/txtButtonStyle"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_margin="5dp"
         android:layout_weight="1"
         android:background="@drawable/bouton"
         android:shadowColor="#A8A8A8"
@@ -19,6 +19,5 @@
         android:singleLine="false"
         android:text="@string/listesequences_retour"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
-        android:textColor="#FF000000"
         android:textSize="25sp" />
 </LinearLayout>

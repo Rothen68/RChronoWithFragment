@@ -74,4 +74,12 @@ public class Fonctions {
     }
 
 
+    public static int[] ajouterDansTabInt(int[] tableau, int taille, int element) {
+        int[] tabTemp = new int[taille + 1];
+        for (int i = 0; i < taille; i++) {
+            tabTemp[i] = tableau[i];
+        }
+        tabTemp[taille] = element;
+        return tabTemp;
+    }
 }

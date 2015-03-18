@@ -5,8 +5,19 @@
 
     </style>
 
-    <style name="txtChronoStyle" >
+    <style name="txtChronoStyle">
         <item name="android:textSize">60dp</item>
     </style>
+
+    <style name="layoutBackground">
+        <item name="android:shadowColor">@color/DarkGreen</item>
+        <item name="android:shadowDx">3</item>
+        <item name="android:shadowRadius">90</item>
+    </style>
+
+    <style name="txtButtonStyle">
+        <item name="android:textColor">@color/WHITE</item>
+    </style>
+
 
 </resources>

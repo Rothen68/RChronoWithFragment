@@ -22,7 +22,7 @@
         android:layout_gravity="center"
 
         android:layout_marginTop="10dp"
-        android:background="@drawable/txtchronobackground"
+
         android:text="00 : 00 : 00"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Display3"
         android:textSize="80dp" />

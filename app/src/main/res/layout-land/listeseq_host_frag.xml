@@ -12,8 +12,8 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:layout_weight="3"
-        android:background="@drawable/txtchronobackground"
+        android:layout_weight="2"
+
         android:orientation="vertical">
 
         <TextView
@@ -22,7 +22,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="Durée 00 : 00 : 00"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1" />
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
+            android:textColor="@color/Green" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/Green" />
 
         <fragment
             android:id="@+id/Frag_ListeSeq_Liste"
@@ -36,7 +42,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:orientation="vertical">
 
         <fragment

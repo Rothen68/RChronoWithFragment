@@ -419,7 +419,7 @@ public class Chronometre {
      * @param s séquence de remplacement
      */
     public void remplacerSequenceActive(Sequence s) {
-        m_chronoModel.remplacerSequenceDansListe(m_indexSequenceActive, s);
+        m_chronoModel.modifierSequenceDansListe(m_indexSequenceActive, s);
     }
 
     /**

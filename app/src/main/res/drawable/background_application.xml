@@ -1,17 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-    <!--
+<?xml version="1.0" encoding="utf-8"?><!--
     background_application.xml
 
     Définit la couleur de fond de l'application
 
     -->
-    <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient
-        android:angle="0"
-        android:centerX="35%"
-        android:centerColor="#ff878787"
-        android:startColor="#ffb9b9b9"
-        android:endColor="#ffb9b9b9"
-        android:type="linear"
-        />
-    </shape>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#ffffffff" />
+</shape>

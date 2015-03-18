@@ -5,33 +5,33 @@ package com.stephane.rothen.rchrono.model;
  * <p/>
  * Created by Stéphane on 14/02/2015.
  */
-public class ElementSequence extends Exercice {
+public class ElementSequence extends Exercice implements Cloneable {
 
     /**
      * Duree de l'exercice
      */
-    protected int m_dureeExercice;
+    protected int mDureeExercice;
 
     /**
      * Playlist de l'exercice
      *
      * @see Playlist
      */
-    protected Playlist m_playlistExercice;
+    protected Playlist mPlaylistExercice;
 
     /**
      * Nofitications de l'exercice
      *
      * @see NotificationExercice
      */
-    protected NotificationExercice m_notificationExercice;
+    protected NotificationExercice mNotificationExercice;
 
     /**
      * Synthèse vocale de l'exercice
      *
      * @see SyntheseVocale
      */
-    protected SyntheseVocale m_syntheseVocale;
+    protected SyntheseVocale mSyntheseVocale;
 
 
     /**
@@ -48,49 +48,149 @@ public class ElementSequence extends Exercice {
      */
     public ElementSequence(String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut, int dureeExercice, Playlist playlistExercice, NotificationExercice notificationExercice, SyntheseVocale syntheseVocale) {
         super(nomExercice, descriptionExercice, dureeParDefaut, playlistParDefaut);
-        this.m_dureeExercice = dureeExercice;
-        this.m_playlistExercice = playlistExercice;
-        this.m_notificationExercice = notificationExercice;
-        this.m_syntheseVocale = syntheseVocale;
+        this.mDureeExercice = dureeExercice;
+        this.mPlaylistExercice = playlistExercice;
+        this.mNotificationExercice = notificationExercice;
+        this.mSyntheseVocale = syntheseVocale;
     }
 
-
+    /**
+     * Renvois la durée de l'exercice
+     *
+     * @return durée de l'exercice
+     */
     public int getDureeExercice() {
-        return m_dureeExercice;
+        return mDureeExercice;
     }
 
+    /**
+     * Définit la durée de l'exercice
+     *
+     * @param duree durée de l'exercice
+     */
     public void setDureeExercice(int duree) {
         if (duree > 0) {
-            m_dureeExercice = duree;
+            mDureeExercice = duree;
         }
     }
 
+    /**
+     * Retourne la synthese vocale de l'exercice
+     *
+     * @return SyntheseVocale
+     */
     public SyntheseVocale getSyntheseVocale() {
-        return m_syntheseVocale;
+        return mSyntheseVocale;
     }
 
-    public NotificationExercice getNotification() {
-        return m_notificationExercice;
+    /**
+     * Définit la synthese vocale de l'exercice
+     *
+     * @param s SyntheseVocale de l'exercice
+     */
+    public void setSyntheseVocale(SyntheseVocale s) {
+        mSyntheseVocale = s;
     }
 
+
+    /**
+     * Renvois la notification de l'exercice
+     *
+     * @return NotificationExercice de l'exercice
+     */
+    public NotificationExercice getNotificationExercice() {
+        return mNotificationExercice;
+    }
+
+    /**
+     * Définit la notification de l'exercice
+     *
+     * @param n NotificationExercice
+     */
+    public void setNotificationExercice(NotificationExercice n) {
+        mNotificationExercice = n;
+    }
+
+    /**
+     * Retourne l'exercice de l'exerciceSequence
+     *
+     * @return Exercice
+     */
     public Exercice getExercice() {
         Exercice e = new Exercice(getNomExercice(), getDescriptionExercice(), getDureeParDefaut(), getPlaylistParDefaut());
         return e;
     }
 
-    public ElementSequence getClone() {
-        return new ElementSequence(m_nomExercice, m_descriptionExercice, m_dureeParDefaut, m_playlistParDefaut.getClone(), m_dureeExercice, m_playlistExercice.getClone(), m_notificationExercice.getClone(), m_syntheseVocale.getClone());
+
+    /**
+     * Creates and returns a copy of this {@code Object}. The default
+     * implementation returns a so-called "shallow" copy: It creates a new
+     * instance of the same class and then copies the field values (including
+     * object references) from this instance to the new instance. A "deep" copy,
+     * in contrast, would also recursively clone nested objects. A subclass that
+     * needs to implement this kind of cloning should call {@code super.clone()}
+     * to create the new instance and then create deep copies of the nested,
+     * mutable objects.
+     *
+     * @return a copy of this object.
+     */
+    @Override
+    public Object clone() {
+        return new ElementSequence(mNomExercice, mDescriptionExercice, mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone(), mDureeExercice, (Playlist) mPlaylistExercice.clone(), (NotificationExercice) mNotificationExercice.clone(), (SyntheseVocale) mSyntheseVocale.clone());
     }
 
-    public boolean egale(ElementSequence e) {
-        if (m_nomExercice.equals(e.m_nomExercice) && m_descriptionExercice.equals(e.m_descriptionExercice) &&
-                m_dureeParDefaut == e.m_dureeParDefaut && m_dureeExercice == e.m_dureeExercice &&
-                m_playlistParDefaut.egale(e.m_playlistParDefaut) && m_playlistExercice.egale(m_playlistExercice) &&
-                m_notificationExercice.egale(e.m_notificationExercice) && m_syntheseVocale.egale(e.m_syntheseVocale))
-            return true;
-        else
-            return false;
-
+    /**
+     * Compares this instance with the specified object and indicates if they
+     * are equal. In order to be equal, {@code o} must represent the same object
+     * as this instance using a class-specific comparison. The general contract
+     * is that this comparison should be reflexive, symmetric, and transitive.
+     * Also, no object reference other than null is equal to null.
+     * <p/>
+     * <p>The default implementation returns {@code true} only if {@code this ==
+     * o}. See <a href="{@docRoot}reference/java/lang/Object.html#writing_equals">Writing a correct
+     * {@code equals} method</a>
+     * if you intend implementing your own {@code equals} method.
+     * <p/>
+     * <p>The general contract for the {@code equals} and {@link
+     * #hashCode()} methods is that if {@code equals} returns {@code true} for
+     * any two objects, then {@code hashCode()} must return the same value for
+     * these objects. This means that subclasses of {@code Object} usually
+     * override either both methods or neither of them.
+     *
+     * @param o the object to compare this instance with.
+     * @return {@code true} if the specified object is equal to this {@code
+     * Object}; {@code false} otherwise.
+     * @see #hashCode
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ElementSequence) {
+            ElementSequence e = (ElementSequence) o;
+            return (mNomExercice.equals(e.mNomExercice) && mDescriptionExercice.equals(e.mDescriptionExercice) &&
+                    mDureeParDefaut == e.mDureeParDefaut && mDureeExercice == e.mDureeExercice &&
+                    mPlaylistParDefaut.equals(e.mPlaylistParDefaut) && mPlaylistExercice.equals(mPlaylistExercice) &&
+                    mNotificationExercice.equals(e.mNotificationExercice) && mSyntheseVocale.equals(e.mSyntheseVocale));
+        }
+        return super.equals(o);
     }
+
+    /**
+     * Returns a string containing a concise, human-readable description of this
+     * object. Subclasses are encouraged to override this method and provide an
+     * implementation that takes into account the object's type and data. The
+     * default implementation is equivalent to the following expression:
+     * <pre>
+     *   getClass().getName() + '@' + Integer.toHexString(hashCode())</pre>
+     * <p>See <a href="{@docRoot}reference/java/lang/Object.html#writing_toString">Writing a useful
+     * {@code toString} method</a>
+     * if you intend implementing your own {@code toString} method.
+     *
+     * @return a printable representation of this object.
+     */
+    @Override
+    public String toString() {
+        return mNomExercice + " " + mDescriptionExercice + " " + mDureeExercice + " " + mPlaylistExercice.toString();
+    }
+
 
 }

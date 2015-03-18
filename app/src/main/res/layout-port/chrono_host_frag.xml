@@ -14,6 +14,11 @@
 
         tools:layout="@layout/chrono_frag_affichage" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/Green" />
+
     <fragment
         android:id="@+id/Frag_Chrono_Liste"
         android:name="com.stephane.rothen.rchrono.views.Frag_ListeItems"

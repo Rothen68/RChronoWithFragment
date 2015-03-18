@@ -32,7 +32,7 @@ lv_exercice_layout.xmlt le layout d'un exercice qui a le focus dans la listView
             android:gravity="left|center_vertical"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/material_blue_grey_800" />
+            android:textColor="#3EA849" />
 
         <LinearLayout
             android:layout_width="wrap_content"

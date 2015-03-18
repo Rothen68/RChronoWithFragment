@@ -399,7 +399,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * @see ChronoService#mSyntheseVocaleSequence
      */
     private void updateNotificationSynthVocaleActives() {
-        mNotificationExercice = mChrono.get().getElementSequenceActif().getNotification();
+        mNotificationExercice = mChrono.get().getElementSequenceActif().getNotificationExercice();
         mSyntheseVocaleExercice = mChrono.get().getElementSequenceActif().getSyntheseVocale();
         mSyntheseVocaleSequence = mChrono.get().getSequenceActive().getSyntheseVocale();
     }
