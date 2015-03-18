@@ -204,7 +204,7 @@ public class Chronometre {
      * Permet de positionner les curseurs du chronometre d'après la position d'un item cliqué dans la ListView
      *
      * @param positionDansListView position de l'item sur lequel l'utilisateur a clicker
-     * @return position de l'item sur lequel affecter le focus
+     * @return position de l'item sur lequel affecter le focus ou -1 si erreur
      */
 
     public int setChronoAt(int positionDansListView) {
@@ -212,10 +212,16 @@ public class Chronometre {
         m_indexExerciceActif = -1;
         m_indexSequenceActive = -1;
         m_nbreRepetition = -1;
-        for (Sequence seq : m_chronoModel.getListeSequences()) {
+        Sequence seq;
+        ElementSequence el;
+
+        //parcourt le tableau de liste des séquences
+        for (int s = 0; s < m_chronoModel.getListeSequences().size(); s++) {
             curseur++;
+            seq = m_chronoModel.getListeSequences().get(s);
+            //si le curseur correspont à une séquence, affecte le curseur
             if (curseur == positionDansListView) {
-                m_indexSequenceActive = m_chronoModel.getListeSequences().indexOf(seq);
+                m_indexSequenceActive = s;
                 m_nbreRepetition = seq.getNombreRepetition();
                 if (seq.getTabElement().size() > 0) {
                     m_indexExerciceActif = 0;
@@ -225,14 +231,19 @@ public class Chronometre {
                     curseur++;
                     return curseur;
                 }
-                return 0;
-            } else {
-                for (ElementSequence el : seq.getTabElement()) {
+                return -1;
+
+            }
+            //sinon parcourt la liste des exercices de la séquence en cours
+            else {
+
+                for (int e = 0; e < seq.getTabElement().size(); e++) {
+                    el = seq.getTabElement().get(e);
                     curseur++;
                     if (curseur == positionDansListView) {
-                        m_indexSequenceActive = m_chronoModel.getListeSequences().indexOf(seq);
+                        m_indexSequenceActive = s;
                         m_nbreRepetition = seq.getNombreRepetition();
-                        m_indexExerciceActif = seq.getTabElement().indexOf(el);
+                        m_indexExerciceActif = e;
                         m_positionDansExerciceActif = el.getDureeExercice();
                         m_dureeRestanteSequenceActive = getDureeRestanteSequenceActive();
                         m_dureeRestanteTotale = getDureeRestanteTotale();

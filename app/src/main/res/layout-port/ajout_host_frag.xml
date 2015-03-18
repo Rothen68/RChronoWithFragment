@@ -9,9 +9,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -37,7 +34,6 @@
         android:name="com.stephane.rothen.rchrono.views.Frag_BoutonRetour"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         tools:layout="@layout/frag_bouton_retour" />
 
 </LinearLayout>
