@@ -66,7 +66,7 @@ public class ItemListeExercice extends LinearLayout {
         mText.setText(txt);
         mFleche.setVisibility((visibiliteFleche) ? VISIBLE : INVISIBLE);
         mBtnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
-        if (callback != null) {
+        if (callback != null && visibiliteBouton) {
             mBtnSuppr.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {

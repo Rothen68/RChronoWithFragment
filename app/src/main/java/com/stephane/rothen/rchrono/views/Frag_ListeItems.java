@@ -152,12 +152,14 @@ public class Frag_ListeItems extends Fragment {
      */
     public void setAfficheBtnSuppr(boolean etat) {
         if (mAdapter != null) {
-            mAdapter.setAfficheBtnSuppr(etat);
             if (etat)
-                mAdapter.setCallback(mCallback);
-            else
-                mAdapter.setCallback(null);
+                mAdapter.setAfficheBtnSuppr(etat, mCallback);
+            else {
+                mAdapter.setAfficheBtnSuppr(etat, null);
+
+            }
             mModeSuppression = etat;
+
         }
     }
 

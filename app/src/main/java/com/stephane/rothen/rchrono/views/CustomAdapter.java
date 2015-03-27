@@ -59,8 +59,9 @@ public class CustomAdapter extends BaseAdapter {
         m_inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setAfficheBtnSuppr(boolean etat) {
+    public void setAfficheBtnSuppr(boolean etat, Frag_Liste_Callback callback) {
         mAfficheBtnSuppr = etat;
+        mCallback = callback;
     }
 
     public void setAfficheCurseur(boolean etat) {

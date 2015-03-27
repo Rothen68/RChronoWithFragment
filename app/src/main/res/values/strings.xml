@@ -48,6 +48,24 @@
     <string name="editionseq_frag_btnexercice_ajouter">Ajouter</string>
 
 
+    <string name="editionex_frag_detail_nom">Nom :</string>
+    <string name="editionex_frag_detail_description">Description :</string>
+    <string name="editionex_frag_detail_duree">Durée :</string>
+    <string name="editionex_frag_detail_sythesevocale">Sythèse vocale :</string>
+    <string name="editionex_frag_detail_svnom">Nom</string>
+    <string name="editionex_frag_detail_svduree">Durée</string>
+    <string name="editionex_frag_detail_notification">Notification :</string>
+    <string name="editionex_frag_detail_nvibreur">Vibreur</string>
+    <string name="editionex_frag_detail_npopup">Popup</string>
+    <string name="editionex_frag_detail_nsonnerie">Sonnerie</string>
+    <string name="editionex_frag_detail_sonnerie">Sonnerie :</string>
+
+    <string name="editionex_frag_playlist_jouerplaylist">Jouer la playlist</string>
+
+    <string name="editionex_frag_ajoutmorceau_btnajout">Ajouter un morceau</string>
+
+    <string name="editionex_frag_valider_btnvalider">Valider</string>
+
     <string name="menu_supprimer">Supprimer</string>
     <string name="menu_quitter">Quitter</string>
 

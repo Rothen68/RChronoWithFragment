@@ -20,10 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.stephane.rothen.rchrono.R;
+import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
 import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
+import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_EnregistrementSeq;
 import com.stephane.rothen.rchrono.views.Frag_EditSeq_BtnExercice;
 import com.stephane.rothen.rchrono.views.Frag_EditSeq_Detail;
@@ -41,7 +43,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class EditionSequenceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback,
         Frag_EditSeq_Detail.Frag_EditSeq_Detail_Callback,
-        Frag_Dialog_EnregistrementSeq.Frag_Dialog_EnregistrementSeq_Callback {
+        Frag_Dialog_EnregistrementSeq.Frag_Dialog_EnregistrementSeq_Callback,
+        Frag_Dialog_Duree.Frag_Dialog_Duree_Callback {
 
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
@@ -309,6 +312,41 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
      */
     @Override
     public void doDialogFragCancelClick() {
+
+    }
+
+    /**
+     * Affiche la popup durée
+     *
+     * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Duree
+     */
+    private void afficheDialogDuree() {
+        FragmentManager fm = getFragmentManager();
+        if (fm.findFragmentByTag("dialog") == null) {
+            DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice());
+            df.show(getFragmentManager(), "dialog");
+        }
+    }
+
+    /**
+     * Gestion de l'appuis sur valider de la popup durée
+     *
+     * @param valeur valeur saisie
+     */
+    @Override
+    public void onRetourDialogDuree(int valeur) {
+        ElementSequence e = (ElementSequence) mChrono.get().getElementSequenceActif().clone();
+        Sequence s = (Sequence) mChrono.get().getSequenceActive().clone();
+        e.setDureeExercice(valeur);
+        s.getTabElement().set(mChrono.get().m_indexExerciceActif, e);
+        if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
+            Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
+            afficheDialogDuree();
+
+        } else {
+            mChrono.get().remplacerSequenceActive(s);
+            chronoService.resetChrono();
+        }
 
     }
 

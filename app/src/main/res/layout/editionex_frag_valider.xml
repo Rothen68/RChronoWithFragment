@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/editionex_frag_valider_btnValider"
+
+        style="@style/txtButtonStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="@drawable/bouton"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:singleLine="false"
+        android:text="@string/editionex_frag_valider_btnvalider"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
+        android:textSize="25sp" />
+</LinearLayout>
