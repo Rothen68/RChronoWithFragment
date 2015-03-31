@@ -138,7 +138,10 @@ public class NotificationExercice implements Cloneable {
      */
     @Override
     public Object clone() {
-        return new NotificationExercice(mVibreur, mPopup, mSonnerie, (Morceau) mFichierSonnerie.clone());
+        if (mFichierSonnerie != null)
+            return new NotificationExercice(mVibreur, mPopup, mSonnerie, (Morceau) mFichierSonnerie.clone());
+        else
+            return new NotificationExercice(mVibreur, mPopup, mSonnerie, null);
     }
 
     /**
@@ -168,7 +171,10 @@ public class NotificationExercice implements Cloneable {
     public boolean equals(Object o) {
         if (o instanceof NotificationExercice) {
             NotificationExercice n = (NotificationExercice) o;
-            return (mPopup == n.mPopup && mFichierSonnerie.equals(n.mFichierSonnerie) && mSonnerie == n.mSonnerie && mVibreur == n.mVibreur);
+            if (mFichierSonnerie != null && n.mFichierSonnerie != null)
+                return (mPopup == n.mPopup && mFichierSonnerie.equals(n.mFichierSonnerie) && mSonnerie == n.mSonnerie && mVibreur == n.mVibreur);
+            else
+                return (mPopup == n.mPopup && mFichierSonnerie == null && n.mFichierSonnerie == null && mSonnerie == n.mSonnerie && mVibreur == n.mVibreur);
         }
         return false;
     }

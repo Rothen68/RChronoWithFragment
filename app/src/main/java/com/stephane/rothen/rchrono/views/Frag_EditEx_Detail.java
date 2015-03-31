@@ -13,6 +13,7 @@ import android.widget.ToggleButton;
 
 import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
+import com.stephane.rothen.rchrono.model.Morceau;
 
 /**
  * Created by stéphane on 27/03/2015.
@@ -39,6 +40,7 @@ public class Frag_EditEx_Detail extends Fragment {
     private boolean mEtatTbSonnerie = false;
 
     private EditText mEtxtSonnerie;
+    private Morceau mSonnerie;
 
 
     /**
@@ -84,6 +86,12 @@ public class Frag_EditEx_Detail extends Fragment {
         mEtxtDescription = (EditText) rootView.findViewById(R.id.editionex_frag_detail_etxtDescription);
         mEtxtDuree = (EditText) rootView.findViewById(R.id.editionex_frag_detail_etxtDuree);
         mDuree = 0;
+        mEtxtDuree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.onClickListener(v);
+            }
+        });
 
         mTbNom = (ToggleButton) rootView.findViewById(R.id.editionex_frag_detail_tbNom);
         mTbNom.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -119,6 +127,14 @@ public class Frag_EditEx_Detail extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mEtatTbSonnerie = isChecked;
+            }
+        });
+
+        mEtxtSonnerie = (EditText) rootView.findViewById(R.id.editionex_frag_detail_etxtSonnerie);
+        mEtxtSonnerie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.onClickListener(v);
             }
         });
 
@@ -195,12 +211,16 @@ public class Frag_EditEx_Detail extends Fragment {
         mEtatTbSonnerie = etat;
     }
 
-    public String getTxtSonnerie() {
-        return mEtxtSonnerie.getText().toString();
+    public Morceau getSonnerie() {
+        return mSonnerie;
     }
 
-    public void setTxtSonnerie(String texte) {
-        mEtxtSonnerie.setText(texte);
+    public void setSonnerie(Morceau sonnerie) {
+        if (sonnerie != null) {
+            mSonnerie = sonnerie;
+            mEtxtSonnerie.setText(sonnerie.getTitre());
+        } else
+            mSonnerie = null;
     }
 
     @Override

@@ -443,6 +443,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ACTIVITY_AJOUT_SEQ) {
             if (resultCode == AjoutSequenceActivity.RESULT_AJOUT) {
+                //todo gérer l'erreur
 //                int derniereSeq = mChrono.get().getListeSequence().size()-1;
 //                mChrono.get().setChronoAt(derniereSeq,0);
 //                goToEditionSequenceActivity();

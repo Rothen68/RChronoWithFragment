@@ -140,4 +140,40 @@ public class ChronoModel {
     public ArrayList<Sequence> getListeSequences() {
         return mListeSequences;
     }
+
+    /**
+     * gere la mise a jour et l'enregistrerment d'un ElementSequence
+     *
+     * @param m_indexSequenceActive index de la séquence de l'elementSequence
+     * @param m_indexExerciceActif  index de l'elementSequence
+     * @param el                    ElementSequence à enregistrer
+     */
+
+    public void remplacerElementSequenceActif(int m_indexSequenceActive, int m_indexExerciceActif, ElementSequence el) {
+        mListeSequences.get(m_indexSequenceActive).getTabElement().set(m_indexExerciceActif, el);
+        Exercice e = el.getExercice();
+        Boolean dejaEnregistrer = false;
+        for (Exercice exercice : mLibExercices) {
+            if (exercice.equals(e)) {
+                dejaEnregistrer = true;
+                break;
+            }
+        }
+        if (!dejaEnregistrer) {
+            mLibExercices.add(e);
+        }
+
+    }
+
+    /**
+     * Créer un ElementSequence et l'ajoute dans la liste des ElementSequence de la séquence dont l'index dans listeSequence est passé en parametre
+     *
+     * @param indexSequence index de la séquence
+     * @return index de l'ElementSequence ajouté dans la séquence
+     */
+
+    public int creerElementSequence(int indexSequence) {
+        mListeSequences.get(indexSequence).getTabElement().add(new ElementSequence("", "", 0, new Playlist(), 0, new Playlist(), new NotificationExercice(0, null), new SyntheseVocale(0)));
+        return mListeSequences.get(indexSequence).getTabElement().size() - 1;
+    }
 }

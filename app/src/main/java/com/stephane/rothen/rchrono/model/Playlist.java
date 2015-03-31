@@ -109,6 +109,10 @@ public class Playlist implements Cloneable {
     }
 
 
+    public void remove(Morceau morceau) {
+        mListeMorceaux.remove(morceau);
+    }
+
     /**
      * Creates and returns a copy of this {@code Object}. The default
      * implementation returns a so-called "shallow" copy: It creates a new

@@ -74,6 +74,16 @@ public class ElementSequence extends Exercice implements Cloneable {
         }
     }
 
+
+    public Playlist getPlaylistExercice() {
+        return mPlaylistExercice;
+    }
+
+
+    public void setPlaylistExercice(Playlist pl) {
+        mPlaylistExercice = pl;
+    }
+
     /**
      * Retourne la synthese vocale de l'exercice
      *
@@ -117,7 +127,7 @@ public class ElementSequence extends Exercice implements Cloneable {
      * @return Exercice
      */
     public Exercice getExercice() {
-        Exercice e = new Exercice(getNomExercice(), getDescriptionExercice(), getDureeParDefaut(), getPlaylistParDefaut());
+        Exercice e = new Exercice(getNomExercice(), getDescriptionExercice(), getDureeExercice(), getPlaylistExercice());
         return e;
     }
 

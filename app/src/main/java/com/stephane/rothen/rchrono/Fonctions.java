@@ -61,14 +61,25 @@ public class Fonctions {
         String valeur = new String();
         valeur = "";
         if (heure != 0) {
-            valeur = valeur + String.valueOf(heure) + " heures ";
+            if (minute == 1) {
+                valeur = valeur + " une heure ";
+            } else {
+                valeur = valeur + String.valueOf(heure) + " heures ";
+            }
         }
         if (minute != 0) {
-            valeur = valeur + String.valueOf(minute) + " minutes ";
+            if (minute == 1) {
+                valeur = valeur + "une minute ";
+            } else {
+                valeur = valeur + String.valueOf(minute) + " minutes ";
+            }
         }
         if (seconde != 0) {
-
-            valeur = valeur + String.valueOf(seconde) + " secondes";
+            if (seconde == 1) {
+                valeur = valeur + " une seconde ";
+            } else {
+                valeur = valeur + String.valueOf(seconde) + " secondes";
+            }
         }
         return valeur;
     }

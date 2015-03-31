@@ -20,32 +20,32 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.stephane.rothen.rchrono.R;
+import com.stephane.rothen.rchrono.model.ElementSequence;
+import com.stephane.rothen.rchrono.model.Morceau;
+import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.Sequence;
+import com.stephane.rothen.rchrono.model.SyntheseVocale;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
 import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
-import com.stephane.rothen.rchrono.views.Frag_Dialog_EnregistrementSeq;
-import com.stephane.rothen.rchrono.views.Frag_EditSeq_BtnExercice;
-import com.stephane.rothen.rchrono.views.Frag_EditSeq_Detail;
+import com.stephane.rothen.rchrono.views.Frag_EditEx_BtnAjoutMorceau;
+import com.stephane.rothen.rchrono.views.Frag_EditEx_BtnValider;
+import com.stephane.rothen.rchrono.views.Frag_EditEx_Detail;
+import com.stephane.rothen.rchrono.views.Frag_EditEx_Playlist;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
 import com.stephane.rothen.rchrono.views.ItemListeExercice;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-
 /**
- * Classe Activity affichant l'écran EditionSequence
- * Created by stéphane on 15/03/2015.
+ * Created by stéphane on 31/03/2015.
  */
-public class EditionSequenceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
-        Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback,
-        Frag_EditSeq_Detail.Frag_EditSeq_Detail_Callback,
-        Frag_Dialog_EnregistrementSeq.Frag_Dialog_EnregistrementSeq_Callback,
-        Frag_Dialog_Duree.Frag_Dialog_Duree_Callback {
-
-    private static final int ACTIVITY_AJOUT_EX = 2;
+public class EditionExerciceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
+        Frag_EditEx_Detail.Frag_EditEx_Detail_Callback,
+        Frag_Dialog_Duree.Frag_Dialog_Duree_Callback,
+        Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
 
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
@@ -72,37 +72,45 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
      * @see ListeSequencesActivity#chronoService
      */
     private ServiceConnection mConnexion;
+
+
     /**
-     * Instance de la classe du fragment affichant la liste des exercices
+     * Instance de la classe du fragment affichant les détails de l'exercice
+     */
+    private Frag_EditEx_Detail mFragDetail;
+
+    /**
+     * Instance de la classe du fragment affichant la liste des morceaux de la playlist de l'exercice
      */
     private Frag_ListeItems mFragListe;
     /**
-     * Instance de la classe du fragment affichant les boutons ajouter
+     * Instance de la classe du fragment affichant le togglebutton jouer la playlist
      */
-    private Frag_EditSeq_BtnExercice mFragBtnExercice;
+    private Frag_EditEx_Playlist mFragPlaylist;
     /**
-     * Instance de la classe du fragment affichant les détails de la séquence
+     * Instance de la classe du fragment affichant le bouton ajouter un morceau à la playlist
      */
-    private Frag_EditSeq_Detail mFragDetail;
+    private Frag_EditEx_BtnAjoutMorceau mFragBtnAjoutMorceau;
+
+    /**
+     * Instance de la classe du fragment affichant le bouton valider
+     */
+    private Frag_EditEx_BtnValider mFragBtnValider;
     /**
      * Instance de la classe du fragment affichant le bouton retour
      */
     private Frag_BoutonRetour mFragBtnRetour;
 
-    /**
-     * index de la séquence a supprimer dans la librairie des séquences
-     */
-    private int mExASuppr = -1;
 
     /**
-     * Séquence temporaire pour la fenetre
+     * ElementSequence temporaire pour la fenetre
      */
-    private Sequence mSeqTemp;
+    private ElementSequence mElementSeqTemp;
 
     /**
-     * index de l'ElementSequence pour la modification de la durée
+     * Morceau à supprimer
      */
-    private int mIndexElementSequenceTemp;
+    private Morceau mMorceauASuppr;
 
     /**
      * Permet de gérer l'appuis double sur le bouton retour
@@ -120,17 +128,22 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         if (savedInstanceState == null) {
 
         }
-        setContentView(R.layout.editionseq_host_frag);
+        setContentView(R.layout.editionex_host_frag);
         if (savedInstanceState == null) {
         }
         getSupportFragmentManager().executePendingTransactions();
-        mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(true);
-        mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_EXERCICESEQACTIVE);
+        mFragDetail = (Frag_EditEx_Detail) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_Detail);
 
-        mFragDetail = (Frag_EditSeq_Detail) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_Detail);
+        mFragPlaylist = (Frag_EditEx_Playlist) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_BtnPlaylist);
 
-        mFragBtnExercice = (Frag_EditSeq_BtnExercice) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_BtnExercice);
+        mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_Liste);
+        mFragListe.setAfficheBtnSuppr(false);
+        mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_PLAYLISTEXERCICEACTIF);
+
+        mFragBtnAjoutMorceau = (Frag_EditEx_BtnAjoutMorceau) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_BtnAjouterMorceau);
+
+        mFragBtnValider = (Frag_EditEx_BtnValider) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_BtnValider);
+
         mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_BtnRetour);
 
 
@@ -153,13 +166,19 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                 } else {
                     mChrono = chronoService.getAtomicChronometre();
                     chronoService.setPersistance(false);
-                    Sequence s = mChrono.get().getSequenceActive();
-                    mSeqTemp = (Sequence) s.clone();
-                    mFragDetail.setTxtNom(mSeqTemp.getNomSequence());
-                    mFragDetail.setTxtRepetition(mSeqTemp.getNombreRepetition());
-                    mFragDetail.setTbNom(mSeqTemp.getSyntheseVocale().getNom());
-                    mFragDetail.setTbDuree(mSeqTemp.getSyntheseVocale().getDuree());
-                    mFragListe.afficheListView(mSeqTemp);
+                    ElementSequence el = mChrono.get().getElementSequenceActif();
+                    mElementSeqTemp = (ElementSequence) el.clone();
+                    mFragDetail.setTxtNom(mElementSeqTemp.getNomExercice());
+                    mFragDetail.setTxtDescription(mElementSeqTemp.getDescriptionExercice());
+                    mFragDetail.setTxtDuree(mElementSeqTemp.getDureeExercice());
+                    mFragDetail.setTbNom(mElementSeqTemp.getSyntheseVocale().getNom());
+                    mFragDetail.setTbDuree(mElementSeqTemp.getSyntheseVocale().getDuree());
+                    mFragDetail.setTbPopup(mElementSeqTemp.getNotificationExercice().getPopup());
+                    mFragDetail.setTbVibreur(mElementSeqTemp.getNotificationExercice().getVibreur());
+                    mFragDetail.setTbSonnerie(mElementSeqTemp.getNotificationExercice().getSonnerie());
+                    mFragDetail.setSonnerie(mElementSeqTemp.getNotificationExercice().getFichierSonnerie());
+                    mFragPlaylist.setJouerPlaylist(mElementSeqTemp.getPlaylistExercice().getJouerPlaylist());
+                    mFragListe.afficheListView(mElementSeqTemp.getPlaylistExercice());
 
                 }
 
@@ -225,83 +244,49 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     public void onClickListener(View v) {
         switch (v.getId()) {
             case R.id.btnRetour:
-                if (isSequenceModifiee())
-                    if (mSeqTemp.getTabElement().size() == 0) {
-                        if (!mRetourListeVide) {
-                            Toast.makeText(this, getString(R.string.editionseq_listeVide), Toast.LENGTH_LONG).show();
-                            mRetourListeVide = true;
-                        } else {
-                            mChrono.get().resetChrono();
-                            finish();
-                        }
-                    } else {
-                        afficheDialogEnrSeq();
-                    }
-                else {
-                    mChrono.get().resetChrono();
-                    finish();
-                }
+                mChrono.get().resetChrono();
+                finish();
                 break;
-            case R.id.editionseq_frag_btnexercice_creer:
-                mChrono.get().creerElementSequenceDansSequenceActive();
-                goToEditionExerciceActivity();
-                break;
-            case R.id.editionseq_frag_btnexercice_ajouter:
-                goToAjoutExerciceActivity();
+
+            case R.id.editionex_frag_valider_btnValider:
+                mElementSeqTemp.setNomExercice(mFragDetail.getTxtNom());
+                mElementSeqTemp.setDescriptionExercice(mFragDetail.getTxtDescription());
+                mElementSeqTemp.setDureeExercice(mFragDetail.getTxtDuree());
+                mElementSeqTemp.setSyntheseVocale(new SyntheseVocale(mFragDetail.getTbNom(), mFragDetail.getTbDuree()));
+                mElementSeqTemp.setNotificationExercice(new NotificationExercice(mFragDetail.getTbVibreur(), mFragDetail.getTbPopup(), mFragDetail.getTbSonnerie(), mFragDetail.getSonnerie()));
+                mElementSeqTemp.getPlaylistExercice().setJouerPlaylist(mFragPlaylist.getJouerPlaylist());
+                mChrono.get().remplacerElementSequenceActif(mElementSeqTemp);
+                finish();
                 break;
             case R.id.btnSuppr:
                 ViewParent parent = v.getParent();
                 parent = parent.getParent();
                 parent = parent.getParent();
                 LinearLayout p = (LinearLayout) parent;
-                String nom = "";
+                int indexMorceauASuppr = -1;
                 if (p instanceof ItemListeExercice) {
-                    mExASuppr = ((ItemListeExercice) p).getPosition();
-                    nom = mSeqTemp.getTabElement().get(mExASuppr).getNomExercice();
+                    indexMorceauASuppr = ((ItemListeExercice) p).getPosition();
+
                 } else {
                     throw new ClassCastException("View suppr non reconnue");
                 }
-                afficheDialogSuppr(nom);
-                break;
-            case R.id.txtLvExercice:
-                parent = v.getParent();
-                parent = parent.getParent();
-                p = (LinearLayout) parent;
-                int position = -2;
-                if (p instanceof ItemListeExercice) {
-                    mIndexElementSequenceTemp = ((ItemListeExercice) p).getPosition();
-                    afficheDialogDuree();
+                if (indexMorceauASuppr >= 0) {
+                    mMorceauASuppr = mElementSeqTemp.getPlaylistExercice().getMorceauAt(indexMorceauASuppr);
+                    afficheDialogSuppr(mMorceauASuppr.getTitre());
                 }
                 break;
+            case R.id.editionex_frag_detail_etxtDuree:
+                afficheDialogDuree();
+                break;
+            case R.id.editionex_frag_detail_etxtSonnerie:
+                //todo affiche liste fichiers audio
+                break;
+            case R.id.editionex_frag_ajoutmorceau_btAjout:
+                //todo affiche liste fichiers audio
             default:
                 break;
         }
 
-    }
-
-    private void goToEditionExerciceActivity() {
-        Intent i = new Intent(this, EditionExerciceActivity.class);
-        startActivity(i);
-    }
-
-
-    private void goToAjoutExerciceActivity() {
-        Intent i = new Intent(this, AjoutExerciceActivity.class);
-        startActivityForResult(i, ACTIVITY_AJOUT_EX);
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ACTIVITY_AJOUT_EX) {
-            if (resultCode == AjoutSequenceActivity.RESULT_AJOUT) {
-                //todo gérer l'erreur
-//                int derniereSeq = mChrono.get().getListeSequence().size()-1;
-//                mChrono.get().setChronoAt(derniereSeq,0);
-//                goToEditionSequenceActivity();
-            }
-        }
     }
 
     @Override
@@ -311,17 +296,8 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
 
     @Override
     public boolean onLongClickListener(View v) {
-        ViewParent parent = v.getParent();
-        parent = parent.getParent();
-        LinearLayout p = (LinearLayout) parent;
-        String nom = "";
-        if (p instanceof ItemListeExercice) {
-            int indexElementSequence = ((ItemListeExercice) p).getPosition();
-            mChrono.get().setChronoAt(mChrono.get().getIndexSequenceActive(), indexElementSequence);
-            goToEditionExerciceActivity();
-
-        }
-        return true;
+        //pas de gestion du click long dans cette activity
+        return false;
     }
 
     /**
@@ -345,8 +321,8 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     public void doDialogFragSupprClick() {
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
 
-        mSeqTemp.getTabElement().remove(mExASuppr);
-        mFragListe.afficheListView(mSeqTemp);
+        mElementSeqTemp.getPlaylistExercice().remove(mMorceauASuppr);
+        mFragListe.afficheListView(mElementSeqTemp.getPlaylistExercice());
 
     }
 
@@ -368,7 +344,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     private void afficheDialogDuree() {
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
-            DialogFragment df = Frag_Dialog_Duree.newInstance(mSeqTemp.getTabElement().get(mIndexElementSequenceTemp).getDureeExercice());
+            DialogFragment df = Frag_Dialog_Duree.newInstance(mElementSeqTemp.getDureeExercice());
             df.show(getFragmentManager(), "dialog");
         }
     }
@@ -381,33 +357,18 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     @Override
     public void onRetourDialogDuree(int valeur) {
 
-        Sequence s = (Sequence) mSeqTemp.clone();
-
-        s.getTabElement().get(mIndexElementSequenceTemp).setDureeExercice(valeur);
-
+        Sequence s = (Sequence) mChrono.get().getSequenceActive().clone();
+        s.getTabElement().set(mChrono.get().getIndexExerciceActif(), mElementSeqTemp);
+        s.getTabElement().get(mChrono.get().getIndexExerciceActif()).setDureeExercice(valeur);
         if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
             Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
             afficheDialogDuree();
 
         } else {
-            mSeqTemp.getTabElement().get(mIndexElementSequenceTemp).setDureeExercice(valeur);
-            mFragListe.afficheListView(mSeqTemp);
-            chronoService.resetChrono();
+            mElementSeqTemp.setDureeExercice(valeur);
+            mFragDetail.setTxtDuree(valeur);
         }
 
-    }
-
-    /**
-     * Affiche la popup d'enregistrement de séquence
-     *
-     * @see com.stephane.rothen.rchrono.views.Frag_Dialog_EnregistrementSeq
-     */
-    private void afficheDialogEnrSeq() {
-        FragmentManager fm = getFragmentManager();
-        if (fm.findFragmentByTag("dialog") == null) {
-            DialogFragment df = Frag_Dialog_EnregistrementSeq.newInstance();
-            df.show(getFragmentManager(), "dialog");
-        }
     }
 
 
@@ -422,66 +383,17 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         return false;
     }
 
-    /**
-     * Fonction appelée lors du retour de la popup enregistrer sequence avec vérification de la durée de la liste de séquence
-     *
-     * @param v View du bouton qui a été cliqué
-     */
-    @Override
-    public void onRetourDialogEnrSeq(View v) {
-        boolean erreur = false;
-        switch (v.getId()) {
-            case R.id.dialFragEnrSeqEcraser:
-                mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-                mSeqTemp.setmNombreRepetition(mFragDetail.getTxtRepetition());
-                mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
-                mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
-                //vérifie que le temps total ne dépasse pas 100h
-                int t = mChrono.get().getDureeTotaleSansSeqActive();
-                if (t + mSeqTemp.getDureeSequence() > 100 * 60 * 60) {
-                    Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
-                    erreur = true;
-                } else {
-                    mChrono.get().remplacerSequenceActive(mSeqTemp);
-                }
-                break;
-            case R.id.dialFragEnrSeqNouvelle:
-                mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-                mSeqTemp.setmNombreRepetition(mFragDetail.getTxtRepetition());
-                mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
-                mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
-                //vérifie que le temps total ne dépasse pas 100h
-                t = mChrono.get().getDureeTotale();
-                if (t + mSeqTemp.getDureeSequence() > 100 * 60 * 60) {
-                    Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
-                    erreur = true;
-                } else {
-                    mChrono.get().ajouterSequenceDansListe(mSeqTemp);
-                }
-                break;
-            case R.id.dialFragEnrSeqCancel:
-                break;
-            default:
-                break;
-        }
-        if (!erreur) {
-            mChrono.get().resetChrono();
-            finish();
-        }
-    }
 
     /**
      * Vérifie si la séquence a été modifiée
      *
      * @return true si la séquence a été modifiée
      */
-    private boolean isSequenceModifiee() {
-        if (mSeqTemp.equals(mChrono.get().getSequenceActive()))
+    private boolean isElementSequenceModifiee() {
+        if (mElementSeqTemp.equals(mChrono.get().getElementSequenceActif()))
             return false;
         else
             return true;
-
-
     }
 
     /**

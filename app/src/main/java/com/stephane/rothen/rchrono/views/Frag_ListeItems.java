@@ -15,6 +15,8 @@ import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.controller.Chronometre;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Exercice;
+import com.stephane.rothen.rchrono.model.Morceau;
+import com.stephane.rothen.rchrono.model.Playlist;
 import com.stephane.rothen.rchrono.model.Sequence;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,7 +33,8 @@ public class Frag_ListeItems extends Fragment {
     public static final int AFFICHE_LIBEXERCICE = 2;
     public static final int AFFICHE_LIBSEQUENCE = 3;
     public static final int AFFICHE_EXERCICESEQACTIVE = 4;
-    private static final int NBRE_TYPE_AFFICHAGE = 4;
+    public static final int AFFICHE_PLAYLISTEXERCICEACTIF = 5;
+    private static final int NBRE_TYPE_AFFICHAGE = 5;
 
 
     /**
@@ -204,10 +207,33 @@ public class Frag_ListeItems extends Fragment {
                 break;
             case AFFICHE_EXERCICESEQACTIVE:
                 affiche_ExerciceSeqActive(mChrono);
+                break;
+            case AFFICHE_PLAYLISTEXERCICEACTIF:
+                affiche_PlaylistExericeActif(mChrono);
             default:
                 break;
         }
 
+    }
+
+    private void affiche_PlaylistExericeActif(AtomicReference<Chronometre> mChrono) {
+        mAdapter.setFocusPosition(0);
+        ElementSequence el = mChrono.get().getElementSequenceActif();
+        int nbreMorceaux = el.getPlaylistExercice().getNbreMorceaux();
+        for (int i = 0; i < nbreMorceaux; i++) {
+            Morceau m = el.getPlaylistExercice().getMorceauAt(i);
+            mAdapter.addItem(m.getTitre() + " - " + m.getArtiste());
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void afficheListView(Playlist playlist) {
+        int nbreMorceaux = playlist.getNbreMorceaux();
+        for (int i = 0; i < nbreMorceaux; i++) {
+            Morceau m = playlist.getMorceauAt(i);
+            mAdapter.addItem(m.getTitre() + " - " + m.getArtiste());
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     /**

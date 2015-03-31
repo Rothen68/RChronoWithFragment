@@ -433,6 +433,11 @@ public class Chronometre {
         m_chronoModel.modifierSequenceDansListe(m_indexSequenceActive, s);
     }
 
+
+    public void remplacerElementSequenceActif(ElementSequence el) {
+        m_chronoModel.remplacerElementSequenceActif(m_indexSequenceActive, m_indexExerciceActif, el);
+    }
+
     /**
      * Renvois l'ElementSequence actif
      *
@@ -449,6 +454,10 @@ public class Chronometre {
      */
     public Sequence getSequenceActive() {
         return m_chronoModel.getListeSequences().get(m_indexSequenceActive);
+    }
+
+    public void creerElementSequenceDansSequenceActive() {
+        m_indexExerciceActif = m_chronoModel.creerElementSequence(m_indexSequenceActive);
     }
 
 }
