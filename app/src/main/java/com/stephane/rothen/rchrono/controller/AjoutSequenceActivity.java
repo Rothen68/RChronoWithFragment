@@ -14,9 +14,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.stephane.rothen.rchrono.R;
@@ -27,7 +25,6 @@ import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
-import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -39,6 +36,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     public static final int RESULT_AJOUT = 2;
     public static final int RESULT_NONE = 1;
+    public static final int ACTIVITY_CREER_SEQ = 30;
 
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
@@ -96,8 +94,6 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
         }
         setContentView(R.layout.ajout_host_frag);
-        if (savedInstanceState == null) {
-        }
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
         mFragListe.setAfficheBtnSuppr(false);
@@ -192,10 +188,17 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        mChrono.get().ajouterSequenceDansListe(mChrono.get().getLibSequence().get(position));
-        setResult(RESULT_AJOUT);
-        finish();
+        if (mFragListe.getAfficheBtnSuppr()) {
+            mSeqASuppr = position;
+            Sequence s = mChrono.get().getLibSequence().get(mSeqASuppr);
+            String nom = s.getNomSequence();
 
+            afficheDialogSuppr(nom);
+        } else {
+            mChrono.get().ajouterSequenceDansListe(mChrono.get().getLibSequence().get(position));
+            setResult(RESULT_AJOUT);
+            finish();
+        }
 
     }
 
@@ -217,23 +220,11 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
                 finish();
                 break;
             case R.id.btnAjouterSequence:
-                //todo ouvrir AjoutSequence et mettre ListeSequencesActivity comme précédant dans la pile
+                Intent i = new Intent(this, EditionSequenceActivity.class);
+                i.putExtra("MODE", ACTIVITY_CREER_SEQ);
+                startActivityForResult(i, ACTIVITY_CREER_SEQ);
                 break;
-            case R.id.btnSuppr:
-                ViewParent parent = v.getParent();
-                parent = parent.getParent();
-                parent = parent.getParent();
-                LinearLayout p = (LinearLayout) parent;
-                String nom = "";
-                if (p instanceof ItemListeSequence) {
-                    mSeqASuppr = ((ItemListeSequence) p).getPosition();
-                    Sequence s = mChrono.get().getLibSequence().get(mSeqASuppr);
-                    nom = s.getNomSequence();
-                } else {
-                    throw new ClassCastException("View suppr non reconnue");
-                }
-                afficheDialogSuppr(nom);
-                break;
+
             default:
                 break;
         }
@@ -284,6 +275,15 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         mSeqASuppr = -1;
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ACTIVITY_CREER_SEQ) {
+            setResult(resultCode);
+            finish();
+        }
+    }
 
     /**
      * Classe privée MyReceiver

@@ -14,20 +14,18 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.Exercice;
+import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
 import com.stephane.rothen.rchrono.views.Frag_BoutonAjout;
 import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
-import com.stephane.rothen.rchrono.views.ItemListeExercice;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -38,6 +36,9 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
+
+    public static final int RESULT_AJOUT = 50;
+
 
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
@@ -99,11 +100,11 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
         }
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(true);
+        mFragListe.setAfficheBtnSuppr(false);
         mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_LIBEXERCICE);
 
         mFragBtnCreer = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
-        mFragBtnCreer.setTexte(R.string.ajoutsequence_creer);
+        mFragBtnCreer.setTexte(R.string.ajoutexercicee_creer);
         mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
 
 
@@ -163,7 +164,7 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_liste_sequences, menu);
+        getMenuInflater().inflate(R.menu.menu_ajout, menu);
         return true;
     }
 
@@ -175,7 +176,14 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_supprimer) {
+        if (id == R.id.menu_ajout_supprimer) {
+            if (mFragListe.getAfficheBtnSuppr()) {
+                mFragListe.setAfficheBtnSuppr(false);
+                mFragListe.afficheListView(0, mChrono);
+            } else {
+                mFragListe.setAfficheBtnSuppr(true);
+                mFragListe.afficheListView(0, mChrono);
+            }
             return true;
         }
 
@@ -184,7 +192,23 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
 
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        //bouton actif donc pas utilisé
+        if (mFragListe.getAfficheBtnSuppr()) {
+            mExASuppr = position;
+            Exercice e = mChrono.get().getLibExercice().get(mExASuppr);
+            String nom = e.getNomExercice();
+            afficheDialogSuppr(nom);
+        } else {
+            Exercice e = mChrono.get().getLibExercice().get(position);
+            Sequence s = (Sequence) mChrono.get().getSeqTemp().clone();
+            s.ajouterExercice(e);
+            if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 10 * 60 * 60) {
+                Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
+            } else {
+                mChrono.get().getSeqTemp().ajouterExercice(e);
+                setResult(RESULT_AJOUT);
+                finish();
+            }
+        }
     }
 
     @Override
@@ -203,28 +227,6 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
         switch (v.getId()) {
             case R.id.btnRetour:
                 finish();
-                break;
-            case R.id.btnAjouterSequence:
-                //todo ouvrir AjoutSequence et mettre ListeSequencesActivity comme précédant dans la pile
-                break;
-            case R.id.btnSuppr:
-                ViewParent parent = v.getParent();
-                parent = parent.getParent();
-                parent = parent.getParent();
-                LinearLayout p = (LinearLayout) parent;
-                String nom = "";
-                if (p instanceof ItemListeExercice) {
-                    mExASuppr = ((ItemListeExercice) p).getPosition();
-                    Exercice e = mChrono.get().getLibExercice().get(mExASuppr);
-                    nom = e.getNomExercice();
-                } else {
-                    throw new ClassCastException("View suppr non reconnue");
-                }
-                afficheDialogSuppr(nom);
-                break;
-            case R.id.txtLvExercice:
-                //todo ajouter exercice à la sequence et afficher EditionExercice
-                Toast.makeText(this, "EditionExercice", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;

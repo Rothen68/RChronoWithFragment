@@ -3,8 +3,7 @@ package com.stephane.rothen.rchrono.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,7 +16,7 @@ import com.stephane.rothen.rchrono.R;
  */
 public class ItemListeSequence extends LinearLayout {
 
-    protected ImageButton mBtnSuppr;
+    protected ImageView mImgSuppr;
     protected TextView mText;
     protected int mPosition;
 
@@ -47,41 +46,18 @@ public class ItemListeSequence extends LinearLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.lv_seq_layout, this, true);
         setOrientation(HORIZONTAL);
         mText = (TextView) findViewById(R.id.txtLvSequence);
-        mBtnSuppr = (ImageButton) findViewById(R.id.btnSuppr);
+        mImgSuppr = (ImageView) findViewById(R.id.imgSuppr);
     }
 
 
     /**
      * permet de modifier les valeurs de la view
      *
-     * @param position         position de la view dans la listView
      * @param txt              valeur à affecter à la zone de texte
      * @param visibiliteBouton visibilité du bouton
      */
-    public void setUpView(int position, String txt, boolean visibiliteBouton, final Frag_Liste_Callback callback) {
+    public void setUpView(String txt, boolean visibiliteBouton) {
         mText.setText(txt);
-
-        mBtnSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
-        if (callback != null) {
-            mBtnSuppr.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callback.onClickListener(v);
-                }
-            });
-            mText.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callback.onClickListener(v);
-                }
-            });
-            mText.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return callback.onLongClickListener(v);
-                }
-            });
-        }
-        mPosition = position;
+        mImgSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
     }
 }

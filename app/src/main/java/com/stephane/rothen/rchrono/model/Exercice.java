@@ -130,7 +130,7 @@ public class Exercice implements Cloneable {
      */
     @Override
     protected Object clone() {
-        return new Exercice(mNomExercice, mDescriptionExercice, mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone());
+        return new Exercice(new String(mNomExercice), new String(mDescriptionExercice), mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone());
     }
 
     /**

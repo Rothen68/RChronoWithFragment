@@ -146,7 +146,7 @@ public class ElementSequence extends Exercice implements Cloneable {
      */
     @Override
     public Object clone() {
-        return new ElementSequence(mNomExercice, mDescriptionExercice, mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone(), mDureeExercice, (Playlist) mPlaylistExercice.clone(), (NotificationExercice) mNotificationExercice.clone(), (SyntheseVocale) mSyntheseVocale.clone());
+        return new ElementSequence(new String(mNomExercice), new String(mDescriptionExercice), mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone(), mDureeExercice, (Playlist) mPlaylistExercice.clone(), (NotificationExercice) mNotificationExercice.clone(), (SyntheseVocale) mSyntheseVocale.clone());
     }
 
     /**

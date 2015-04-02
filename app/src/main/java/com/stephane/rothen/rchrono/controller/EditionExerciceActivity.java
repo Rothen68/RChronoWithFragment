@@ -25,6 +25,7 @@ import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Morceau;
 import com.stephane.rothen.rchrono.model.NotificationExercice;
+import com.stephane.rothen.rchrono.model.Playlist;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
@@ -41,6 +42,9 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     private static final int LISTESONS_SONNERIE = 1;
     private static final int LISTESONS_MORCEAU = 2;
 
+    private static final int CREATION = 1;
+    private static final int EDITION = 2;
+    private int mMode = EDITION;
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *
@@ -66,50 +70,38 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
      * @see ListeSequencesActivity#chronoService
      */
     private ServiceConnection mConnexion;
-
-
     private EditText mEtxtNom;
     private EditText mEtxtDescription;
     private EditText mEtxtDuree;
     private int mDuree;
-
     private ToggleButton mTbNom;
     private boolean mEtatTbNom = false;
     private ToggleButton mTbDuree;
     private boolean mEtatTbDuree = false;
-
     private ToggleButton mTbVibreur;
     private boolean mEtatTbVibreur = false;
     private ToggleButton mTbPopup;
     private boolean mEtatTbPopup = false;
     private ToggleButton mTbSonnerie;
     private boolean mEtatTbSonnerie = false;
-
     private EditText mEtxtSonnerie;
     private Morceau mSonnerie = null;
-
     private ToggleButton mTbJouerPlaylist;
     private boolean mEtatTbJouerPlaylist = false;
-
     private Button mBtnValider;
     private Button mBtnRetour;
-
-
     /**
      * Permet de stocker les données de l'ElementSequence en cours de modification lors du basculement vers la fenetre de la playlist
      */
     private boolean mSauvegarderDonneesTemp = false;
-
     /**
      * ElementSequence temporaire pour la fenetre
      */
     private ElementSequence mElementSeqTemp;
-
     /**
      * Morceau à supprimer
      */
     private Morceau mMorceauASuppr;
-
     /**
      * Permet de gérer l'appuis double sur le bouton retour
      */
@@ -123,8 +115,10 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
 
+        Intent i = getIntent();
+        if (i.getExtras() != null) {
+            mMode = i.getExtras().getInt("MODE");
         }
         setContentView(R.layout.editionex_main);
         mEtxtNom = (EditText) findViewById(R.id.editionex_main_etxtNom);
@@ -233,14 +227,18 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     mChrono = chronoService.getAtomicChronometre();
 
                     chronoService.setPersistance(false);
-                    ElementSequence el = mChrono.get().getElementSeqTemp();
-                    if (el == null) {
-                        el = mChrono.get().getElementSequenceActif();
-                        if (mElementSeqTemp == null)
-                            mElementSeqTemp = (ElementSequence) el.clone();
+                    if (mMode == EDITION) {
+                        ElementSequence el = mChrono.get().getElementSeqTemp();
+                        if (el == null) {
+                            el = mChrono.get().getSeqTemp().getTabElement().get(mChrono.get().getIndexElementSeqTemp());
+                            if (mElementSeqTemp == null)
+                                mElementSeqTemp = (ElementSequence) el.clone();
+                        } else {
+                            mElementSeqTemp = el;
+                            mSauvegarderDonneesTemp = false;
+                        }
                     } else {
-                        mElementSeqTemp = el;
-                        mSauvegarderDonneesTemp = false;
+                        mElementSeqTemp = new ElementSequence("", "", 1, new Playlist(), 1, new Playlist(), new NotificationExercice(false, false, false, null), new SyntheseVocale(false, false));
                     }
                     mEtxtNom.setText(mElementSeqTemp.getNomExercice());
                     mEtxtDescription.setText(mElementSeqTemp.getDescriptionExercice());
@@ -257,7 +255,8 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     mEtatTbSonnerie = mElementSeqTemp.getNotificationExercice().getSonnerie();
                     mTbSonnerie.setChecked(mEtatTbSonnerie);
                     mSonnerie = mElementSeqTemp.getNotificationExercice().getFichierSonnerie();
-                    mEtxtSonnerie.setText(mSonnerie.getTitre());
+                    if (mSonnerie != null)
+                        mEtxtSonnerie.setText(mSonnerie.getTitre());
                     mEtatTbJouerPlaylist = mElementSeqTemp.getPlaylistExercice().getJouerPlaylist();
                     mTbJouerPlaylist.setChecked(mEtatTbJouerPlaylist);
                 }
@@ -366,16 +365,20 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     @Override
     public void onRetourDialogDuree(int valeur) {
 
-        Sequence s = (Sequence) mChrono.get().getSequenceActive().clone();
-        s.getTabElement().set(mChrono.get().getIndexExerciceActif(), mElementSeqTemp);
-        s.getTabElement().get(mChrono.get().getIndexExerciceActif()).setDureeExercice(valeur);
+        Sequence s = (Sequence) mChrono.get().getSeqTemp().clone();
+        if (mMode == EDITION) {
+            s.getTabElement().set(mChrono.get().getIndexElementSeqTemp(), mElementSeqTemp);
+            s.getTabElement().get(mChrono.get().getIndexElementSeqTemp()).setDureeExercice(valeur);
+        } else {
+            s.ajouterElement(mElementSeqTemp);
+        }
         if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
             Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
             afficheDialogDuree();
 
         } else {
-            mElementSeqTemp.setDureeExercice(valeur);
-            //mFragDetail.setTxtDuree(valeur);
+            mDuree = valeur;
+            mEtxtDuree.setText(Fonctions.convertSversHMSSansZeros(valeur));
         }
 
     }
@@ -417,6 +420,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.editionex_main_btnRetour:
+                mChrono.get().setElementSeqTemp(null);
                 finish();
                 break;
 
@@ -427,8 +431,15 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                 mElementSeqTemp.setSyntheseVocale(new SyntheseVocale(mEtatTbNom, mEtatTbDuree));
                 mElementSeqTemp.setNotificationExercice(new NotificationExercice(mEtatTbVibreur, mEtatTbPopup, mEtatTbSonnerie, mSonnerie));
                 mElementSeqTemp.getPlaylistExercice().setJouerPlaylist(mEtatTbJouerPlaylist);
-                mChrono.get().remplacerElementSequenceActif(mElementSeqTemp);
-                finish();
+                if (mMode == EDITION) {
+
+                    mChrono.get().getSeqTemp().getTabElement().set(mChrono.get().getIndexElementSeqTemp(), mElementSeqTemp);
+                    mChrono.get().setElementSeqTemp(null);
+                    finish();
+                } else {
+                    mChrono.get().getSeqTemp().ajouterElement(mElementSeqTemp);
+                    finish();
+                }
                 break;
             default:
                 break;

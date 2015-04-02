@@ -94,6 +94,9 @@ public class ChronoModel {
         if (mLibSequences.indexOf(s) < 0)
             mLibSequences.add(s);
         mListeSequences.add(s);
+        for (ElementSequence el : s.getTabElement()) {
+            remplacerElementSequence(el);
+        }
     }
 
     /**
@@ -109,7 +112,7 @@ public class ChronoModel {
         int nbreOccurences = 0;
         int[] tabIndexOccurences = new int[mListeSequences.size()];
 
-        // recherchce des occurences de la séquence à modifier dans la liste des séquences
+        // recherche des occurences de la séquence à modifier dans la liste des séquences
         for (int i = 0; i < mListeSequences.size(); i++) {
             if (ancienneSeq.equals(mListeSequences.get(i))) {
 
@@ -125,6 +128,9 @@ public class ChronoModel {
             int i = mLibSequences.indexOf(mListeSequences.get(indexListeSequence));
             mListeSequences.set(indexListeSequence, s);
             mLibSequences.set(i, s);
+        }
+        for (ElementSequence el : s.getTabElement()) {
+            remplacerElementSequence(el);
         }
     }
 
@@ -144,13 +150,10 @@ public class ChronoModel {
     /**
      * gere la mise a jour et l'enregistrerment d'un ElementSequence
      *
-     * @param m_indexSequenceActive index de la séquence de l'elementSequence
-     * @param m_indexExerciceActif  index de l'elementSequence
-     * @param el                    ElementSequence à enregistrer
+     * @param el ElementSequence à enregistrer
      */
 
-    public void remplacerElementSequenceActif(int m_indexSequenceActive, int m_indexExerciceActif, ElementSequence el) {
-        mListeSequences.get(m_indexSequenceActive).getTabElement().set(m_indexExerciceActif, el);
+    public void remplacerElementSequence(ElementSequence el) {
         Exercice e = el.getExercice();
         Boolean dejaEnregistrer = false;
         for (Exercice exercice : mLibExercices) {

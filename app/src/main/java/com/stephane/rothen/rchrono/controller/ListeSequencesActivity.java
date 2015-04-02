@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,8 +32,6 @@ import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
-import com.stephane.rothen.rchrono.views.ItemListeExercice;
-import com.stephane.rothen.rchrono.views.ItemListeSequence;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -105,12 +102,9 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
 
-        }
         setContentView(R.layout.listeseq_host_frag);
-        if (savedInstanceState == null) {
-        }
+
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
         mFragListe.setAfficheBtnSuppr(false);
@@ -221,52 +215,9 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
             case R.id.btnAjouterSequence:
                 goToAjoutSequenceActivity();
                 break;
-            case R.id.btnSuppr:
-                //gestion du click sur le bouton supprimer d'un élément de la listView
-                ViewParent parent = v.getParent();
-                parent = parent.getParent();
-                parent = parent.getParent();
-                LinearLayout p = (LinearLayout) parent;
-                int position = -2;
-                String nom = "";
-                if (p instanceof ItemListeExercice) {
-                    position = ((ItemListeExercice) p).getPosition();
-                    mChrono.get().setChronoAt(position);
-                    ElementSequence e = mChrono.get().getElementSequenceActif();
-                    nom = e.getNomExercice();
-                    mTypeASuppr = TYPEEXERCICE;
-                } else if (p instanceof ItemListeSequence) {
-                    position = ((ItemListeSequence) p).getPosition();
-                    mChrono.get().setChronoAt(position);
-                    Sequence s = mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive);
-                    nom = s.getNomSequence();
-                    mTypeASuppr = TYPESEQUENCE;
-                } else {
-                    throw new ClassCastException("View suppr non reconnue");
-                }
-                afficheDialogSuppr(nom);
+            default:
                 break;
-
-            case R.id.txtLvExercice:
-            case R.id.txtLvSequence:
-                parent = v.getParent();
-                parent = parent.getParent();
-                p = (LinearLayout) parent;
-                position = -2;
-                if (p instanceof ItemListeExercice) {
-                    position = ((ItemListeExercice) p).getPosition();
-                    mChrono.get().setChronoAt(position);
-                    afficheDialogDuree();
-
-                } else if (p instanceof ItemListeSequence) {
-                    position = ((ItemListeSequence) p).getPosition();
-                    mChrono.get().setChronoAt(position);
-                    afficheDialogRepetition();
-                } else {
-                    throw new ClassCastException("View Item non reconnue");
-                }
         }
-
     }
 
     /**
@@ -279,19 +230,42 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
      */
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        LinearLayout p = (LinearLayout) view;
-        mChrono.get().setChronoAt(position);
-        switch (mFragListe.getAdapter().getItemViewType(position)) {
-            case CustomAdapter.TYPE_ITEM:
-                DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getElementSequenceActif().getDureeExercice());
-                df.show(getFragmentManager(), "dialog");
-                break;
-            case CustomAdapter.TYPE_SEPARATOR:
-                df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
-                df.show(getFragmentManager(), "dialog");
-                break;
-            default:
-                throw new ClassCastException("View suppr non reconnue");
+
+        if (mFragListe.getAfficheBtnSuppr()) {//si mode suppression
+            String nom = "";
+            switch (mFragListe.getAdapter().getItemViewType(position)) {
+                case CustomAdapter.TYPE_ITEM:
+                    mChrono.get().setChronoAt(position);
+                    ElementSequence e = mChrono.get().getElementSequenceActif();
+                    nom = e.getNomExercice();
+                    mTypeASuppr = TYPEEXERCICE;
+                    break;
+                case CustomAdapter.TYPE_SEPARATOR:
+                    mChrono.get().setChronoAt(position);
+                    Sequence s = mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive);
+                    nom = s.getNomSequence();
+                    mTypeASuppr = TYPESEQUENCE;
+                    break;
+                default:
+                    break;
+            }
+            afficheDialogSuppr(nom);
+
+        } else {
+            LinearLayout p = (LinearLayout) view;
+            mChrono.get().setChronoAt(position);
+            switch (mFragListe.getAdapter().getItemViewType(position)) {
+                case CustomAdapter.TYPE_ITEM:
+                    DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getElementSequenceActif().getDureeExercice());
+                    df.show(getFragmentManager(), "dialog");
+                    break;
+                case CustomAdapter.TYPE_SEPARATOR:
+                    df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+                    df.show(getFragmentManager(), "dialog");
+                    break;
+                default:
+                    throw new ClassCastException("View suppr non reconnue");
+            }
         }
     }
 
@@ -435,6 +409,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     private void goToEditionSequenceActivity() {
         Intent i = new Intent(this, EditionSequenceActivity.class);
+        i.putExtra("MODE", 0);
         startActivity(i);
     }
 
@@ -444,9 +419,9 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         if (requestCode == ACTIVITY_AJOUT_SEQ) {
             if (resultCode == AjoutSequenceActivity.RESULT_AJOUT) {
                 //todo gérer l'erreur
-//                int derniereSeq = mChrono.get().getListeSequence().size()-1;
-//                mChrono.get().setChronoAt(derniereSeq,0);
-//                goToEditionSequenceActivity();
+                int derniereSeq = mChrono.get().getListeSequence().size() - 1;
+                mChrono.get().setChronoAt(derniereSeq, 0);
+                goToEditionSequenceActivity();
             }
         }
     }

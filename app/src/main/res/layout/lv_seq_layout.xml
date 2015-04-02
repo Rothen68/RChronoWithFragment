@@ -30,13 +30,13 @@ Définit le layout d'une séquence dans la listView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <ImageButton
-                android:id="@+id/btnSuppr"
+
+            <ImageView
+                android:id="@+id/imgSuppr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/suppr"
-                android:visibility="invisible" />
+                android:background="@drawable/suppr" />
 
         </LinearLayout>
 

@@ -276,7 +276,7 @@ public class Frag_ListeItems extends Fragment {
 
     private void affiche_LibExercice(AtomicReference<Chronometre> mChrono) {
         mAdapter.setFocusPosition(0);
-        for (int i = 0; i < mChrono.get().getLibSequence().size(); i++) {
+        for (int i = 0; i < mChrono.get().getLibExercice().size(); i++) {
             Exercice e = mChrono.get().getLibExercice().get(i);
             mAdapter.addSectionHeaderItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeParDefaut()) + " s");
 

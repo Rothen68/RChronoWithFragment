@@ -11,11 +11,11 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.stephane.rothen.rchrono.R;
@@ -27,7 +27,6 @@ import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
-import com.stephane.rothen.rchrono.views.ItemListeExercice;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -92,6 +91,35 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
         });
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_editionexerciceplaylist, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_editionExercicePlaylist_supprimer) {
+            if (mLstMorceaux.getAfficheBtnSuppr()) {
+                mLstMorceaux.setAfficheBtnSuppr(false);
+                mLstMorceaux.afficheListView(mPlaylist);
+            } else {
+                mLstMorceaux.setAfficheBtnSuppr(true);
+                mLstMorceaux.afficheListView(mPlaylist);
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -170,20 +198,6 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
             case R.id.editionexplaylist_host_frag_btnRetour:
                 finish();
                 break;
-            case R.id.btnSuppr:
-                ViewParent parent = v.getParent();
-                parent = parent.getParent();
-                parent = parent.getParent();
-                LinearLayout p = (LinearLayout) parent;
-                String nom = "";
-                if (p instanceof ItemListeExercice) {
-                    mIndexMorceauASuppr = ((ItemListeExercice) p).getPosition();
-                    nom = mPlaylist.getMorceauAt(mIndexMorceauASuppr).getTitre();
-                } else {
-                    throw new ClassCastException("View suppr non reconnue");
-                }
-                afficheDialogSuppr(nom);
-                break;
             default:
                 break;
         }
@@ -212,7 +226,11 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
      */
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-
+        if (mLstMorceaux.getAfficheBtnSuppr()) {
+            mIndexMorceauASuppr = position;
+            String nom = mPlaylist.getMorceauAt(mIndexMorceauASuppr).getTitre();
+            afficheDialogSuppr(nom);
+        }
 
     }
 
@@ -252,6 +270,7 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
 
         mPlaylist.supprimerMorceau(mIndexMorceauASuppr);
+        mLstMorceaux.afficheListView(mPlaylist);
 
     }
 

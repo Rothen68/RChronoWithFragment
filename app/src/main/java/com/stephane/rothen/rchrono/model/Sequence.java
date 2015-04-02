@@ -129,6 +129,11 @@ public class Sequence implements Cloneable {
         mTabElement.add(e);
     }
 
+    public void ajouterExercice(Exercice e) {
+        ElementSequence el = new ElementSequence(e.getNomExercice(), e.getDescriptionExercice(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), new NotificationExercice(false, false, false, null), new SyntheseVocale(false, false));
+        mTabElement.add(el);
+    }
+
 
     /**
      * Fonction qui retourne la durée d'une séquence incluant les répétitions
@@ -158,7 +163,7 @@ public class Sequence implements Cloneable {
      */
     @Override
     public Object clone() {
-        Sequence s = new Sequence(mNomSequence, mNombreRepetition, (SyntheseVocale) mSyntheseVocale.clone());
+        Sequence s = new Sequence(new String(mNomSequence), mNombreRepetition, (SyntheseVocale) mSyntheseVocale.clone());
         s.mTabElement = (ArrayList<ElementSequence>) mTabElement.clone();
         return s;
 

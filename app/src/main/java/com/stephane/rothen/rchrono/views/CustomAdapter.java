@@ -200,9 +200,9 @@ public class CustomAdapter extends BaseAdapter {
                 }
                 // met à jour les valeurs de la vue
                 if (position == mfocusPosition && mAfficheCurseur) {
-                    ((ItemListeExercice) convertView).setUpView(position, m_Data.get(position), true, mAfficheBtnSuppr, mCallback);
+                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position), true, mAfficheBtnSuppr);
                 } else {
-                    ((ItemListeExercice) convertView).setUpView(position, m_Data.get(position), false, mAfficheBtnSuppr, mCallback);
+                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position), false, mAfficheBtnSuppr);
 
                 }
                 break;
@@ -210,7 +210,7 @@ public class CustomAdapter extends BaseAdapter {
                 if (!(convertView instanceof ItemListeSequence)) {
                     convertView = new ItemListeSequence(m_inflater.getContext());
                 }
-                ((ItemListeSequence) convertView).setUpView(position, m_Data.get(position), mAfficheBtnSuppr, mCallback);
+                ((ItemListeSequence) convertView).setUpView(m_Data.get(position), mAfficheBtnSuppr);
                 break;
         }
 

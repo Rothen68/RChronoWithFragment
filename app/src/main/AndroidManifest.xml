@@ -39,6 +39,14 @@
                 android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
         </activity>
         <activity
+            android:name=".controller.AjoutExerciceActivity"
+            android:label="@string/title_activity_ajout_exercice"
+            android:parentActivityName=".controller.EditionSequenceActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
+        </activity>
+        <activity
             android:name=".controller.EditionSequenceActivity"
             android:label="@string/title_activity_editionSequence"
             android:parentActivityName=".controller.ListeSequencesActivity"

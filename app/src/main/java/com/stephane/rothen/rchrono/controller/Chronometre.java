@@ -85,6 +85,9 @@ public class Chronometre {
      * ElementSequence temporaire utilisé pour garder les modifications lors du passage de la fenetre editionexercice vers editionexerciceplaylist
      */
     protected ElementSequence mElementSeqTemp;
+    protected int mIndexElementSeqTtemp;
+
+    protected Sequence mSeqTemp;
 
 
     /**
@@ -402,7 +405,8 @@ public class Chronometre {
      */
     public int getDureeTotaleSansSeqActive() {
         int duree = getDureeTotale();
-        duree -= m_chronoModel.getListeSequences().get(m_indexSequenceActive).getDureeSequence();
+        if (m_indexSequenceActive >= 0)
+            duree -= m_chronoModel.getListeSequences().get(m_indexSequenceActive).getDureeSequence();
         return duree;
     }
 
@@ -440,10 +444,6 @@ public class Chronometre {
     }
 
 
-    public void remplacerElementSequenceActif(ElementSequence el) {
-        m_chronoModel.remplacerElementSequenceActif(m_indexSequenceActive, m_indexExerciceActif, el);
-    }
-
     /**
      * Renvois l'ElementSequence actif
      *
@@ -459,7 +459,10 @@ public class Chronometre {
      * @return Sequence active
      */
     public Sequence getSequenceActive() {
+        if (m_indexSequenceActive >= 0)
         return m_chronoModel.getListeSequences().get(m_indexSequenceActive);
+        else
+            return null;
     }
 
     public void creerElementSequenceDansSequenceActive() {
@@ -475,4 +478,19 @@ public class Chronometre {
         mElementSeqTemp = el;
     }
 
+    public Sequence getSeqTemp() {
+        return mSeqTemp;
+    }
+
+    public void setSeqTemp(Sequence s) {
+        mSeqTemp = s;
+    }
+
+    public int getIndexElementSeqTemp() {
+        return mIndexElementSeqTtemp;
+    }
+
+    public void setIndexElementSeqTemp(int index) {
+        mIndexElementSeqTtemp = index;
+    }
 }

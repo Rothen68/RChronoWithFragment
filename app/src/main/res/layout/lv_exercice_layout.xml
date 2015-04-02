@@ -40,13 +40,13 @@ lv_exercice_layout.xmlt le layout d'un exercice qui a le focus dans la listView
             android:gravity="center_vertical|right"
             android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/btnSuppr"
+
+            <ImageView
+                android:id="@+id/imgSuppr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/suppr"
-                android:visibility="visible" />
+                android:background="@drawable/suppr" />
         </LinearLayout>
     </LinearLayout>
 
