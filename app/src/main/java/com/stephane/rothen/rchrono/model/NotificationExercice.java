@@ -123,6 +123,10 @@ public class NotificationExercice implements Cloneable {
         return mFichierSonnerie;
     }
 
+    public void setFichierSonnerie(Morceau m) {
+        mFichierSonnerie = m;
+    }
+
 
     /**
      * Creates and returns a copy of this {@code Object}. The default

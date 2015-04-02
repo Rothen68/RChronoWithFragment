@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/editionex_frag_detail_nom"
+                        android:textColor="@color/Green" />
+
+                    <EditText
+                        android:id="@+id/editionex_main_etxtNom"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/Green" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:text="@string/editionex_frag_detail_description"
+                        android:textColor="@color/Green" />
+
+                    <EditText
+                        android:id="@+id/editionex_main_etxtDescription"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|right"
+                        android:ems="10"
+                        android:inputType="textMultiLine"
+                        android:textColor="@color/Green" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:text="@string/editionex_frag_detail_duree"
+                        android:textColor="@color/Green" />
+
+                    <EditText
+                        android:id="@+id/editionex_main_etxtDuree"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|right"
+                        android:clickable="true"
+                        android:editable="false"
+                        android:ems="10"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:textColor="@color/Green" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/editionex_frag_detail_sythesevocale"
+                    android:textColor="@color/Green" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <ToggleButton
+                        android:id="@+id/editionex_main_tbNom"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/editionex_frag_detail_svnom"
+                        android:textColor="@color/Green"
+                        android:textOff="@string/editionex_frag_detail_svnom"
+                        android:textOn="@string/editionex_frag_detail_svnom" />
+
+                    <ToggleButton
+                        android:id="@+id/editionex_main_tbDuree"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/editionex_frag_detail_svduree"
+                        android:textColor="@color/Green"
+                        android:textOff="@string/editionex_frag_detail_svduree"
+                        android:textOn="@string/editionex_frag_detail_svduree" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/editionex_frag_detail_notification"
+                    android:textColor="@color/Green" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <ToggleButton
+                        android:id="@+id/editionex_main_tbVibreur"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/editionex_frag_detail_nvibreur"
+                        android:textColor="@color/Green"
+                        android:textOff="@string/editionex_frag_detail_nvibreur"
+                        android:textOn="@string/editionex_frag_detail_nvibreur" />
+
+                    <ToggleButton
+                        android:id="@+id/editionex_main_tbPopup"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/editionex_frag_detail_npopup"
+                        android:textColor="@color/Green"
+                        android:textOff="@string/editionex_frag_detail_npopup"
+                        android:textOn="@string/editionex_frag_detail_npopup" />
+
+                    <ToggleButton
+                        android:id="@+id/editionex_main_tbSonnerie"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/editionex_frag_detail_nsonnerie"
+                        android:textColor="@color/Green"
+                        android:textOff="@string/editionex_frag_detail_nsonnerie"
+                        android:textOn="@string/editionex_frag_detail_nsonnerie" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:text="@string/editionex_frag_detail_sonnerie"
+                        android:textColor="@color/Green" />
+
+                    <EditText
+                        android:id="@+id/editionex_main_etxtSonnerie"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|right"
+                        android:ems="10"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:textColor="@color/Green" />
+                </LinearLayout>
+
+                <ToggleButton
+                    android:id="@+id/editionex_main_tbJouerPlaylist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/editionex_frag_playlist_jouerplaylist"
+                    android:textColor="@color/Green"
+                    android:textOff="@string/editionex_frag_playlist_jouerplaylist"
+                    android:textOn="@string/editionex_frag_playlist_jouerplaylist" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:baselineAligned="false"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/editionex_main_btnValider"
+
+            style="@style/txtButtonStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bouton"
+            android:shadowColor="#A8A8A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
+            android:singleLine="false"
+            android:text="@string/editionex_frag_valider_btnvalider"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/editionex_main_btnRetour"
+            style="@style/txtButtonStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bouton"
+            android:shadowColor="#A8A8A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
+            android:singleLine="false"
+            android:text="@string/listesequences_retour"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
+            android:textSize="25sp" />
+    </LinearLayout>
+</LinearLayout>

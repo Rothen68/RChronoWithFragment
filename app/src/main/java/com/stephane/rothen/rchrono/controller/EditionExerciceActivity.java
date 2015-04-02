@@ -14,38 +14,32 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewParent;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
+import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Morceau;
 import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
-import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
-import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
-import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
-import com.stephane.rothen.rchrono.views.Frag_EditEx_BtnAjoutMorceau;
-import com.stephane.rothen.rchrono.views.Frag_EditEx_BtnValider;
-import com.stephane.rothen.rchrono.views.Frag_EditEx_Detail;
-import com.stephane.rothen.rchrono.views.Frag_EditEx_Playlist;
-import com.stephane.rothen.rchrono.views.Frag_ListeItems;
-import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
-import com.stephane.rothen.rchrono.views.ItemListeExercice;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by stéphane on 31/03/2015.
  */
-public class EditionExerciceActivity extends ActionBarActivity implements Frag_Liste_Callback, Frag_Bouton_Callback,
-        Frag_EditEx_Detail.Frag_EditEx_Detail_Callback,
-        Frag_Dialog_Duree.Frag_Dialog_Duree_Callback,
-        Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
+public class EditionExerciceActivity extends ActionBarActivity implements View.OnClickListener,
+        Frag_Dialog_Duree.Frag_Dialog_Duree_Callback {
+
+
+    private static final int LISTESONS_SONNERIE = 1;
+    private static final int LISTESONS_MORCEAU = 2;
 
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
@@ -74,33 +68,37 @@ public class EditionExerciceActivity extends ActionBarActivity implements Frag_L
     private ServiceConnection mConnexion;
 
 
-    /**
-     * Instance de la classe du fragment affichant les détails de l'exercice
-     */
-    private Frag_EditEx_Detail mFragDetail;
+    private EditText mEtxtNom;
+    private EditText mEtxtDescription;
+    private EditText mEtxtDuree;
+    private int mDuree;
+
+    private ToggleButton mTbNom;
+    private boolean mEtatTbNom = false;
+    private ToggleButton mTbDuree;
+    private boolean mEtatTbDuree = false;
+
+    private ToggleButton mTbVibreur;
+    private boolean mEtatTbVibreur = false;
+    private ToggleButton mTbPopup;
+    private boolean mEtatTbPopup = false;
+    private ToggleButton mTbSonnerie;
+    private boolean mEtatTbSonnerie = false;
+
+    private EditText mEtxtSonnerie;
+    private Morceau mSonnerie = null;
+
+    private ToggleButton mTbJouerPlaylist;
+    private boolean mEtatTbJouerPlaylist = false;
+
+    private Button mBtnValider;
+    private Button mBtnRetour;
+
 
     /**
-     * Instance de la classe du fragment affichant la liste des morceaux de la playlist de l'exercice
+     * Permet de stocker les données de l'ElementSequence en cours de modification lors du basculement vers la fenetre de la playlist
      */
-    private Frag_ListeItems mFragListe;
-    /**
-     * Instance de la classe du fragment affichant le togglebutton jouer la playlist
-     */
-    private Frag_EditEx_Playlist mFragPlaylist;
-    /**
-     * Instance de la classe du fragment affichant le bouton ajouter un morceau à la playlist
-     */
-    private Frag_EditEx_BtnAjoutMorceau mFragBtnAjoutMorceau;
-
-    /**
-     * Instance de la classe du fragment affichant le bouton valider
-     */
-    private Frag_EditEx_BtnValider mFragBtnValider;
-    /**
-     * Instance de la classe du fragment affichant le bouton retour
-     */
-    private Frag_BoutonRetour mFragBtnRetour;
-
+    private boolean mSauvegarderDonneesTemp = false;
 
     /**
      * ElementSequence temporaire pour la fenetre
@@ -128,23 +126,91 @@ public class EditionExerciceActivity extends ActionBarActivity implements Frag_L
         if (savedInstanceState == null) {
 
         }
-        setContentView(R.layout.editionex_host_frag);
-        if (savedInstanceState == null) {
-        }
-        getSupportFragmentManager().executePendingTransactions();
-        mFragDetail = (Frag_EditEx_Detail) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_Detail);
+        setContentView(R.layout.editionex_main);
+        mEtxtNom = (EditText) findViewById(R.id.editionex_main_etxtNom);
+        mEtxtDescription = (EditText) findViewById(R.id.editionex_main_etxtDescription);
+        mEtxtDuree = (EditText) findViewById(R.id.editionex_main_etxtDuree);
+        mTbNom = (ToggleButton) findViewById(R.id.editionex_main_tbNom);
+        mTbDuree = (ToggleButton) findViewById(R.id.editionex_main_tbDuree);
+        mTbPopup = (ToggleButton) findViewById(R.id.editionex_main_tbPopup);
+        mTbVibreur = (ToggleButton) findViewById(R.id.editionex_main_tbVibreur);
+        mTbSonnerie = (ToggleButton) findViewById(R.id.editionex_main_tbSonnerie);
+        mEtxtSonnerie = (EditText) findViewById(R.id.editionex_main_etxtSonnerie);
+        mTbJouerPlaylist = (ToggleButton) findViewById(R.id.editionex_main_tbJouerPlaylist);
+        mBtnValider = (Button) findViewById(R.id.editionex_main_btnValider);
+        mBtnRetour = (Button) findViewById(R.id.editionex_main_btnRetour);
 
-        mFragPlaylist = (Frag_EditEx_Playlist) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_BtnPlaylist);
+        mEtxtDuree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                afficheDialogDuree();
+            }
+        });
 
-        mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_Liste);
-        mFragListe.setAfficheBtnSuppr(false);
-        mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_PLAYLISTEXERCICEACTIF);
+        mEtxtSonnerie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listeSonsPourSonnerie();
+            }
+        });
 
-        mFragBtnAjoutMorceau = (Frag_EditEx_BtnAjoutMorceau) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_BtnAjouterMorceau);
+        mTbJouerPlaylist.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mEtatTbJouerPlaylist != isChecked) {
+                    mEtatTbJouerPlaylist = isChecked;
+                    if (isChecked) {
+                        gotToEditionExercicePlaylist();
+                    }
+                }
+            }
+        });
 
-        mFragBtnValider = (Frag_EditEx_BtnValider) getSupportFragmentManager().findFragmentById(R.id.Frag_EditEx_BtnValider);
+        mTbNom.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mEtatTbNom = isChecked;
+            }
+        });
 
-        mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_BtnRetour);
+        mTbDuree.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mEtatTbDuree = isChecked;
+            }
+        });
+
+        mTbPopup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mEtatTbPopup = isChecked;
+            }
+        });
+
+        mTbVibreur.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mEtatTbVibreur = isChecked;
+            }
+        });
+
+        mTbSonnerie.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mEtatTbSonnerie = isChecked;
+                if (isChecked && mSonnerie == null) {
+                    listeSonsPourSonnerie();
+                }
+            }
+        });
+
+        mBtnValider.setOnClickListener(this);
+        mBtnRetour.setOnClickListener(this);
+
+
+
+
+
 
 
     }
@@ -165,21 +231,35 @@ public class EditionExerciceActivity extends ActionBarActivity implements Frag_L
                     //todo gérer erreur dans service
                 } else {
                     mChrono = chronoService.getAtomicChronometre();
-                    chronoService.setPersistance(false);
-                    ElementSequence el = mChrono.get().getElementSequenceActif();
-                    mElementSeqTemp = (ElementSequence) el.clone();
-                    mFragDetail.setTxtNom(mElementSeqTemp.getNomExercice());
-                    mFragDetail.setTxtDescription(mElementSeqTemp.getDescriptionExercice());
-                    mFragDetail.setTxtDuree(mElementSeqTemp.getDureeExercice());
-                    mFragDetail.setTbNom(mElementSeqTemp.getSyntheseVocale().getNom());
-                    mFragDetail.setTbDuree(mElementSeqTemp.getSyntheseVocale().getDuree());
-                    mFragDetail.setTbPopup(mElementSeqTemp.getNotificationExercice().getPopup());
-                    mFragDetail.setTbVibreur(mElementSeqTemp.getNotificationExercice().getVibreur());
-                    mFragDetail.setTbSonnerie(mElementSeqTemp.getNotificationExercice().getSonnerie());
-                    mFragDetail.setSonnerie(mElementSeqTemp.getNotificationExercice().getFichierSonnerie());
-                    mFragPlaylist.setJouerPlaylist(mElementSeqTemp.getPlaylistExercice().getJouerPlaylist());
-                    mFragListe.afficheListView(mElementSeqTemp.getPlaylistExercice());
 
+                    chronoService.setPersistance(false);
+                    ElementSequence el = mChrono.get().getElementSeqTemp();
+                    if (el == null) {
+                        el = mChrono.get().getElementSequenceActif();
+                        if (mElementSeqTemp == null)
+                            mElementSeqTemp = (ElementSequence) el.clone();
+                    } else {
+                        mElementSeqTemp = el;
+                        mSauvegarderDonneesTemp = false;
+                    }
+                    mEtxtNom.setText(mElementSeqTemp.getNomExercice());
+                    mEtxtDescription.setText(mElementSeqTemp.getDescriptionExercice());
+                    mEtxtDuree.setText(Fonctions.convertSversHMSSansZeros(mElementSeqTemp.getDureeExercice()));
+                    mDuree = mElementSeqTemp.getDureeExercice();
+                    mEtatTbNom = mElementSeqTemp.getSyntheseVocale().getNom();
+                    mTbNom.setChecked(mEtatTbNom);
+                    mEtatTbDuree = mElementSeqTemp.getSyntheseVocale().getDuree();
+                    mTbDuree.setChecked(mEtatTbDuree);
+                    mEtatTbPopup = mElementSeqTemp.getNotificationExercice().getPopup();
+                    mTbPopup.setChecked(mEtatTbPopup);
+                    mEtatTbVibreur = mElementSeqTemp.getNotificationExercice().getVibreur();
+                    mTbVibreur.setChecked(mEtatTbVibreur);
+                    mEtatTbSonnerie = mElementSeqTemp.getNotificationExercice().getSonnerie();
+                    mTbSonnerie.setChecked(mEtatTbSonnerie);
+                    mSonnerie = mElementSeqTemp.getNotificationExercice().getFichierSonnerie();
+                    mEtxtSonnerie.setText(mSonnerie.getTitre());
+                    mEtatTbJouerPlaylist = mElementSeqTemp.getPlaylistExercice().getJouerPlaylist();
+                    mTbJouerPlaylist.setChecked(mEtatTbJouerPlaylist);
                 }
 
             }
@@ -207,6 +287,17 @@ public class EditionExerciceActivity extends ActionBarActivity implements Frag_L
     @Override
     protected void onPause() {
         super.onPause();
+        if (mSauvegarderDonneesTemp) {
+            mElementSeqTemp.setNomExercice(mEtxtNom.getText().toString());
+            mElementSeqTemp.setDescriptionExercice(mEtxtDescription.getText().toString());
+            mElementSeqTemp.setDureeExercice(mDuree);
+            mElementSeqTemp.setSyntheseVocale(new SyntheseVocale(mEtatTbNom, mEtatTbDuree));
+            mElementSeqTemp.setNotificationExercice(new NotificationExercice(mEtatTbVibreur, mEtatTbPopup, mEtatTbSonnerie, mSonnerie));
+            mElementSeqTemp.getPlaylistExercice().setJouerPlaylist(mEtatTbJouerPlaylist);
+            mChrono.get().setElementSeqTemp(mElementSeqTemp);
+        } else {
+            mChrono.get().setElementSeqTemp(null);
+        }
         if (myReceiver.isRegistered)
             unregisterReceiver(myReceiver);
 
@@ -235,106 +326,10 @@ public class EditionExerciceActivity extends ActionBarActivity implements Frag_L
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Gestion du Callback onclickListener des vues filles
-     *
-     * @param v View sur laquelle l'utilisateur a cliqué
-     */
-    @Override
-    public void onClickListener(View v) {
-        switch (v.getId()) {
-            case R.id.btnRetour:
-                mChrono.get().resetChrono();
-                finish();
-                break;
 
-            case R.id.editionex_frag_valider_btnValider:
-                mElementSeqTemp.setNomExercice(mFragDetail.getTxtNom());
-                mElementSeqTemp.setDescriptionExercice(mFragDetail.getTxtDescription());
-                mElementSeqTemp.setDureeExercice(mFragDetail.getTxtDuree());
-                mElementSeqTemp.setSyntheseVocale(new SyntheseVocale(mFragDetail.getTbNom(), mFragDetail.getTbDuree()));
-                mElementSeqTemp.setNotificationExercice(new NotificationExercice(mFragDetail.getTbVibreur(), mFragDetail.getTbPopup(), mFragDetail.getTbSonnerie(), mFragDetail.getSonnerie()));
-                mElementSeqTemp.getPlaylistExercice().setJouerPlaylist(mFragPlaylist.getJouerPlaylist());
-                mChrono.get().remplacerElementSequenceActif(mElementSeqTemp);
-                finish();
-                break;
-            case R.id.btnSuppr:
-                ViewParent parent = v.getParent();
-                parent = parent.getParent();
-                parent = parent.getParent();
-                LinearLayout p = (LinearLayout) parent;
-                int indexMorceauASuppr = -1;
-                if (p instanceof ItemListeExercice) {
-                    indexMorceauASuppr = ((ItemListeExercice) p).getPosition();
 
-                } else {
-                    throw new ClassCastException("View suppr non reconnue");
-                }
-                if (indexMorceauASuppr >= 0) {
-                    mMorceauASuppr = mElementSeqTemp.getPlaylistExercice().getMorceauAt(indexMorceauASuppr);
-                    afficheDialogSuppr(mMorceauASuppr.getTitre());
-                }
-                break;
-            case R.id.editionex_frag_detail_etxtDuree:
-                afficheDialogDuree();
-                break;
-            case R.id.editionex_frag_detail_etxtSonnerie:
-                //todo affiche liste fichiers audio
-                break;
-            case R.id.editionex_frag_ajoutmorceau_btAjout:
-                //todo affiche liste fichiers audio
-            default:
-                break;
-        }
 
-    }
 
-    @Override
-    public void onTextChange(View v) {
-
-    }
-
-    @Override
-    public boolean onLongClickListener(View v) {
-        //pas de gestion du click long dans cette activity
-        return false;
-    }
-
-    /**
-     * Affiche la popup confirmation de suppression
-     *
-     * @param nom nom du fichier à confirmer
-     */
-    private void afficheDialogSuppr(String nom) {
-        FragmentManager fm = getFragmentManager();
-        if (fm.findFragmentByTag("dialog") == null) {
-            DialogFragment df = Frag_AlertDialog_Suppr.newInstance(getString(R.string.alertDialog_suppr) + " " + nom);
-            df.show(getFragmentManager(), "dialog");
-        }
-    }
-
-    /**
-     * Gestion de l'appuis sur Supprimer de la popup confirmation de suppression
-     *
-     * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
-     */
-    public void doDialogFragSupprClick() {
-        Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
-
-        mElementSeqTemp.getPlaylistExercice().remove(mMorceauASuppr);
-        mFragListe.afficheListView(mElementSeqTemp.getPlaylistExercice());
-
-    }
-
-    /**
-     * Gestion de l'appuis sur Cancel de la popup confirmation de suppression
-     *
-     * @see com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr
-     */
-    @Override
-    public void doDialogFragCancelClick() {
-
-    }
 
     /**
      * Affiche la popup durée
@@ -348,6 +343,20 @@ public class EditionExerciceActivity extends ActionBarActivity implements Frag_L
             df.show(getFragmentManager(), "dialog");
         }
     }
+
+
+    private void listeSonsPourSonnerie() {
+
+        Intent i = new Intent(this, ListeSonsActivity.class);
+        startActivityForResult(i, LISTESONS_SONNERIE);
+    }
+
+    private void gotToEditionExercicePlaylist() {
+        mSauvegarderDonneesTemp = true;
+        Intent i = new Intent(this, EditionExercicePlaylistActivity.class);
+        startActivity(i);
+    }
+
 
     /**
      * Gestion de l'appuis sur valider de la popup durée
@@ -366,35 +375,66 @@ public class EditionExerciceActivity extends ActionBarActivity implements Frag_L
 
         } else {
             mElementSeqTemp.setDureeExercice(valeur);
-            mFragDetail.setTxtDuree(valeur);
+            //mFragDetail.setTxtDuree(valeur);
         }
 
     }
 
 
+    /**
+     * Dispatch incoming result to the correct fragment.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
-    public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        //bouton actif donc pas utilisé
-    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ((requestCode == LISTESONS_MORCEAU) && resultCode == ListeSonsActivity.RESULT_OK) {
+            long id = data.getLongExtra("ID", -1);
+            String titre = data.getStringExtra("TITRE");
+            String artiste = data.getStringExtra("ARTISTE");
+            if (id != -1) {
+                switch (requestCode) {
 
-    @Override
-    public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
-        //bouton actif donc pas utilisé
-        return false;
-    }
+                    case LISTESONS_SONNERIE:
 
+                        mElementSeqTemp.getNotificationExercice().setFichierSonnerie(new Morceau(id, titre, artiste));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
 
     /**
-     * Vérifie si la séquence a été modifiée
+     * Called when a view has been clicked.
      *
-     * @return true si la séquence a été modifiée
+     * @param v The view that was clicked.
      */
-    private boolean isElementSequenceModifiee() {
-        if (mElementSeqTemp.equals(mChrono.get().getElementSequenceActif()))
-            return false;
-        else
-            return true;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.editionex_main_btnRetour:
+                finish();
+                break;
+
+            case R.id.editionex_main_btnValider:
+                mElementSeqTemp.setNomExercice(mEtxtNom.getText().toString());
+                mElementSeqTemp.setDescriptionExercice(mEtxtDescription.getText().toString());
+                mElementSeqTemp.setDureeExercice(mDuree);
+                mElementSeqTemp.setSyntheseVocale(new SyntheseVocale(mEtatTbNom, mEtatTbDuree));
+                mElementSeqTemp.setNotificationExercice(new NotificationExercice(mEtatTbVibreur, mEtatTbPopup, mEtatTbSonnerie, mSonnerie));
+                mElementSeqTemp.getPlaylistExercice().setJouerPlaylist(mEtatTbJouerPlaylist);
+                mChrono.get().remplacerElementSequenceActif(mElementSeqTemp);
+                finish();
+                break;
+            default:
+                break;
+        }
     }
+
 
     /**
      * Classe privée MyReceiver

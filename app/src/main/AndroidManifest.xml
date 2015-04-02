@@ -49,8 +49,24 @@
         </activity>
         <activity
             android:name=".controller.EditionExerciceActivity"
-            android:label="Edition de l'exercice"
+            android:label="Edition de l&apos;exercice"
             android:parentActivityName=".controller.EditionSequenceActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
+        </activity>
+        <activity
+            android:name=".controller.ListeSonsActivity"
+            android:label="Fichiers audios"
+            android:parentActivityName=".controller.EditionExerciceActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
+        </activity>
+        <activity
+            android:name=".controller.EditionExercicePlaylistActivity"
+            android:label="Fichiers audios"
+            android:parentActivityName=".controller.EditionExerciceActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />

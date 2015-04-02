@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <fragment
+        android:id="@+id/editionexplaylist_host_frag_lstMorceaux"
+        android:name="com.stephane.rothen.rchrono.views.Frag_ListeItems"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        tools:layout="@layout/frag_liste" />
+
+    <Button
+        android:id="@+id/editionexplaylist_host_frag_btnAjouterMorceau"
+        style="@style/txtButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bouton"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:singleLine="false"
+        android:text="@string/editionex_frag_ajoutmorceau_btnajout"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
+        android:textSize="25sp" />
+
+    <fragment
+        android:id="@+id/editionexplaylist_host_frag_btnRetour"
+        android:name="com.stephane.rothen.rchrono.views.Frag_BoutonRetour"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        tools:layout="@layout/frag_bouton_retour" />
+</LinearLayout>

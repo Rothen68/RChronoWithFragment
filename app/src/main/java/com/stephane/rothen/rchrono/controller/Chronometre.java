@@ -82,6 +82,12 @@ public class Chronometre {
 
 
     /**
+     * ElementSequence temporaire utilisé pour garder les modifications lors du passage de la fenetre editionexercice vers editionexerciceplaylist
+     */
+    protected ElementSequence mElementSeqTemp;
+
+
+    /**
      * Constructeur
      *
      * @param c Context de l'application, pour l'acces à la base de donnée
@@ -458,6 +464,15 @@ public class Chronometre {
 
     public void creerElementSequenceDansSequenceActive() {
         m_indexExerciceActif = m_chronoModel.creerElementSequence(m_indexSequenceActive);
+    }
+
+
+    public ElementSequence getElementSeqTemp() {
+        return mElementSeqTemp;
+    }
+
+    public void setElementSeqTemp(ElementSequence el) {
+        mElementSeqTemp = el;
     }
 
 }

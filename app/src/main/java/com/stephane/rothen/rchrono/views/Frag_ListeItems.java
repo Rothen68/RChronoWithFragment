@@ -228,6 +228,7 @@ public class Frag_ListeItems extends Fragment {
     }
 
     public void afficheListView(Playlist playlist) {
+        mAdapter.deleteAll();
         int nbreMorceaux = playlist.getNbreMorceaux();
         for (int i = 0; i < nbreMorceaux; i++) {
             Morceau m = playlist.getMorceauAt(i);
