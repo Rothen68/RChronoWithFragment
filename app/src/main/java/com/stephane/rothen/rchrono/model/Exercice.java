@@ -6,6 +6,8 @@ package com.stephane.rothen.rchrono.model;
  * Created by Stéphane on 14/02/2015.
  */
 public class Exercice implements Cloneable {
+
+    protected int mIdExercice;
     /**
      * Nom de l'exercice
      */
@@ -34,12 +36,21 @@ public class Exercice implements Cloneable {
      * @param dureeParDefaut
      * @param playlistParDefaut
      */
-    public Exercice(String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut) {
+    public Exercice(int idExercice, String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut) {
+        this.mIdExercice = idExercice;
         this.mNomExercice = nomExercice;
         this.mDescriptionExercice = descriptionExercice;
         this.mDureeParDefaut = dureeParDefaut;
         this.mPlaylistParDefaut = playlistParDefaut;
 
+    }
+
+    public int getIdExercice() {
+        return mIdExercice;
+    }
+
+    public void setIdExercice(int id) {
+        mIdExercice = id;
     }
 
     /**
@@ -130,7 +141,7 @@ public class Exercice implements Cloneable {
      */
     @Override
     protected Object clone() {
-        return new Exercice(new String(mNomExercice), new String(mDescriptionExercice), mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone());
+        return new Exercice(mIdExercice, new String(mNomExercice), new String(mDescriptionExercice), mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone());
     }
 
     /**
@@ -160,7 +171,7 @@ public class Exercice implements Cloneable {
     public boolean equals(Object o) {
         if (o instanceof Exercice) {
             Exercice e = (Exercice) o;
-            return (mNomExercice.equals(e.mNomExercice) && mDescriptionExercice.equals(e.mDescriptionExercice) && mDureeParDefaut == e.mDureeParDefaut && mPlaylistParDefaut.equals(e.mPlaylistParDefaut));
+            return (mIdExercice == e.mIdExercice && mNomExercice.equals(e.mNomExercice) && mDescriptionExercice.equals(e.mDescriptionExercice) && mDureeParDefaut == e.mDureeParDefaut && mPlaylistParDefaut.equals(e.mPlaylistParDefaut));
         }
         return false;
     }

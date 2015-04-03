@@ -144,7 +144,9 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
         mEtxtSonnerie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mSauvegarderDonneesTemp = true;
                 listeSonsPourSonnerie();
+
             }
         });
 
@@ -193,6 +195,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mEtatTbSonnerie = isChecked;
                 if (isChecked && mSonnerie == null) {
+                    mSauvegarderDonneesTemp = true;
                     listeSonsPourSonnerie();
                 }
             }
@@ -238,7 +241,11 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                             mSauvegarderDonneesTemp = false;
                         }
                     } else {
-                        mElementSeqTemp = new ElementSequence("", "", 1, new Playlist(), 1, new Playlist(), new NotificationExercice(false, false, false, null), new SyntheseVocale(false, false));
+                        ElementSequence el = mChrono.get().getElementSeqTemp();
+                        if (el == null)
+                            mElementSeqTemp = new ElementSequence(-1, "", "", 1, new Playlist(), 1, new Playlist(), new NotificationExercice(false, false, false, null), new SyntheseVocale(false, false));
+                        else
+                            mElementSeqTemp = el;
                     }
                     mEtxtNom.setText(mElementSeqTemp.getNomExercice());
                     mEtxtDescription.setText(mElementSeqTemp.getDescriptionExercice());
@@ -252,11 +259,11 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     mTbPopup.setChecked(mEtatTbPopup);
                     mEtatTbVibreur = mElementSeqTemp.getNotificationExercice().getVibreur();
                     mTbVibreur.setChecked(mEtatTbVibreur);
-                    mEtatTbSonnerie = mElementSeqTemp.getNotificationExercice().getSonnerie();
-                    mTbSonnerie.setChecked(mEtatTbSonnerie);
                     mSonnerie = mElementSeqTemp.getNotificationExercice().getFichierSonnerie();
                     if (mSonnerie != null)
                         mEtxtSonnerie.setText(mSonnerie.getTitre());
+                    mEtatTbSonnerie = mElementSeqTemp.getNotificationExercice().getSonnerie();
+                    mTbSonnerie.setChecked(mEtatTbSonnerie);
                     mEtatTbJouerPlaylist = mElementSeqTemp.getPlaylistExercice().getJouerPlaylist();
                     mTbJouerPlaylist.setChecked(mEtatTbJouerPlaylist);
                 }
@@ -294,6 +301,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
             mElementSeqTemp.setNotificationExercice(new NotificationExercice(mEtatTbVibreur, mEtatTbPopup, mEtatTbSonnerie, mSonnerie));
             mElementSeqTemp.getPlaylistExercice().setJouerPlaylist(mEtatTbJouerPlaylist);
             mChrono.get().setElementSeqTemp(mElementSeqTemp);
+            mSauvegarderDonneesTemp = false;
         } else {
             mChrono.get().setElementSeqTemp(null);
         }
@@ -393,7 +401,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((requestCode == LISTESONS_MORCEAU) && resultCode == ListeSonsActivity.RESULT_OK) {
+        if ((requestCode == LISTESONS_SONNERIE) && resultCode == ListeSonsActivity.RESULT_OK) {
             long id = data.getLongExtra("ID", -1);
             String titre = data.getStringExtra("TITRE");
             String artiste = data.getStringExtra("ARTISTE");
@@ -430,7 +438,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                 mElementSeqTemp.setDureeExercice(mDuree);
                 mElementSeqTemp.setSyntheseVocale(new SyntheseVocale(mEtatTbNom, mEtatTbDuree));
                 mElementSeqTemp.setNotificationExercice(new NotificationExercice(mEtatTbVibreur, mEtatTbPopup, mEtatTbSonnerie, mSonnerie));
-                mElementSeqTemp.getPlaylistExercice().setJouerPlaylist(mEtatTbJouerPlaylist);
+                mElementSeqTemp.getPlaylistParDefaut().setJouerPlaylist(mEtatTbJouerPlaylist);
                 if (mMode == EDITION) {
 
                     mChrono.get().getSeqTemp().getTabElement().set(mChrono.get().getIndexElementSeqTemp(), mElementSeqTemp);
@@ -438,6 +446,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     finish();
                 } else {
                     mChrono.get().getSeqTemp().ajouterElement(mElementSeqTemp);
+                    mChrono.get().setElementSeqTemp(null);
                     finish();
                 }
                 break;

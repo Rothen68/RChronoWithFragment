@@ -134,9 +134,13 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                 } else {
                     mChrono = chronoService.getAtomicChronometre();
                     mChrono.get().resetChrono();
-                    chronoService.updateListView();
-                    chronoService.setPersistance(false);
-                    mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
+                    if (mChrono.get().getListeSequence().size() > 0) {
+                        chronoService.updateListView();
+                        chronoService.setPersistance(false);
+                        mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
+                    } else {
+                        goToAjoutSequenceActivity();
+                    }
                 }
 
             }
@@ -242,7 +246,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                     break;
                 case CustomAdapter.TYPE_SEPARATOR:
                     mChrono.get().setChronoAt(position);
-                    Sequence s = mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive);
+                    Sequence s = mChrono.get().getSeqFromLstSequenceAt(mChrono.get().m_indexSequenceActive);
                     nom = s.getNomSequence();
                     mTypeASuppr = TYPESEQUENCE;
                     break;
@@ -260,7 +264,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                     df.show(getFragmentManager(), "dialog");
                     break;
                 case CustomAdapter.TYPE_SEPARATOR:
-                    df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+                    df = Frag_Dialog_Repetition.newInstance(mChrono.get().getSeqFromLstSequenceAt(mChrono.get().m_indexSequenceActive).getNombreRepetition());
                     df.show(getFragmentManager(), "dialog");
                     break;
                 default:
@@ -338,7 +342,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         //todo gérer modification d'une séquence ou d'un exercice par creation d'un ou plusieurs doublons
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
-            DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getNombreRepetition());
+            DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getSeqFromLstSequenceAt(mChrono.get().m_indexSequenceActive).getNombreRepetition());
             df.show(getFragmentManager(), "dialog");
         }
     }
@@ -373,7 +377,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     private void afficheDialogDuree() {
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
-            DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getListeSequence().get(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice());
+            DialogFragment df = Frag_Dialog_Duree.newInstance(mChrono.get().getSeqFromLstSequenceAt(mChrono.get().m_indexSequenceActive).getTabElement().get(mChrono.get().getIndexExerciceActif()).getDureeExercice());
             df.show(getFragmentManager(), "dialog");
         }
     }

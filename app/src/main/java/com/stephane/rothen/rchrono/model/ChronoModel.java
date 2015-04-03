@@ -2,8 +2,6 @@ package com.stephane.rothen.rchrono.model;
 
 import android.content.Context;
 
-import com.stephane.rothen.rchrono.Fonctions;
-
 import java.util.ArrayList;
 
 /**
@@ -29,7 +27,7 @@ public class ChronoModel {
     /**
      * Instance de l'objet contenant la liste des séquences à effectuer
      */
-    protected ArrayList<Sequence> mListeSequences;
+    protected ArrayList<Integer> mListeSequences;
 
 
     public ChronoModel(Context context) {
@@ -43,35 +41,12 @@ public class ChronoModel {
      * @see DAOBase
      */
     public boolean restore() {
-        mListeSequences = new ArrayList<>();
-        mLibSequences = new ArrayList<>();
-        mLibExercices = new ArrayList<>();
-        ElementSequence e = new ElementSequence("Exercice 1", "", 10, new Playlist(), 10, new Playlist(), new NotificationExercice(0x01, new Morceau(0, "ding", "")), new SyntheseVocale(0));
-        ElementSequence e2 = new ElementSequence("Exercice 2", "", 60, new Playlist(), 5, new Playlist(), new NotificationExercice(0x01, new Morceau(0, "ding", "")), new SyntheseVocale(0));
-        ElementSequence e3 = new ElementSequence("Exercice 3", "", 30, new Playlist(), 5, new Playlist(), new NotificationExercice(0, new Morceau(0, "ding", "")), new SyntheseVocale(0x01));
-        ElementSequence e4 = new ElementSequence("Exercice 4", "", 30, new Playlist(), 2, new Playlist(), new NotificationExercice(0x00, new Morceau(0, "ding", "")), new SyntheseVocale(0));
-        ElementSequence e5 = new ElementSequence("Exercice 5", "", 30, new Playlist(), 2, new Playlist(), new NotificationExercice(0x00, new Morceau(0, "ding", "")), new SyntheseVocale(0));
-        Sequence s = new Sequence("Sequence 1", 2, new SyntheseVocale(0x03));
-        s.ajouterElement(e);
-        s.ajouterElement(e2);
-        Sequence s2 = new Sequence("Sequence 2", 1, new SyntheseVocale(0x03));
-        s2.ajouterElement(e3);
-        Sequence s3 = new Sequence("Sequence 3", 100, new SyntheseVocale(0x03));
-        s3.ajouterElement(e4);
-        s3.ajouterElement(e5);
-        mListeSequences.add(s);
-        mListeSequences.add(s2);
-        mListeSequences.add(s3);
+        mBddHelper.open();
 
-        mLibSequences.add(s);
-        mLibSequences.add(s2);
-        mLibSequences.add(s3);
-
-        mLibExercices.add(e.getExercice());
-        mLibExercices.add(e2.getExercice());
-        mLibExercices.add(e3.getExercice());
-        mLibExercices.add(e4.getExercice());
-        mLibExercices.add(e5.getExercice());
+        mLibExercices = mBddHelper.restoreLibrairieExercice();
+        mLibSequences = mBddHelper.restoreLibrairieSequences(mLibExercices);
+        mListeSequences = mBddHelper.restoreListeSequences();
+        mBddHelper.close();
         return true;
     }
 
@@ -82,6 +57,12 @@ public class ChronoModel {
      * @return état de la sauvegarde : true si réussie
      */
     public boolean save() {
+        mBddHelper.open();
+        mBddHelper.clearTables();
+        mBddHelper.saveLibrairieExercice(mLibExercices);
+        mBddHelper.saveLibrairieSequences(mLibSequences);
+        mBddHelper.saveLstSequence(mListeSequences);
+        mBddHelper.close();
         return true;
     }
 
@@ -91,13 +72,27 @@ public class ChronoModel {
      * @param s Séquence à ajouter
      */
     public void ajouterSequenceDansListe(Sequence s) {
-        if (mLibSequences.indexOf(s) < 0)
+        if (mLibSequences.indexOf(s) < 0) {
+            s.setIdSequence(mLibSequences.size() + 1);
             mLibSequences.add(s);
-        mListeSequences.add(s);
+        }
+
+        mListeSequences.add(s.getIdSequence());
         for (ElementSequence el : s.getTabElement()) {
             remplacerElementSequence(el);
         }
     }
+
+    public Sequence getSeqFromLstSequenceAt(int i) {
+        int indexSequence = mListeSequences.get(i);
+        for (Sequence s : mLibSequences) {
+            if (s.getIdSequence() == indexSequence)
+                return s;
+        }
+        return null;
+    }
+
+
 
     /**
      * Modifie la séquence dans la liste des séquences et dans la librairie
@@ -108,26 +103,24 @@ public class ChronoModel {
      * @param s                  Nouvelle séquence
      */
     public void modifierSequenceDansListe(int indexListeSequence, Sequence s) {
-        Sequence ancienneSeq = mListeSequences.get(indexListeSequence);
+        s.setIdSequence(mListeSequences.get(indexListeSequence));
+        Sequence ancienneSeq = getSeqFromLstSequenceAt(indexListeSequence);
         int nbreOccurences = 0;
-        int[] tabIndexOccurences = new int[mListeSequences.size()];
 
         // recherche des occurences de la séquence à modifier dans la liste des séquences
         for (int i = 0; i < mListeSequences.size(); i++) {
-            if (ancienneSeq.equals(mListeSequences.get(i))) {
-
-                tabIndexOccurences = Fonctions.ajouterDansTabInt(tabIndexOccurences, nbreOccurences, i);
+            if (ancienneSeq.getIdSequence() == s.getIdSequence()) {
                 nbreOccurences++;
             }
         }
         if (nbreOccurences > 1) {
             // si plusieurs occurences dans listeSequence, ajout d'une nouvelle séquence dans la librairie et modification de la séquence modifiée
+            s.setIdSequence(mLibSequences.size() + 1);
             mLibSequences.add(s);
-            mListeSequences.set(indexListeSequence, s);
+            mListeSequences.set(indexListeSequence, s.getIdSequence());
         } else {
-            int i = mLibSequences.indexOf(mListeSequences.get(indexListeSequence));
-            mListeSequences.set(indexListeSequence, s);
-            mLibSequences.set(i, s);
+            int i = mListeSequences.get(indexListeSequence);
+            mLibSequences.set(s.getIdSequence() - 1, s);
         }
         for (ElementSequence el : s.getTabElement()) {
             remplacerElementSequence(el);
@@ -143,7 +136,7 @@ public class ChronoModel {
         return mLibExercices;
     }
 
-    public ArrayList<Sequence> getListeSequences() {
+    public ArrayList<Integer> getListeSequences() {
         return mListeSequences;
     }
 
@@ -156,9 +149,12 @@ public class ChronoModel {
     public void remplacerElementSequence(ElementSequence el) {
         Exercice e = el.getExercice();
         Boolean dejaEnregistrer = false;
-        for (Exercice exercice : mLibExercices) {
-            if (exercice.equals(e)) {
+        Exercice exercice;
+        for (int i = 0; i < mLibExercices.size(); i++) {
+            exercice = mLibExercices.get(i);
+            if (exercice.getIdExercice() == e.getIdExercice()) {
                 dejaEnregistrer = true;
+                mLibExercices.set(i, e);
                 break;
             }
         }
@@ -168,15 +164,4 @@ public class ChronoModel {
 
     }
 
-    /**
-     * Créer un ElementSequence et l'ajoute dans la liste des ElementSequence de la séquence dont l'index dans listeSequence est passé en parametre
-     *
-     * @param indexSequence index de la séquence
-     * @return index de l'ElementSequence ajouté dans la séquence
-     */
-
-    public int creerElementSequence(int indexSequence) {
-        mListeSequences.get(indexSequence).getTabElement().add(new ElementSequence("", "", 0, new Playlist(), 0, new Playlist(), new NotificationExercice(0, null), new SyntheseVocale(0)));
-        return mListeSequences.get(indexSequence).getTabElement().size() - 1;
-    }
 }

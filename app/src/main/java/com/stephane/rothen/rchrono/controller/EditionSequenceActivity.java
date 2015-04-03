@@ -169,7 +169,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                         }
                     } else {
                         if (s == null)
-                            mSeqTemp = new Sequence("", 1, new SyntheseVocale(false, false));
+                            mSeqTemp = new Sequence(-1, "", 1, new SyntheseVocale(false, false));
                         else
                             mSeqTemp = s;
 
@@ -344,7 +344,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
             String nom = mSeqTemp.getTabElement().get(mExASuppr).getNomExercice();
             afficheDialogSuppr(nom);
         } else {
-
+            mIndexElementSequenceTemp = position;
             afficheDialogDuree();
         }
     }
@@ -352,7 +352,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     @Override
     public boolean onItemLongClickListener(AdapterView<?> parent, View view, int position, long id) {
         mIndexElementSequenceTemp = position;
-        mChrono.get().setChronoAt(mChrono.get().getIndexSequenceActive(), position);
+
         goToEditionExerciceActivity();
 
 

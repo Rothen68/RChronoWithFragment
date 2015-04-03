@@ -278,7 +278,7 @@ public class Frag_ListeItems extends Fragment {
         mAdapter.setFocusPosition(0);
         for (int i = 0; i < mChrono.get().getLibExercice().size(); i++) {
             Exercice e = mChrono.get().getLibExercice().get(i);
-            mAdapter.addSectionHeaderItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeParDefaut()) + " s");
+            mAdapter.addSectionHeaderItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeParDefaut()));
 
         }
         mAdapter.notifyDataSetChanged();
@@ -290,7 +290,7 @@ public class Frag_ListeItems extends Fragment {
         mAdapter.setFocusPosition(positionFocus);
         //Parcours la liste des séquences et des exercices pour chaque séquence et les ajoute dans mAdapter
         for (int i = 0; i < mChrono.get().getListeSequence().size(); i++) {
-            Sequence s = mChrono.get().getListeSequence().get(i);
+            Sequence s = mChrono.get().getSeqFromLstSequenceAt(i);
             //si s est la séquence active, afficher le nombre de répétitions restantes
             if (mChrono.get().getIndexSequenceActive() == i) {
                 if (mChrono.get().getNbreRepetition() == 0) {

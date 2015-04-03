@@ -141,7 +141,7 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
                     chronoService.setPersistance(false);
                     ElementSequence el = mChrono.get().getElementSeqTemp();
                     if (el != null) {
-                        mPlaylist = el.getPlaylistExercice();
+                        mPlaylist = el.getPlaylistParDefaut();
                         mLstMorceaux.afficheListView(mPlaylist);
                     } else {
                         finish();

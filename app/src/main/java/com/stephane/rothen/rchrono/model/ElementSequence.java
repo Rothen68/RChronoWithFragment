@@ -46,8 +46,8 @@ public class ElementSequence extends Exercice implements Cloneable {
      * @param notificationExercice
      * @param syntheseVocale
      */
-    public ElementSequence(String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut, int dureeExercice, Playlist playlistExercice, NotificationExercice notificationExercice, SyntheseVocale syntheseVocale) {
-        super(nomExercice, descriptionExercice, dureeParDefaut, playlistParDefaut);
+    public ElementSequence(int idExercice, String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut, int dureeExercice, Playlist playlistExercice, NotificationExercice notificationExercice, SyntheseVocale syntheseVocale) {
+        super(idExercice, nomExercice, descriptionExercice, dureeParDefaut, playlistParDefaut);
         this.mDureeExercice = dureeExercice;
         this.mPlaylistExercice = playlistExercice;
         this.mNotificationExercice = notificationExercice;
@@ -127,7 +127,7 @@ public class ElementSequence extends Exercice implements Cloneable {
      * @return Exercice
      */
     public Exercice getExercice() {
-        Exercice e = new Exercice(getNomExercice(), getDescriptionExercice(), getDureeExercice(), getPlaylistExercice());
+        Exercice e = new Exercice(getIdExercice(), getNomExercice(), getDescriptionExercice(), getDureeExercice(), (Playlist) getPlaylistParDefaut());
         return e;
     }
 
@@ -146,7 +146,7 @@ public class ElementSequence extends Exercice implements Cloneable {
      */
     @Override
     public Object clone() {
-        return new ElementSequence(new String(mNomExercice), new String(mDescriptionExercice), mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone(), mDureeExercice, (Playlist) mPlaylistExercice.clone(), (NotificationExercice) mNotificationExercice.clone(), (SyntheseVocale) mSyntheseVocale.clone());
+        return new ElementSequence(mIdExercice, new String(mNomExercice), new String(mDescriptionExercice), mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone(), mDureeExercice, (Playlist) mPlaylistExercice.clone(), (NotificationExercice) mNotificationExercice.clone(), (SyntheseVocale) mSyntheseVocale.clone());
     }
 
     /**
@@ -178,10 +178,10 @@ public class ElementSequence extends Exercice implements Cloneable {
             ElementSequence e = (ElementSequence) o;
             return (mNomExercice.equals(e.mNomExercice) && mDescriptionExercice.equals(e.mDescriptionExercice) &&
                     mDureeParDefaut == e.mDureeParDefaut && mDureeExercice == e.mDureeExercice &&
-                    mPlaylistParDefaut.equals(e.mPlaylistParDefaut) && mPlaylistExercice.equals(mPlaylistExercice) &&
+                    mPlaylistParDefaut.equals(e.mPlaylistParDefaut) && mPlaylistExercice.equals(e.mPlaylistExercice) &&
                     mNotificationExercice.equals(e.mNotificationExercice) && mSyntheseVocale.equals(e.mSyntheseVocale));
         }
-        return super.equals(o);
+        return false;
     }
 
     /**

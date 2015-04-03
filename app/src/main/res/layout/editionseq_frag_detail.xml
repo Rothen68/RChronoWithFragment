@@ -19,6 +19,7 @@
             android:id="@+id/editionseq_frag_detail_etxtNom"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
             android:textColor="@color/Green" />
     </LinearLayout>
 

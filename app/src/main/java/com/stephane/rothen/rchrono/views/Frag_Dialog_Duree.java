@@ -66,7 +66,7 @@ public class Frag_Dialog_Duree extends DialogFragment
         tpMinute.setMaxValue(59);
         tpMinute.setValue(minutes);
 
-        tpSecondes.setMinValue(1);
+        tpSecondes.setMinValue(0);
         tpSecondes.setMaxValue(59);
         tpSecondes.setValue(secondes);
 

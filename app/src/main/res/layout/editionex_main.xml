@@ -36,6 +36,7 @@
                         android:id="@+id/editionex_main_etxtNom"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textCapSentences"
                         android:textColor="@color/Green" />
                 </LinearLayout>
 
@@ -58,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|right"
                         android:ems="10"
-                        android:inputType="textMultiLine"
+                        android:inputType="textCapSentences|textMultiLine"
                         android:textColor="@color/Green" />
                 </LinearLayout>
 

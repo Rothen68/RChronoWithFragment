@@ -228,6 +228,9 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
             case R.id.btnRetour:
                 finish();
                 break;
+            case R.id.Frag_ListeSeq_BtnAjouterSeq:
+
+                break;
             default:
                 break;
         }

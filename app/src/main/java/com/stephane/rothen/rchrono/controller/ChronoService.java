@@ -306,7 +306,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             int position = 1;
             for (int j = 0; j < seq; j++) {
                 position++;
-                for (ElementSequence e : mChrono.get().getListeSequence().get(j).getTabElement()) {
+                for (ElementSequence e : mChrono.get().getSeqFromLstSequenceAt(j).getTabElement()) {
                     position++;
                 }
             }

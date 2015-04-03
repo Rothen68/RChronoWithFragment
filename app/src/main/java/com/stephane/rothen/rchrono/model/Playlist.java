@@ -160,7 +160,18 @@ public class Playlist implements Cloneable {
     public boolean equals(Object o) {
         if (o instanceof Playlist) {
             Playlist p = (Playlist) o;
-            return (mJouerPlaylist == mJouerPlaylist) && mListeMorceaux.equals(p.mListeMorceaux);
+            boolean egale = true;
+            int nbreMorceaux = ((Playlist) o).getNbreMorceaux();
+            if (nbreMorceaux != mListeMorceaux.size()) {
+                return false;
+            } else {
+                for (int i = 0; i < nbreMorceaux; i++) {
+                    if (!((Playlist) o).getMorceauAt(i).equals(mListeMorceaux.get(i)))
+                        egale = false;
+                }
+            }
+
+            return (mJouerPlaylist == p.mJouerPlaylist) && egale;
         }
         return false;
     }

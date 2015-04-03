@@ -8,6 +8,8 @@ import java.util.ArrayList;
  * Created by Stéphane on 14/02/2015.
  */
 public class Sequence implements Cloneable {
+
+    protected int mIdSequence;
     /**
      * Nom de la séquence
      */
@@ -39,11 +41,20 @@ public class Sequence implements Cloneable {
      * @param nombreRepetition
      * @param syntheseVocale
      */
-    public Sequence(String nomSequence, int nombreRepetition, SyntheseVocale syntheseVocale) {
+    public Sequence(int idSequence, String nomSequence, int nombreRepetition, SyntheseVocale syntheseVocale) {
+        mIdSequence = idSequence;
         this.mNomSequence = nomSequence;
         this.mNombreRepetition = nombreRepetition;
         this.mSyntheseVocale = syntheseVocale;
         mTabElement = new ArrayList<>();
+    }
+
+    public int getIdSequence() {
+        return mIdSequence;
+    }
+
+    public void setIdSequence(int id) {
+        mIdSequence = id;
     }
 
     /**
@@ -130,7 +141,7 @@ public class Sequence implements Cloneable {
     }
 
     public void ajouterExercice(Exercice e) {
-        ElementSequence el = new ElementSequence(e.getNomExercice(), e.getDescriptionExercice(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), new NotificationExercice(false, false, false, null), new SyntheseVocale(false, false));
+        ElementSequence el = new ElementSequence(e.getIdExercice(), e.getNomExercice(), e.getDescriptionExercice(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), new NotificationExercice(false, false, false, null), new SyntheseVocale(false, false));
         mTabElement.add(el);
     }
 
@@ -163,7 +174,7 @@ public class Sequence implements Cloneable {
      */
     @Override
     public Object clone() {
-        Sequence s = new Sequence(new String(mNomSequence), mNombreRepetition, (SyntheseVocale) mSyntheseVocale.clone());
+        Sequence s = new Sequence(mIdSequence, new String(mNomSequence), mNombreRepetition, (SyntheseVocale) mSyntheseVocale.clone());
         s.mTabElement = (ArrayList<ElementSequence>) mTabElement.clone();
         return s;
 
@@ -196,7 +207,18 @@ public class Sequence implements Cloneable {
     public boolean equals(Object o) {
         if (o instanceof Sequence) {
             Sequence s = (Sequence) o;
-            return (mNomSequence.equals(s.mNomSequence) && mNombreRepetition == s.mNombreRepetition && mSyntheseVocale.equals(s.mSyntheseVocale) && mTabElement.equals(s.mTabElement));
+            boolean egale = true;
+            int nbreElement = s.getTabElement().size();
+            if (nbreElement != mTabElement.size()) {
+                return false;
+            } else {
+                for (int i = 0; i < nbreElement; i++) {
+                    if (!s.getTabElement().get(i).equals(mTabElement.get(i)))
+                        egale = false;
+                }
+            }
+
+            return (mIdSequence == s.mIdSequence && mNomSequence.equals(s.mNomSequence) && mNombreRepetition == s.mNombreRepetition && mSyntheseVocale.equals(s.mSyntheseVocale) && egale);
 
         }
         return false;

@@ -121,6 +121,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
             chronoService.setPersistance(false);
             if (chronoService.getChronoStart())
                 chronoService.stopChrono();
+            mChrono.get().save();
             finish();
             return true;
         }
@@ -208,6 +209,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
             chronoService = null;
             mConnexion = null;
         }
+
         super.onDestroy();
     }
 
@@ -231,7 +233,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                         }
                     }
                 } else {
-                    //todo aller directement a la fenetre AjoutSequence
+
                     goToListeSequencesActivity();
                 }
                 break;
@@ -269,7 +271,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                 if (exercice >= 0) {
                     for (int j = 0; j < seq; j++) {
                         position++;
-                        for (ElementSequence e : mChrono.get().getListeSequence().get(j).getTabElement()) {
+                        for (ElementSequence e : mChrono.get().getSeqFromLstSequenceAt(j).getTabElement()) {
                             position++;
                         }
                     }
@@ -337,6 +339,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         Intent i = new Intent(this, ListeSequencesActivity.class);
         startActivity(i);
     }
+
 
     /**
      * Classe privée MyReceiver
