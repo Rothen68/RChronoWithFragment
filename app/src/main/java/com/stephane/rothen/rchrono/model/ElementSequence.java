@@ -8,6 +8,10 @@ package com.stephane.rothen.rchrono.model;
 public class ElementSequence extends Exercice implements Cloneable {
 
     /**
+     * Identifiant de l'élément dans la base de données de l'application
+     */
+    protected long mIdElementSequence;
+    /**
      * Duree de l'exercice
      */
     protected int mDureeExercice;
@@ -17,7 +21,7 @@ public class ElementSequence extends Exercice implements Cloneable {
      *
      * @see Playlist
      */
-    protected Playlist mPlaylistExercice;
+//    protected Playlist mPlaylistExercice;
 
     /**
      * Nofitications de l'exercice
@@ -37,21 +41,41 @@ public class ElementSequence extends Exercice implements Cloneable {
     /**
      * Constructeur
      *
-     * @param nomExercice
-     * @param descriptionExercice
-     * @param dureeParDefaut
-     * @param playlistParDefaut
-     * @param dureeExercice
-     * @param playlistExercice
-     * @param notificationExercice
-     * @param syntheseVocale
+     * @param idExercice    identifiant de l'exercice
+     * @param idElementSequence identifiant de l'élément
+     * @param nomExercice   nom de l'exercice
+     * @param descriptionExercice   description de l'exercice
+     * @param dureeParDefaut    durée par défaut
+     * @param playlistParDefaut playlist par défaut
+     * @param dureeExercice     durée de l'exercice
+     * @param playlistExercice  playlist de l'exercice
+     * @param notificationExercice  notification de l'exercice
+     * @param syntheseVocale    synthèse vocale de l'exercice
      */
-    public ElementSequence(int idExercice, String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut, int dureeExercice, Playlist playlistExercice, NotificationExercice notificationExercice, SyntheseVocale syntheseVocale) {
+    public ElementSequence(long idExercice, long idElementSequence, String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut, int dureeExercice, Playlist playlistExercice, NotificationExercice notificationExercice, SyntheseVocale syntheseVocale) {
         super(idExercice, nomExercice, descriptionExercice, dureeParDefaut, playlistParDefaut);
+        this.mIdElementSequence = idElementSequence;
         this.mDureeExercice = dureeExercice;
-        this.mPlaylistExercice = playlistExercice;
+//        this.mPlaylistExercice = playlistExercice;
         this.mNotificationExercice = notificationExercice;
         this.mSyntheseVocale = syntheseVocale;
+    }
+
+    /**
+     * Retourne l'id de l'élément
+     * @return identifiant de l'élément
+     */
+    public long getIdElementSequence() {
+        return mIdElementSequence;
+    }
+
+    /**
+     * Définit l'id de l'élément
+     *
+     * @param id identifiant de l'élément
+     */
+    public void setIdElementSequence(long id) {
+        mIdElementSequence = id;
     }
 
     /**
@@ -75,14 +99,14 @@ public class ElementSequence extends Exercice implements Cloneable {
     }
 
 
-    public Playlist getPlaylistExercice() {
-        return mPlaylistExercice;
-    }
-
-
-    public void setPlaylistExercice(Playlist pl) {
-        mPlaylistExercice = pl;
-    }
+//    public Playlist getPlaylistExercice() {
+//        return mPlaylistExercice;
+//    }
+//
+//
+//    public void setPlaylistExercice(Playlist pl) {
+//        mPlaylistExercice = pl;
+//    }
 
     /**
      * Retourne la synthese vocale de l'exercice
@@ -122,12 +146,12 @@ public class ElementSequence extends Exercice implements Cloneable {
     }
 
     /**
-     * Retourne l'exercice de l'exerciceSequence
+     * Retourne l'exercice de l' ElementSequence
      *
      * @return Exercice
      */
     public Exercice getExercice() {
-        Exercice e = new Exercice(getIdExercice(), getNomExercice(), getDescriptionExercice(), getDureeExercice(), (Playlist) getPlaylistParDefaut());
+        Exercice e = new Exercice(getIdExercice(), getNomExercice(), getDescriptionExercice(), getDureeExercice(), getPlaylistParDefaut());
         return e;
     }
 
@@ -146,7 +170,7 @@ public class ElementSequence extends Exercice implements Cloneable {
      */
     @Override
     public Object clone() {
-        return new ElementSequence(mIdExercice, new String(mNomExercice), new String(mDescriptionExercice), mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone(), mDureeExercice, (Playlist) mPlaylistExercice.clone(), (NotificationExercice) mNotificationExercice.clone(), (SyntheseVocale) mSyntheseVocale.clone());
+        return new ElementSequence(mIdExercice, mIdElementSequence, new String(mNomExercice), new String(mDescriptionExercice), mDureeParDefaut, (Playlist) mPlaylistParDefaut.clone(), mDureeExercice, /*(Playlist) mPlaylistExercice.clone()*/ null, (NotificationExercice) mNotificationExercice.clone(), (SyntheseVocale) mSyntheseVocale.clone());
     }
 
     /**
@@ -178,7 +202,7 @@ public class ElementSequence extends Exercice implements Cloneable {
             ElementSequence e = (ElementSequence) o;
             return (mNomExercice.equals(e.mNomExercice) && mDescriptionExercice.equals(e.mDescriptionExercice) &&
                     mDureeParDefaut == e.mDureeParDefaut && mDureeExercice == e.mDureeExercice &&
-                    mPlaylistParDefaut.equals(e.mPlaylistParDefaut) && mPlaylistExercice.equals(e.mPlaylistExercice) &&
+                    mPlaylistParDefaut.equals(e.mPlaylistParDefaut) &&/* mPlaylistExercice.equals(e.mPlaylistExercice) &&*/
                     mNotificationExercice.equals(e.mNotificationExercice) && mSyntheseVocale.equals(e.mSyntheseVocale));
         }
         return false;
@@ -199,7 +223,7 @@ public class ElementSequence extends Exercice implements Cloneable {
      */
     @Override
     public String toString() {
-        return mNomExercice + " " + mDescriptionExercice + " " + mDureeExercice + " " + mPlaylistExercice.toString();
+        return mNomExercice + " " + mDescriptionExercice + " " + mDureeExercice + " ";
     }
 
 

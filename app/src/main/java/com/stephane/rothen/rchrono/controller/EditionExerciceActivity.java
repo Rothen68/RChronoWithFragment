@@ -85,7 +85,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     private ToggleButton mTbSonnerie;
     private boolean mEtatTbSonnerie = false;
     private EditText mEtxtSonnerie;
-    private Morceau mSonnerie = null;
+    private long mSonnerie = -1;
     private ToggleButton mTbJouerPlaylist;
     private boolean mEtatTbJouerPlaylist = false;
     private Button mBtnValider;
@@ -194,7 +194,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mEtatTbSonnerie = isChecked;
-                if (isChecked && mSonnerie == null) {
+                if (isChecked && mSonnerie == -1) {
                     mSauvegarderDonneesTemp = true;
                     listeSonsPourSonnerie();
                 }
@@ -203,11 +203,6 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
 
         mBtnValider.setOnClickListener(this);
         mBtnRetour.setOnClickListener(this);
-
-
-
-
-
 
 
     }
@@ -243,7 +238,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     } else {
                         ElementSequence el = mChrono.get().getElementSeqTemp();
                         if (el == null)
-                            mElementSeqTemp = new ElementSequence(-1, "", "", 1, new Playlist(), 1, new Playlist(), new NotificationExercice(false, false, false, null), new SyntheseVocale(false, false));
+                            mElementSeqTemp = new ElementSequence(-1, -1, "", "", 1, new Playlist(), 1, new Playlist(), new NotificationExercice(false, false, false, -1), new SyntheseVocale(false, false));
                         else
                             mElementSeqTemp = el;
                     }
@@ -260,11 +255,11 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     mEtatTbVibreur = mElementSeqTemp.getNotificationExercice().getVibreur();
                     mTbVibreur.setChecked(mEtatTbVibreur);
                     mSonnerie = mElementSeqTemp.getNotificationExercice().getFichierSonnerie();
-                    if (mSonnerie != null)
-                        mEtxtSonnerie.setText(mSonnerie.getTitre());
+                    if (mSonnerie != -1)
+                        mEtxtSonnerie.setText(mChrono.get().getMorceauFromLibMorceau(mSonnerie).getTitre());
                     mEtatTbSonnerie = mElementSeqTemp.getNotificationExercice().getSonnerie();
                     mTbSonnerie.setChecked(mEtatTbSonnerie);
-                    mEtatTbJouerPlaylist = mElementSeqTemp.getPlaylistExercice().getJouerPlaylist();
+                    mEtatTbJouerPlaylist = mElementSeqTemp.getPlaylistParDefaut().getJouerPlaylist();
                     mTbJouerPlaylist.setChecked(mEtatTbJouerPlaylist);
                 }
 
@@ -299,7 +294,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
             mElementSeqTemp.setDureeExercice(mDuree);
             mElementSeqTemp.setSyntheseVocale(new SyntheseVocale(mEtatTbNom, mEtatTbDuree));
             mElementSeqTemp.setNotificationExercice(new NotificationExercice(mEtatTbVibreur, mEtatTbPopup, mEtatTbSonnerie, mSonnerie));
-            mElementSeqTemp.getPlaylistExercice().setJouerPlaylist(mEtatTbJouerPlaylist);
+            mElementSeqTemp.getPlaylistParDefaut().setJouerPlaylist(mEtatTbJouerPlaylist);
             mChrono.get().setElementSeqTemp(mElementSeqTemp);
             mSauvegarderDonneesTemp = false;
         } else {
@@ -332,10 +327,6 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
 
 
     /**
@@ -410,7 +401,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
 
                     case LISTESONS_SONNERIE:
 
-                        mElementSeqTemp.getNotificationExercice().setFichierSonnerie(new Morceau(id, titre, artiste));
+                        mElementSeqTemp.getNotificationExercice().setFichierSonnerie(mChrono.get().ajouterMorceau(id, titre, artiste));
                         break;
                     default:
                         break;

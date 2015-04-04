@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
-import com.stephane.rothen.rchrono.model.Morceau;
 import com.stephane.rothen.rchrono.model.Playlist;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
 import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
@@ -81,7 +80,7 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
         mLstMorceaux = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.editionexplaylist_host_frag_lstMorceaux);
         mBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.editionexplaylist_host_frag_btnRetour);
         mBtnAjouterMorceau = (Button) findViewById(R.id.editionexplaylist_host_frag_btnAjouterMorceau);
-        mLstMorceaux.setAfficheBtnSuppr(false);
+        mLstMorceaux.setAfficheBtnSupprExercice(false);
         mPlaylist = null;
         mBtnAjouterMorceau.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,12 +108,12 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_editionExercicePlaylist_supprimer) {
-            if (mLstMorceaux.getAfficheBtnSuppr()) {
-                mLstMorceaux.setAfficheBtnSuppr(false);
-                mLstMorceaux.afficheListView(mPlaylist);
+            if (mLstMorceaux.getAfficheBtnSupprExercice()) {
+                mLstMorceaux.setAfficheBtnSupprExercice(false);
+                mLstMorceaux.afficheListView(mPlaylist, mChrono);
             } else {
-                mLstMorceaux.setAfficheBtnSuppr(true);
-                mLstMorceaux.afficheListView(mPlaylist);
+                mLstMorceaux.setAfficheBtnSupprExercice(true);
+                mLstMorceaux.afficheListView(mPlaylist, mChrono);
             }
             return true;
         }
@@ -142,7 +141,7 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
                     ElementSequence el = mChrono.get().getElementSeqTemp();
                     if (el != null) {
                         mPlaylist = el.getPlaylistParDefaut();
-                        mLstMorceaux.afficheListView(mPlaylist);
+                        mLstMorceaux.afficheListView(mPlaylist, mChrono);
                     } else {
                         finish();
                     }
@@ -195,13 +194,13 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
     @Override
     public void onClickListener(View v) {
         switch (v.getId()) {
-            case R.id.editionexplaylist_host_frag_btnRetour:
+            case R.id.btnRetour:
+                mChrono.get().getElementSeqTemp().setPlaylistParDefaut(mPlaylist);
                 finish();
                 break;
             default:
                 break;
         }
-        finish();
     }
 
     /**
@@ -226,9 +225,9 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
      */
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        if (mLstMorceaux.getAfficheBtnSuppr()) {
+        if (mLstMorceaux.getAfficheBtnSupprExercice()) {
             mIndexMorceauASuppr = position;
-            String nom = mPlaylist.getMorceauAt(mIndexMorceauASuppr).getTitre();
+            String nom = mChrono.get().getMorceauFromLibMorceau(mPlaylist.getMorceauAt(mIndexMorceauASuppr)).getTitre();
             afficheDialogSuppr(nom);
         }
 
@@ -268,9 +267,9 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
      */
     public void doDialogFragSupprClick() {
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
-
+        mChrono.get().enleverUtilisation(mPlaylist.getMorceauAt(mIndexMorceauASuppr));
         mPlaylist.supprimerMorceau(mIndexMorceauASuppr);
-        mLstMorceaux.afficheListView(mPlaylist);
+        mLstMorceaux.afficheListView(mPlaylist, mChrono);
 
     }
 
@@ -301,7 +300,7 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
                 switch (requestCode) {
 
                     case LISTESONS_MORCEAU:
-                        mPlaylist.ajouterMorceau(new Morceau(id, titre, artiste));
+                        mPlaylist.ajouterMorceau(mChrono.get().ajouterMorceau(id, titre, artiste));
 
                         break;
                     default:

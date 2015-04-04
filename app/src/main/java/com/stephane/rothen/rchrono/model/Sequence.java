@@ -3,13 +3,16 @@ package com.stephane.rothen.rchrono.model;
 import java.util.ArrayList;
 
 /**
- * Classe métier permettant de stocker les donnees d'une séquence
+ * Classe métier permettant de stocker les données d'une séquence
  * <p/>
  * Created by Stéphane on 14/02/2015.
  */
 public class Sequence implements Cloneable {
 
-    protected int mIdSequence;
+    /**
+     * Identifiant de la séquence dans la base de données
+     */
+    protected long mIdSequence;
     /**
      * Nom de la séquence
      */
@@ -37,11 +40,12 @@ public class Sequence implements Cloneable {
     /**
      * Constructeur
      *
-     * @param nomSequence
-     * @param nombreRepetition
-     * @param syntheseVocale
+     * @param idSequence       identifiant de la séquence dans la base de données
+     * @param nomSequence      nom de la séquence
+     * @param nombreRepetition nombre de répétitions
+     * @param syntheseVocale   synthèse vocale de la séquence
      */
-    public Sequence(int idSequence, String nomSequence, int nombreRepetition, SyntheseVocale syntheseVocale) {
+    public Sequence(long idSequence, String nomSequence, int nombreRepetition, SyntheseVocale syntheseVocale) {
         mIdSequence = idSequence;
         this.mNomSequence = nomSequence;
         this.mNombreRepetition = nombreRepetition;
@@ -49,11 +53,21 @@ public class Sequence implements Cloneable {
         mTabElement = new ArrayList<>();
     }
 
-    public int getIdSequence() {
+    /**
+     * Retourne l'id de la séquence dans la base de données
+     *
+     * @return id de la séquence dans la base de données
+     */
+    public long getIdSequence() {
         return mIdSequence;
     }
 
-    public void setIdSequence(int id) {
+    /**
+     * Définit l'id de la séquence dans la base de données
+     *
+     * @param id id de la séquence dans la base de données
+     */
+    public void setIdSequence(long id) {
         mIdSequence = id;
     }
 
@@ -91,7 +105,7 @@ public class Sequence implements Cloneable {
      * @param nombreRepetition nombre de répétitions
      */
 
-    public void setmNombreRepetition(int nombreRepetition) {
+    public void setNombreRepetition(int nombreRepetition) {
         this.mNombreRepetition = nombreRepetition;
     }
 
@@ -112,7 +126,7 @@ public class Sequence implements Cloneable {
      * @param syntheseVocale SyntheseVocale
      * @see com.stephane.rothen.rchrono.model.SyntheseVocale
      */
-    public void setmSyntheseVocale(SyntheseVocale syntheseVocale) {
+    public void setSyntheseVocale(SyntheseVocale syntheseVocale) {
         this.mSyntheseVocale = syntheseVocale;
     }
 
@@ -125,9 +139,6 @@ public class Sequence implements Cloneable {
         return mTabElement;
     }
 
-    public void setTabElement(ArrayList<ElementSequence> tabElement) {
-        this.mTabElement = tabElement;
-    }
 
     /**
      * Ajoute un ElementSequence à la séquence
@@ -140,8 +151,14 @@ public class Sequence implements Cloneable {
         mTabElement.add(e);
     }
 
+
+    /**
+     * Créé un nouvel ElementSequence à partir de l'Exercice passé en paramètre et l'ajoute à la séquence
+     *
+     * @param e Exercice source
+     */
     public void ajouterExercice(Exercice e) {
-        ElementSequence el = new ElementSequence(e.getIdExercice(), e.getNomExercice(), e.getDescriptionExercice(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), new NotificationExercice(false, false, false, null), new SyntheseVocale(false, false));
+        ElementSequence el = new ElementSequence(e.getIdExercice(), -1, e.getNomExercice(), e.getDescriptionExercice(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), e.getDureeParDefaut(), e.getPlaylistParDefaut(), new NotificationExercice(false, false, false, -1), new SyntheseVocale(false, false));
         mTabElement.add(el);
     }
 
@@ -239,8 +256,7 @@ public class Sequence implements Cloneable {
      */
     @Override
     public String toString() {
-        String retour = mNomSequence + " " + mNombreRepetition + " " + mTabElement.toString();
-        return retour;
+        return mNomSequence + " " + mNombreRepetition + " " + mTabElement.toString();
     }
 
 

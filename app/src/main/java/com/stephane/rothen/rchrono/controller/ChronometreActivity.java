@@ -95,7 +95,6 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         mFragAffichage = (Frag_Chrono_Affichage) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Affichage);
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Liste);
         mFragListe.setAfficheCurseur(true);
-        mFragListe.setAfficheBtnSuppr(false);
         mFragBoutons = (Frag_Chrono_Boutons) getSupportFragmentManager().findFragmentById(R.id.Frag_Chrono_Boutons);
 
 
@@ -121,7 +120,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
             chronoService.setPersistance(false);
             if (chronoService.getChronoStart())
                 chronoService.stopChrono();
-            mChrono.get().save();
+
             finish();
             return true;
         }
@@ -203,7 +202,6 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
 
     @Override
     protected void onDestroy() {
-
         if (!chronoService.getPersistance() && !chronoService.getChronoStart()) {
             stopService(new Intent(this, ChronoService.class));
             chronoService = null;
@@ -337,6 +335,14 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
         chronoService.stopChrono();
 
         Intent i = new Intent(this, ListeSequencesActivity.class);
+        startActivity(i);
+    }
+
+    private void goToListeSequencesActivityForCreation() {
+        chronoService.stopChrono();
+
+        Intent i = new Intent(this, ListeSequencesActivity.class);
+        i.putExtra("MODE", ListeSequencesActivity.CREATION);
         startActivity(i);
     }
 

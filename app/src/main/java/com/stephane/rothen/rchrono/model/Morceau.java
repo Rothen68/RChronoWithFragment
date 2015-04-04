@@ -5,10 +5,15 @@ package com.stephane.rothen.rchrono.model;
  * Created by stéphane on 18/02/2015.
  */
 public class Morceau implements Cloneable {
+
+    /**
+     * Identifiant du morceau dans la base de donnée du programme
+     */
+    protected long mIdMorceau;
     /**
      * Stocke l'identifiant de la musique de la base de donnée globale du téléphone
      */
-    protected long mIdMorceau;
+    protected long mIdMorceauDansTelephone;
     /**
      * Stocke le titre de la musique
      */
@@ -19,36 +24,79 @@ public class Morceau implements Cloneable {
     protected String mArtiste;
 
     /**
+     * Stocke le nombre d'utilisations du morceau dans l'application
+     */
+    protected int mNbreUtilisation;
+
+    /**
      * Constructeur
      *
-     * @param id
-     * @param titre
-     * @param artiste
+     * @param idMorceau     id du morceau dans la base de données de l'application
+     * @param idMorceauDansTelephone    id du morceau dans la base de données du téléphone
+     * @param titre     titre du morceau
+     * @param artiste   artiste du morceau
      */
-    public Morceau(long id, String titre, String artiste) {
-        mIdMorceau = id;
+    public Morceau(long idMorceau, long idMorceauDansTelephone, String titre, String artiste) {
+        mIdMorceau = idMorceau;
+        mIdMorceauDansTelephone = idMorceauDansTelephone;
         mTitre = titre;
         mArtiste = artiste;
+        mNbreUtilisation = 0;
     }
 
     /**
-     * Retourne l'Id du morceau
-     *
-     * @return Id du morceau
-     * @see com.stephane.rothen.rchrono.model.Morceau#mIdMorceau
+     * Retourne l'id du morceau dans la base de données de l'application
+     * @return id du morceau
      */
     public long getIdMorceau() {
         return mIdMorceau;
     }
 
     /**
-     * Définit l'Id du morceau
+     * Définit l'id du morceau dans la base de données de l'application
      *
-     * @param id Id du morceau
-     * @see com.stephane.rothen.rchrono.model.Morceau#mIdMorceau
+     * @param id id du morceau
      */
     public void setIdMorceau(long id) {
         mIdMorceau = id;
+    }
+
+
+    /**
+     * Ajoute une utilisation au morceau
+     */
+    public void ajouteUtilisation() {
+        mNbreUtilisation++;
+    }
+
+    /**
+     * Enlève une utilisation au morceau et renvois le nombre d'utilisations restantes
+     *
+     * @return nombre d'utilisations restantes
+     */
+    public int enleveUtilisation() {
+        mNbreUtilisation--;
+        return mNbreUtilisation;
+    }
+
+    /**
+     * Retourne l'Id du morceau
+     *
+     * @return Id du morceau
+     * @see com.stephane.rothen.rchrono.model.Morceau#mIdMorceauDansTelephone
+     */
+    public long getIdMorceauDansTelephone() {
+        return mIdMorceauDansTelephone;
+    }
+
+    /**
+     * Définit l'Id du morceau
+     *
+     * @param id Id du morceau
+     * @see com.stephane.rothen.rchrono.model.Morceau#mIdMorceauDansTelephone
+     */
+    public void setIdMorceauDansTelephone(long id) {
+        mIdMorceauDansTelephone = id;
     }
 
     /**
@@ -106,7 +154,7 @@ public class Morceau implements Cloneable {
      */
     @Override
     public Object clone() {
-        return new Morceau(mIdMorceau, mTitre, mArtiste);
+        return new Morceau(mIdMorceau, mIdMorceauDansTelephone, mTitre, mArtiste);
     }
 
     /**
@@ -136,7 +184,7 @@ public class Morceau implements Cloneable {
     public boolean equals(Object o) {
         if (o instanceof Morceau) {
             Morceau m = (Morceau) o;
-            return (mArtiste.equals(m.mArtiste) && mIdMorceau == m.mIdMorceau && mTitre.equals(m.mTitre));
+            return (mIdMorceau == m.mIdMorceau && mArtiste.equals(m.mArtiste) && mIdMorceauDansTelephone == m.mIdMorceauDansTelephone && mTitre.equals(m.mTitre));
         }
         return false;
     }
@@ -156,8 +204,6 @@ public class Morceau implements Cloneable {
      */
     @Override
     public String toString() {
-        String retour = new String();
-        retour = mTitre + " " + mArtiste + " " + mIdMorceau + ";";
-        return retour;
+        return mTitre + " " + mArtiste + " " + mIdMorceauDansTelephone + ";";
     }
 }

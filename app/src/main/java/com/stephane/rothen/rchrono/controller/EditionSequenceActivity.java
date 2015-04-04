@@ -120,7 +120,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
         if (i.getExtras() != null) {
-            if (i.getExtras().getInt("MODE") == AjoutSequenceActivity.ACTIVITY_CREER_SEQ)
+            if (i.getExtras().getInt("MODE") == ListeSequencesActivity.CREATION)
                 mMode = CREATION;
             else
                 mMode = EDITION;
@@ -130,7 +130,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         setContentView(R.layout.editionseq_host_frag);
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(false);
+        mFragListe.setAfficheBtnSupprExercice(false);
         mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_EXERCICESEQACTIVE);
 
         mFragDetail = (Frag_EditSeq_Detail) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_Detail);
@@ -157,6 +157,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                     //todo gérer erreur dans service
                 } else {
                     mChrono = chronoService.getAtomicChronometre();
+
                     chronoService.setPersistance(false);
                     Sequence s = mChrono.get().getSeqTemp();
 
@@ -169,10 +170,13 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                         }
                     } else {
                         if (s == null)
+
+
                             mSeqTemp = new Sequence(-1, "", 1, new SyntheseVocale(false, false));
+
                         else
                             mSeqTemp = s;
-
+                        mChrono.get().setSeqTemp(mSeqTemp);
                     }
                     mFragDetail.setTxtNom(mSeqTemp.getNomSequence());
                     mFragDetail.setTxtRepetition(mSeqTemp.getNombreRepetition());
@@ -209,7 +213,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         super.onPause();
         if (mSauvegarderDonneesTemp) {
             mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-            mSeqTemp.setmNombreRepetition(mFragDetail.getTxtRepetition());
+            mSeqTemp.setNombreRepetition(mFragDetail.getTxtRepetition());
             mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
             mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
             mChrono.get().setSeqTemp(mSeqTemp);
@@ -237,11 +241,11 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_editionSequence_supprimer) {
-            if (mFragListe.getAfficheBtnSuppr()) {
-                mFragListe.setAfficheBtnSuppr(false);
+            if (mFragListe.getAfficheBtnSupprExercice()) {
+                mFragListe.setAfficheBtnSupprExercice(false);
                 mFragListe.afficheListView(mSeqTemp);
             } else {
-                mFragListe.setAfficheBtnSuppr(true);
+                mFragListe.setAfficheBtnSupprExercice(true);
                 mFragListe.afficheListView(mSeqTemp);
             }
             return true;
@@ -320,8 +324,10 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
             if (resultCode == AjoutExerciceActivity.RESULT_AJOUT) {
                 //todo gérer l'erreur
                 mIndexElementSequenceTemp = mSeqTemp.getTabElement().size() - 1;
-
                 goToEditionExerciceActivity();
+            }
+            if (resultCode == AjoutExerciceActivity.RESULT_CREER) {
+                goToEditionExerciceActivityForCreation();
             }
         }
     }
@@ -339,7 +345,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
 
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        if (mFragListe.getAfficheBtnSuppr()) {
+        if (mFragListe.getAfficheBtnSupprExercice()) {
             mExASuppr = position;
             String nom = mSeqTemp.getTabElement().get(mExASuppr).getNomExercice();
             afficheDialogSuppr(nom);
@@ -446,8 +452,6 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     }
 
 
-
-
     /**
      * Fonction appelée lors du retour de la popup enregistrer sequence avec vérification de la durée de la liste de séquence
      *
@@ -459,7 +463,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         switch (v.getId()) {
             case R.id.dialFragEnrSeqEcraser:
                 mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-                mSeqTemp.setmNombreRepetition(mFragDetail.getTxtRepetition());
+                mSeqTemp.setNombreRepetition(mFragDetail.getTxtRepetition());
                 mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
                 mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
                 //vérifie que le temps total ne dépasse pas 100h
@@ -470,14 +474,14 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                 } else {
                     //si mode creation la séquence n'existe pas encore dans la base
                     if (mMode == EDITION)
-                    mChrono.get().remplacerSequenceActive(mSeqTemp);
+                        mChrono.get().remplacerSequenceActive(mSeqTemp);
                     else
                         mChrono.get().ajouterSequenceDansListe(mSeqTemp);
                 }
                 break;
             case R.id.dialFragEnrSeqNouvelle:
                 mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-                mSeqTemp.setmNombreRepetition(mFragDetail.getTxtRepetition());
+                mSeqTemp.setNombreRepetition(mFragDetail.getTxtRepetition());
                 mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
                 mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
                 //vérifie que le temps total ne dépasse pas 100h

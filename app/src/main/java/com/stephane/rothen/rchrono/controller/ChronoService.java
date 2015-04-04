@@ -3,8 +3,12 @@ package com.stephane.rothen.rchrono.controller;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -16,6 +20,7 @@ import android.util.Log;
 import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
+import com.stephane.rothen.rchrono.model.Morceau;
 import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
@@ -26,7 +31,8 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Classe gérant le Service en tache de fond
  */
-public class ChronoService extends Service implements TextToSpeech.OnInitListener {
+public class ChronoService extends Service implements TextToSpeech.OnInitListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnErrorListener {
 
     public static final String SER_ACTION = "action";
 
@@ -101,6 +107,21 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private int mIndexSequenceSyntheseVocaleEnnoncee = -1;
 
+    /**
+     * Spécifie si il faut énoncer le texte de la synthese vocale apres la sonnerie de notification
+     */
+    private boolean mEnoncerSyntheseVocale = false;
+
+    /**
+     * MediaPlayer pour les notifications ( sonnerie )
+     */
+    private MediaPlayer mMPNotif;
+
+    /**
+     * Etat de préparation de mMPNotif ( true : pret à jouer la sonnerie )
+     */
+    private boolean mEtatMPNotif = false;
+
 
     /**
      * Implémente l'interface TextToSpeech.OnInitListener, active lors de la fin de l'initialisation du TextToSpeech
@@ -145,6 +166,13 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
 
         mTextToSpeach = new TextToSpeech(this, this);
+        mMPNotif = new MediaPlayer();
+        mMPNotif.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+        mMPNotif.setOnPreparedListener(this);
+        mMPNotif.setOnCompletionListener(this);
+        mMPNotif.setOnErrorListener(this);
+
+
     }
 
     @Override
@@ -174,6 +202,10 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             mTextToSpeach.stop();
             mTextToSpeach.shutdown();
         }
+        if (mMPNotif != null) {
+            mMPNotif.release();
+            mMPNotif = null;
+        }
     }
 
     /**
@@ -184,6 +216,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             chronoStart = true;
 
             updateNotificationSynthVocaleActives();
+            mEnoncerSyntheseVocale = true;
             gestionSyntheseVocale();
 
 
@@ -192,6 +225,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             mNotificationBuilder.setSmallIcon(R.drawable.fleche);
             mNotificationBuilder.setContentText("Chronomètre lancé");
             mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
+
+
+            prepareMPNotif();
 
         }
     }
@@ -218,6 +254,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentText("Chronomètre arrêté");
         mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
+
     }
 
     /**
@@ -237,6 +274,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentText("Chronomètre arrêté");
         mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
+
 
     }
 
@@ -336,13 +374,15 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                     updateListView();
                     gestionNotification();
                     updateNotificationSynthVocaleActives();
-                    gestionSyntheseVocale();
+                    mEnoncerSyntheseVocale = true;
+
                 }
                 updateChrono();
             }
 
             @Override
             public void onFinish() {
+                gestionNotification();
                 resetChrono();
 
             }
@@ -354,7 +394,8 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * Gestion de la synthèse vocale pour la séquence et l'exercice en cours
      */
     private void gestionSyntheseVocale() {
-        if (mTextToSpeachReady) {
+
+        if (mTextToSpeachReady && mEnoncerSyntheseVocale) {
             if (mIndexSequenceSyntheseVocaleEnnoncee != mChrono.get().getIndexSequenceActive()) {
                 if (mSyntheseVocaleSequence.getNom()) {
                     mTextToSpeach.speak(mChrono.get().getSequenceActive().getNomSequence(), TextToSpeech.QUEUE_ADD, null);
@@ -376,7 +417,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                 String texte = Fonctions.convertSversVocale(duree);
                 mTextToSpeach.speak(texte, TextToSpeech.QUEUE_ADD, null);
             }
-
+            mEnoncerSyntheseVocale = false;
         }
     }
 
@@ -387,6 +428,13 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         if (mNotificationExercice.getVibreur()) {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
+        }
+        if (mNotificationExercice.getSonnerie()) {
+            if (mEtatMPNotif) {
+                mMPNotif.start();
+            }
+        } else {
+            gestionSyntheseVocale();
         }
 
     }
@@ -402,7 +450,72 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mNotificationExercice = mChrono.get().getElementSequenceActif().getNotificationExercice();
         mSyntheseVocaleExercice = mChrono.get().getElementSequenceActif().getSyntheseVocale();
         mSyntheseVocaleSequence = mChrono.get().getSequenceActive().getSyntheseVocale();
+
     }
+
+    /**
+     * Prepare le MediaPlayer jouant la sonnerie de l'exercice
+     */
+    private void prepareMPNotif() {
+        Morceau m = mChrono.get().getMorceauFromLibMorceau(mNotificationExercice.getFichierSonnerie());
+        if (m != null) {
+
+            Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            Uri sonnerie = ContentUris.withAppendedId(musicUri, m.getIdMorceauDansTelephone());
+            mMPNotif.reset();
+            try {
+                mMPNotif.setDataSource(getApplicationContext(), sonnerie);
+
+            } catch (Exception e) {
+                Log.e("AUDIO", "Erreur mMpNotif setDataSource " + e.toString());
+            }
+            mEtatMPNotif = false;
+            mMPNotif.prepareAsync();
+
+
+        }
+
+    }
+
+    /**
+     * Called when the media file is ready for playback.
+     *
+     * @param mp the MediaPlayer that is ready for playback
+     */
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mEtatMPNotif = true;
+    }
+
+    /**
+     * Called when the end of a media source is reached during playback.
+     *
+     * @param mp the MediaPlayer that reached the end of the file
+     */
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mMPNotif.reset();
+        gestionSyntheseVocale();
+        prepareMPNotif();
+    }
+
+    /**
+     * Called to indicate an error.
+     *
+     * @param mp    the MediaPlayer the error pertains to
+     * @param what  the type of error that has occurred:
+     * @param extra an extra code, specific to the error. Typically
+     *              implementation dependent.
+     * @return True if the method handled the error, false if it didn't.
+     * Returning false, or not having an OnErrorListener at all, will
+     * cause the OnCompletionListener to be called.
+     */
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        Log.e("AUDIO", " Erreur media player " + extra);
+        return false;
+    }
+
 
     /**
      * Classe permettant la communication depuis l'interface

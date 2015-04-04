@@ -19,6 +19,7 @@ import com.stephane.rothen.rchrono.model.Morceau;
 import com.stephane.rothen.rchrono.model.Playlist;
 import com.stephane.rothen.rchrono.model.Sequence;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -57,7 +58,9 @@ public class Frag_ListeItems extends Fragment {
     /**
      * Gère l'état du mode suppression, actif ou non
      */
-    private boolean mModeSuppression = false;
+    private boolean mModeSuppressionSequence = false;
+
+    private boolean mModeSuppressionExercice = false;
 
 
     public Frag_ListeItems() {
@@ -96,7 +99,6 @@ public class Frag_ListeItems extends Fragment {
         View rootView = inflater.inflate(R.layout.frag_liste, container, false);
         mLv = (ListView) rootView.findViewById(R.id.Frag_Liste_listView);
         mAdapter = new CustomAdapter(getActivity().getApplicationContext());
-        mAdapter.setCallback(mCallback);
         mLv.setAdapter(mAdapter);
 
         mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -144,24 +146,38 @@ public class Frag_ListeItems extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-    public boolean getAfficheBtnSuppr() {
-        return mModeSuppression;
+    public boolean getAfficheBtnSupprSequence() {
+        return mModeSuppressionSequence;
     }
 
     /**
-     * Affiche ou non le bouton Supprimer sur les éléments de la listView
+     * Affiche ou non le bouton Supprimer sur les éléments sequence de la listView
      *
      * @param etat Etat de l'affichage du bouton
      */
-    public void setAfficheBtnSuppr(boolean etat) {
+    public void setAfficheBtnSupprSequence(boolean etat) {
         if (mAdapter != null) {
-            if (etat)
-                mAdapter.setAfficheBtnSuppr(etat, mCallback);
-            else {
-                mAdapter.setAfficheBtnSuppr(etat, null);
 
-            }
-            mModeSuppression = etat;
+            mAdapter.setAfficheBtnSupprSequence(etat);
+            mModeSuppressionSequence = etat;
+
+        }
+    }
+
+    public boolean getAfficheBtnSupprExercice() {
+        return mModeSuppressionExercice;
+    }
+
+    /**
+     * Affiche ou non le bouton Supprimer sur les éléments Exercice de la listView
+     *
+     * @param etat Etat de l'affichage du bouton
+     */
+    public void setAfficheBtnSupprExercice(boolean etat) {
+        if (mAdapter != null) {
+
+            mAdapter.setAfficheBtnSupprExercice(etat);
+            mModeSuppressionExercice = etat;
 
         }
     }
@@ -219,22 +235,30 @@ public class Frag_ListeItems extends Fragment {
     private void affiche_PlaylistExericeActif(AtomicReference<Chronometre> mChrono) {
         mAdapter.setFocusPosition(0);
         ElementSequence el = mChrono.get().getElementSequenceActif();
-        int nbreMorceaux = el.getPlaylistExercice().getNbreMorceaux();
+        int nbreMorceaux = el.getPlaylistParDefaut().getNbreMorceaux();
         for (int i = 0; i < nbreMorceaux; i++) {
-            Morceau m = el.getPlaylistExercice().getMorceauAt(i);
+            Morceau m = mChrono.get().getMorceauFromLibMorceau(el.getPlaylistParDefaut().getMorceauAt(i));
             mAdapter.addItem(m.getTitre() + " - " + m.getArtiste());
         }
         mAdapter.notifyDataSetChanged();
     }
 
-    public void afficheListView(Playlist playlist) {
+    public void afficheListView(Playlist playlist, AtomicReference<Chronometre> mChrono) {
         mAdapter.deleteAll();
         int nbreMorceaux = playlist.getNbreMorceaux();
         for (int i = 0; i < nbreMorceaux; i++) {
-            Morceau m = playlist.getMorceauAt(i);
+            Morceau m = mChrono.get().getMorceauFromLibMorceau(playlist.getMorceauAt(i));
             mAdapter.addItem(m.getTitre() + " - " + m.getArtiste());
         }
         mAdapter.notifyDataSetChanged();
+    }
+
+    public void afficheListSons(ArrayList<Morceau> lst) {
+        mAdapter.deleteAll();
+        int nbreMorceau = lst.size();
+        for (int i = 0; i < nbreMorceau; i++) {
+            mAdapter.addItem(lst.get(i).getTitre() + " - " + lst.get(i).getArtiste());
+        }
     }
 
     /**

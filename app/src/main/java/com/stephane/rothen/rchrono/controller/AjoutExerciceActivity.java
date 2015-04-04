@@ -38,6 +38,7 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
 
     public static final int RESULT_AJOUT = 50;
+    public static final int RESULT_CREER = 51;
 
 
     /**
@@ -100,11 +101,11 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
         }
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(false);
+        mFragListe.setAfficheBtnSupprExercice(false);
         mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_LIBEXERCICE);
 
         mFragBtnCreer = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
-        mFragBtnCreer.setTexte(R.string.ajoutexercicee_creer);
+        mFragBtnCreer.setTexte(R.string.ajoutexercice_creer);
         mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
 
 
@@ -161,6 +162,12 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
 
     }
 
+    /**
+     * Gere la creation du menu
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -168,6 +175,13 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
         return true;
     }
 
+    /**
+     * Gère les interractions avec le menu
+     * Affiche ou non les boutons de suppression sur la listView
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -177,11 +191,11 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_ajout_supprimer) {
-            if (mFragListe.getAfficheBtnSuppr()) {
-                mFragListe.setAfficheBtnSuppr(false);
+            if (mFragListe.getAfficheBtnSupprExercice()) {
+                mFragListe.setAfficheBtnSupprExercice(false);
                 mFragListe.afficheListView(0, mChrono);
             } else {
-                mFragListe.setAfficheBtnSuppr(true);
+                mFragListe.setAfficheBtnSupprExercice(true);
                 mFragListe.afficheListView(0, mChrono);
             }
             return true;
@@ -190,13 +204,28 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * Gere le click sur un item de la listView
+     * Si mode supprimer actif, affiche la popup de confirmation
+     * Sinon mémorise l'exercice cliqué et retourne à la fenetre editionSequence
+     *
+     * @param parent   ListView contenant l'item cliqué
+     * @param view     View sur laquelle l'utilisateur a cliqué
+     * @param position position de la View dans la ListView
+     * @param id
+     */
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        if (mFragListe.getAfficheBtnSuppr()) {
+        if (mFragListe.getAfficheBtnSupprExercice()) {
             mExASuppr = position;
             Exercice e = mChrono.get().getLibExercice().get(mExASuppr);
             String nom = e.getNomExercice();
-            afficheDialogSuppr(nom);
+            if (mChrono.get().isExerciceUtilise(position)) {
+                Toast.makeText(this, getString(R.string.ajoutexercice_exercice_utilise), Toast.LENGTH_SHORT).show();
+            } else {
+                afficheDialogSuppr(nom);
+            }
         } else {
             Exercice e = mChrono.get().getLibExercice().get(position);
             Sequence s = (Sequence) mChrono.get().getSeqTemp().clone();
@@ -229,7 +258,8 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
                 finish();
                 break;
             case R.id.Frag_ListeSeq_BtnAjouterSeq:
-
+                setResult(RESULT_CREER);
+                finish();
                 break;
             default:
                 break;
@@ -265,7 +295,7 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
 
         if (mExASuppr >= 0) {
-            mChrono.get().getLibExercice().remove(mExASuppr);
+            mChrono.get().supprimerExerciceDansLibrairie(mExASuppr);
         }
         mFragListe.afficheListView(0, mChrono);
 

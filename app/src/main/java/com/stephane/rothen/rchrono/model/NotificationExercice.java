@@ -23,19 +23,19 @@ public class NotificationExercice implements Cloneable {
      */
     protected boolean mSonnerie;
     /**
-     * Chemin vers le fichier de sonnerie si la notification est du type sonnerie
+     * index du fichier de sonnerie dans la librairie si la notification est du type sonnerie
      *
      * @see NotificationExercice#mSonnerie
      */
-    protected Morceau mFichierSonnerie;
+    protected long mFichierSonnerie;
 
     /**
      * Constructeur
      *
-     * @param notificationFromBdd entier stockant l'état de la notification stocké dans la base de donnée
+     * @param notificationFromBdd entier stockant l'état de la notification stockée dans la base de donnée
      * @param fichierSonnerie     entier
      */
-    public NotificationExercice(int notificationFromBdd, Morceau fichierSonnerie) {
+    public NotificationExercice(int notificationFromBdd, long fichierSonnerie) {
 
 
         if ((notificationFromBdd & VIBREUR) > 0) {
@@ -62,12 +62,12 @@ public class NotificationExercice implements Cloneable {
     /**
      * Constructeur
      *
-     * @param vibreur
-     * @param popup
-     * @param sonnerie
-     * @param fichierSonnerie
+     * @param vibreur         Etat du vibreur
+     * @param popup           Etat de la popup
+     * @param sonnerie        Etat de la sonnerie
+     * @param fichierSonnerie Identifiant du fichier sonnerie
      */
-    public NotificationExercice(boolean vibreur, boolean popup, boolean sonnerie, Morceau fichierSonnerie) {
+    public NotificationExercice(boolean vibreur, boolean popup, boolean sonnerie, long fichierSonnerie) {
         mVibreur = vibreur;
         mPopup = popup;
         mSonnerie = sonnerie;
@@ -119,11 +119,16 @@ public class NotificationExercice implements Cloneable {
      *
      * @return morceau à jouer comme sonnerie
      */
-    public Morceau getFichierSonnerie() {
+    public long getFichierSonnerie() {
         return mFichierSonnerie;
     }
 
-    public void setFichierSonnerie(Morceau m) {
+    /**
+     * Définit l'index du fichier sonnerie
+     *
+     * @param m index du fichier
+     */
+    public void setFichierSonnerie(long m) {
         mFichierSonnerie = m;
     }
 
@@ -142,10 +147,10 @@ public class NotificationExercice implements Cloneable {
      */
     @Override
     public Object clone() {
-        if (mFichierSonnerie != null)
-            return new NotificationExercice(mVibreur, mPopup, mSonnerie, (Morceau) mFichierSonnerie.clone());
+        if (mFichierSonnerie != -1)
+            return new NotificationExercice(mVibreur, mPopup, mSonnerie, mFichierSonnerie);
         else
-            return new NotificationExercice(mVibreur, mPopup, mSonnerie, null);
+            return new NotificationExercice(mVibreur, mPopup, mSonnerie, -1);
     }
 
     /**
@@ -175,10 +180,8 @@ public class NotificationExercice implements Cloneable {
     public boolean equals(Object o) {
         if (o instanceof NotificationExercice) {
             NotificationExercice n = (NotificationExercice) o;
-            if (mFichierSonnerie != null && n.mFichierSonnerie != null)
-                return (mPopup == n.mPopup && mFichierSonnerie.equals(n.mFichierSonnerie) && mSonnerie == n.mSonnerie && mVibreur == n.mVibreur);
-            else
-                return (mPopup == n.mPopup && mFichierSonnerie == null && n.mFichierSonnerie == null && mSonnerie == n.mSonnerie && mVibreur == n.mVibreur);
+
+            return (mPopup == n.mPopup && mFichierSonnerie == n.mFichierSonnerie && mSonnerie == n.mSonnerie && mVibreur == n.mVibreur);
         }
         return false;
     }
@@ -198,8 +201,6 @@ public class NotificationExercice implements Cloneable {
      */
     @Override
     public String toString() {
-        String retour = new String();
-        retour = mPopup + " " + mVibreur + " " + mSonnerie + " " + mFichierSonnerie.toString();
-        return retour;
+        return mPopup + " " + mVibreur + " " + mSonnerie + " " + mFichierSonnerie;
     }
 }

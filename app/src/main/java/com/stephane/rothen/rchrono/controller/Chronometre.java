@@ -6,6 +6,7 @@ import com.stephane.rothen.rchrono.model.ChronoModel;
 import com.stephane.rothen.rchrono.model.DAOBase;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Exercice;
+import com.stephane.rothen.rchrono.model.Morceau;
 import com.stephane.rothen.rchrono.model.Sequence;
 
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class Chronometre {
      * Supprime la sequence active
      */
     public void supprimeSequenceActive() {
-        m_chronoModel.getListeSequences().remove(m_indexSequenceActive);
+        m_chronoModel.supprimerSequenceDansListe(m_indexSequenceActive);
     }
 
 
@@ -316,7 +317,7 @@ public class Chronometre {
      * @return liste des séquences
      * @see Chronometre#m_chronoModel
      */
-    public ArrayList<Integer> getListeSequence() {
+    public ArrayList<Long> getListeSequence() {
         return m_chronoModel.getListeSequences();
     }
 
@@ -453,7 +454,7 @@ public class Chronometre {
      * @param s séquence de remplacement
      */
     public void remplacerSequenceActive(Sequence s) {
-        m_chronoModel.modifierSequenceDansListe(m_indexSequenceActive, s);
+        m_chronoModel.modifierSequenceDansListe(s);
     }
 
 
@@ -504,9 +505,36 @@ public class Chronometre {
         mIndexElementSeqTtemp = index;
     }
 
-    public void save() {
-        m_chronoModel.save();
+    public void supprimerSequenceDansListe(int indexSequenceDansListe) {
+        m_chronoModel.supprimerSequenceDansListe(indexSequenceDansListe);
     }
 
+    public void supprimerSequenceDansLibrairie(int indexSequenceDansLibrairie) {
+        m_chronoModel.supprimerSequenceDansLibrairie(indexSequenceDansLibrairie);
+    }
+
+    public void supprimerExerciceDansLibrairie(int indexExerciceDansLibrairie) {
+        m_chronoModel.supprimerExerciceDansLibrairie(indexExerciceDansLibrairie);
+    }
+
+    public long ajouterMorceau(long idMorceauDansTelephone, String titre, String artiste) {
+        return m_chronoModel.ajouterMorceau(idMorceauDansTelephone, titre, artiste);
+    }
+
+    public Morceau getMorceauFromLibMorceau(long idMorceauDansTelephone) {
+        return m_chronoModel.getMorceauFromLibMorceau(idMorceauDansTelephone);
+    }
+
+    public void enleverUtilisation(long idMorceau) {
+        m_chronoModel.enleverUtilisation(idMorceau);
+    }
+
+    public boolean isSequenceUtilisee(int indexLibSequence) {
+        return m_chronoModel.isSequenceUtilisee(indexLibSequence);
+    }
+
+    public boolean isExerciceUtilise(int indexLibExercice) {
+        return m_chronoModel.isExerciceUtilise(indexLibExercice);
+    }
 
 }

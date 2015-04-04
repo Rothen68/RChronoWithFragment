@@ -29,9 +29,11 @@
 
     <string name="title_activity_ajout_sequence">Liste des séquences</string>
     <string name="ajoutsequence_creer">Créer une séquence</string>
+    <string name="ajoutsequence_sequence_utilisee">Suppression impossible, la séquence est utilisée</string>
 
     <string name="title_activity_ajout_exercice">Liste des exercices</string>
-    <string name="ajoutexercicee_creer">Créer un exercice</string>
+    <string name="ajoutexercice_creer">Créer un exercice</string>
+    <string name="ajoutexercice_exercice_utilise">Suppression impossible</string>
 
 
     <string name="title_activity_editionSequence">Edition de la séquence</string>

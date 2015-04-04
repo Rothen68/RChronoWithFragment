@@ -45,10 +45,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         Frag_Dialog_Duree.Frag_Dialog_Duree_Callback
 
 {
+    public static final int CREATION = 1;
+    public static final int EDITION = 2;
     private static final int TYPESEQUENCE = 1;
     private static final int TYPEEXERCICE = 2;
-    private static final int ACTIVITY_AJOUT_SEQ = 1;
-
+    private static final int ACTIVITY_AJOUT_SEQ = 1000;
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *
@@ -93,6 +94,8 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
     private int mTypeASuppr = 0;
 
+    private boolean mRetourGoToEditionSequenceForCreation = false;
+
 
     /**
      * Gestion de la creation de la vue
@@ -105,9 +108,15 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
         setContentView(R.layout.listeseq_host_frag);
 
+        Intent i = getIntent();
+        if (i.getExtras() != null) {
+            if (i.getExtras().getInt("MODE") == CREATION)
+                goToAjoutSequenceActivity();
+        }
+
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(false);
+        mFragListe.setAfficheBtnSupprSequence(false);
         mFragBtnAjouterSeq = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
         mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnRetour);
         mTxtDuree = (TextView) findViewById(R.id.ListeSeq_txtDuree);
@@ -141,6 +150,10 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                     } else {
                         goToAjoutSequenceActivity();
                     }
+                }
+                if (mRetourGoToEditionSequenceForCreation) {
+                    mRetourGoToEditionSequenceForCreation = false;
+                    goToEditionSequenceForCreation();
                 }
 
             }
@@ -190,11 +203,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_supprimer) {
-            if (mFragListe.getAfficheBtnSuppr()) {
-                mFragListe.setAfficheBtnSuppr(false);
+            if (mFragListe.getAfficheBtnSupprSequence()) {
+                mFragListe.setAfficheBtnSupprSequence(false);
                 mFragListe.afficheListView(0, mChrono);
             } else {
-                mFragListe.setAfficheBtnSuppr(true);
+                mFragListe.setAfficheBtnSupprSequence(true);
                 mFragListe.afficheListView(0, mChrono);
             }
 
@@ -235,15 +248,9 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
 
-        if (mFragListe.getAfficheBtnSuppr()) {//si mode suppression
+        if (mFragListe.getAfficheBtnSupprSequence()) {//si mode suppression
             String nom = "";
             switch (mFragListe.getAdapter().getItemViewType(position)) {
-                case CustomAdapter.TYPE_ITEM:
-                    mChrono.get().setChronoAt(position);
-                    ElementSequence e = mChrono.get().getElementSequenceActif();
-                    nom = e.getNomExercice();
-                    mTypeASuppr = TYPEEXERCICE;
-                    break;
                 case CustomAdapter.TYPE_SEPARATOR:
                     mChrono.get().setChronoAt(position);
                     Sequence s = mChrono.get().getSeqFromLstSequenceAt(mChrono.get().m_indexSequenceActive);
@@ -309,9 +316,6 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     public void doDialogFragSupprClick() {
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
         switch (mTypeASuppr) {
-            case TYPEEXERCICE:
-                mChrono.get().supprimeExerciceActif();
-                break;
             case TYPESEQUENCE:
                 mChrono.get().supprimeSequenceActive();
                 break;
@@ -357,7 +361,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
     @Override
     public void onRetourDialogRepetition(int valeur) {
         Sequence s = (Sequence) mChrono.get().getSequenceActive().clone();
-        s.setmNombreRepetition(valeur);
+        s.setNombreRepetition(valeur);
         if (mChrono.get().getDureeTotaleSansSeqActive() + s.getDureeSequence() > 100 * 60 * 60) {
             Toast.makeText(this, R.string.alert_dureeTotaleTropGrande, Toast.LENGTH_LONG).show();
             afficheDialogRepetition();
@@ -417,6 +421,12 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         startActivity(i);
     }
 
+    private void goToEditionSequenceForCreation() {
+        Intent i = new Intent(this, EditionSequenceActivity.class);
+        i.putExtra("MODE", CREATION);
+        startActivity(i);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -427,7 +437,11 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                 mChrono.get().setChronoAt(derniereSeq, 0);
                 goToEditionSequenceActivity();
             }
+            if (resultCode == AjoutSequenceActivity.RESULT_CREER) {
+                mRetourGoToEditionSequenceForCreation = true;
+            }
         }
+
     }
 
     /**

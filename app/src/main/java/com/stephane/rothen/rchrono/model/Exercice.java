@@ -6,8 +6,10 @@ package com.stephane.rothen.rchrono.model;
  * Created by Stéphane on 14/02/2015.
  */
 public class Exercice implements Cloneable {
-
-    protected int mIdExercice;
+    /**
+     * Identifiant de l'exercice dans la base de données
+     */
+    protected long mIdExercice;
     /**
      * Nom de l'exercice
      */
@@ -31,12 +33,13 @@ public class Exercice implements Cloneable {
     /**
      * Constructeur
      *
-     * @param nomExercice
-     * @param descriptionExercice
-     * @param dureeParDefaut
-     * @param playlistParDefaut
+     * @param idExercice identifiant de l'exercice dans la base de données
+     * @param nomExercice   nom de l'exercice
+     * @param descriptionExercice   description de l'exercice
+     * @param dureeParDefaut    durée par défaut de l'exercice
+     * @param playlistParDefaut playlist par défaut
      */
-    public Exercice(int idExercice, String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut) {
+    public Exercice(long idExercice, String nomExercice, String descriptionExercice, int dureeParDefaut, Playlist playlistParDefaut) {
         this.mIdExercice = idExercice;
         this.mNomExercice = nomExercice;
         this.mDescriptionExercice = descriptionExercice;
@@ -45,11 +48,21 @@ public class Exercice implements Cloneable {
 
     }
 
-    public int getIdExercice() {
+    /**
+     * Retourne l'id de l'exercice dans la base de données
+     *
+     * @return identifiant de l'exercice
+     */
+    public long getIdExercice() {
         return mIdExercice;
     }
 
-    public void setIdExercice(int id) {
+    /**
+     * Définit l'id de l'exercice dans la base de données
+     *
+     * @param id identifiant de l'exercice
+     */
+    public void setIdExercice(long id) {
         mIdExercice = id;
     }
 

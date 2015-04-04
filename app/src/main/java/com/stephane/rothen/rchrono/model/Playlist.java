@@ -9,9 +9,9 @@ import java.util.ArrayList;
  */
 public class Playlist implements Cloneable {
     /**
-     * Tableau contenant la liste des liens vers les morceaux à jouer dans la playlist
+     * Tableau contenant la liste des index des morceaux à jouer dans la playlist
      */
-    protected ArrayList<Morceau> mListeMorceaux;
+    protected ArrayList<Long> mListeMorceaux;
     /**
      * La playlist est jouée pendant l'exercice
      */
@@ -29,7 +29,7 @@ public class Playlist implements Cloneable {
     /**
      * Retourne l'état de la donnée membre jouerPlaylist sous la forme d'un entier
      *
-     * @return etat de jouerPlaylist
+     * @return état de jouerPlaylist
      * @see com.stephane.rothen.rchrono.model.Playlist#mJouerPlaylist
      */
     public boolean getJouerPlaylist() {
@@ -40,42 +40,27 @@ public class Playlist implements Cloneable {
     /**
      * Définit si la Playlist doit être jouée ou pas
      *
-     * @param b
+     * @param b Etat de la playlist
      */
     public void setJouerPlaylist(boolean b) {
         mJouerPlaylist = b;
     }
 
     /**
-     * Ajoute le morceau dont le chemin est passé en parametre
+     * Ajoute le morceau dont le chemin est passé en paramètre
      *
-     * @param m Morceau a ajouter
+     * @param indexMorceau index du morceau a ajouter
      */
-    public void ajouterMorceau(Morceau m) {
-        mListeMorceaux.add(m);
+    public void ajouterMorceau(long indexMorceau) {
+        mListeMorceaux.add(indexMorceau);
     }
 
-    /**
-     * Supprime le morceau passé en parametre
-     *
-     * @param m morceau à supprimer
-     * @return true si le morceau a été supprimer
-     * false si le morceau n'a pas été trouvé
-     */
-    public boolean supprimerMorceau(Morceau m) {
-        int i = mListeMorceaux.indexOf(m);
-        if (i >= 0) {
-            mListeMorceaux.remove(i);
-            return true;
-        }
-        return false;
-    }
 
     /**
-     * Supprime le morceau dont l'index est passé en parametre
+     * Supprime le morceau dont l'index est passé en paramètre
      *
      * @param index index du morceau à supprimer
-     * @return true si le morceau a supprimé
+     * @return true si le morceau a été supprimé
      * false si le morceau n'a pas été supprimé
      */
     public boolean supprimerMorceau(int index) {
@@ -88,15 +73,15 @@ public class Playlist implements Cloneable {
 
 
     /**
-     * Renvois le morceau dont la position est passée en parametre
+     * Renvois le morceau dont la position est passée en paramètre
      *
      * @param position Position du morceau dans la playlist
      * @return Uri du morceau
      */
-    public Morceau getMorceauAt(int position) {
+    public long getMorceauAt(int position) {
         if (position >= 0 && position < mListeMorceaux.size())
             return mListeMorceaux.get(position);
-        else return null;
+        else return -1;
     }
 
     /**
@@ -108,10 +93,6 @@ public class Playlist implements Cloneable {
         return mListeMorceaux.size();
     }
 
-
-    public void remove(Morceau morceau) {
-        mListeMorceaux.remove(morceau);
-    }
 
     /**
      * Creates and returns a copy of this {@code Object}. The default
@@ -129,7 +110,7 @@ public class Playlist implements Cloneable {
     public Object clone() {
         Playlist pl = new Playlist();
         pl.setJouerPlaylist(mJouerPlaylist);
-        pl.mListeMorceaux = (ArrayList<Morceau>) mListeMorceaux.clone();
+        pl.mListeMorceaux = (ArrayList<Long>) mListeMorceaux.clone();
         return pl;
     }
 
@@ -166,7 +147,7 @@ public class Playlist implements Cloneable {
                 return false;
             } else {
                 for (int i = 0; i < nbreMorceaux; i++) {
-                    if (!((Playlist) o).getMorceauAt(i).equals(mListeMorceaux.get(i)))
+                    if (!(((Playlist) o).getMorceauAt(i) == mListeMorceaux.get(i)))
                         egale = false;
                 }
             }
@@ -191,8 +172,6 @@ public class Playlist implements Cloneable {
      */
     @Override
     public String toString() {
-        String retour = new String();
-        retour = mJouerPlaylist + mListeMorceaux.toString();
-        return retour;
+        return mJouerPlaylist + mListeMorceaux.toString();
     }
 }

@@ -35,8 +35,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         Frag_AlertDialog_Suppr.Frag_AlertDialog_Suppr_Callback {
 
     public static final int RESULT_AJOUT = 2;
-    public static final int RESULT_NONE = 1;
-    public static final int ACTIVITY_CREER_SEQ = 30;
+    public static final int RESULT_CREER = 1;
 
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
@@ -96,7 +95,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         setContentView(R.layout.ajout_host_frag);
         getSupportFragmentManager().executePendingTransactions();
         mFragListe = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_Liste);
-        mFragListe.setAfficheBtnSuppr(false);
+        mFragListe.setAfficheBtnSupprSequence(false);
         mFragListe.setTypeAffichage(Frag_ListeItems.AFFICHE_LIBSEQUENCE);
 
         mFragBtnCreer = (Frag_BoutonAjout) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSeq_BtnAjouterSeq);
@@ -173,11 +172,11 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_supprimer) {
-            if (mFragListe.getAfficheBtnSuppr()) {
-                mFragListe.setAfficheBtnSuppr(false);
+            if (mFragListe.getAfficheBtnSupprSequence()) {
+                mFragListe.setAfficheBtnSupprSequence(false);
                 mFragListe.afficheListView(0, mChrono);
             } else {
-                mFragListe.setAfficheBtnSuppr(true);
+                mFragListe.setAfficheBtnSupprSequence(true);
                 mFragListe.afficheListView(0, mChrono);
             }
             return true;
@@ -188,12 +187,16 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
-        if (mFragListe.getAfficheBtnSuppr()) {
-            mSeqASuppr = position;
-            Sequence s = mChrono.get().getLibSequence().get(mSeqASuppr);
-            String nom = s.getNomSequence();
+        mSeqASuppr = position;
+        Sequence s = mChrono.get().getLibSequence().get(mSeqASuppr);
+        String nom = s.getNomSequence();
+        if (mFragListe.getAfficheBtnSupprSequence()) {
+            if (mChrono.get().isSequenceUtilisee(position)) {
+                Toast.makeText(this, getString(R.string.ajoutsequence_sequence_utilisee), Toast.LENGTH_SHORT).show();
+            } else {
 
-            afficheDialogSuppr(nom);
+                afficheDialogSuppr(nom);
+            }
         } else {
             mChrono.get().ajouterSequenceDansListe(mChrono.get().getLibSequence().get(position));
             setResult(RESULT_AJOUT);
@@ -220,9 +223,8 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
                 finish();
                 break;
             case R.id.btnAjouterSequence:
-                Intent i = new Intent(this, EditionSequenceActivity.class);
-                i.putExtra("MODE", ACTIVITY_CREER_SEQ);
-                startActivityForResult(i, ACTIVITY_CREER_SEQ);
+                setResult(RESULT_CREER);
+                finish();
                 break;
 
             default:
@@ -259,7 +261,7 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
 
         if (mSeqASuppr >= 0) {
-            mChrono.get().getLibSequence().remove(mSeqASuppr);
+            mChrono.get().supprimerSequenceDansLibrairie(mSeqASuppr);
         }
         mFragListe.afficheListView(0, mChrono);
 
@@ -275,15 +277,6 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         mSeqASuppr = -1;
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ACTIVITY_CREER_SEQ) {
-            setResult(resultCode);
-            finish();
-        }
-    }
 
     /**
      * Classe privée MyReceiver

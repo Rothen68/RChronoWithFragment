@@ -11,11 +11,12 @@ import android.widget.AdapterView;
 
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.Morceau;
-import com.stephane.rothen.rchrono.model.Playlist;
 import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
 import com.stephane.rothen.rchrono.views.Frag_ListeItems;
 import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
+
+import java.util.ArrayList;
 
 /**
  * Created by stéphane on 31/03/2015.
@@ -27,7 +28,7 @@ public class ListeSonsActivity extends ActionBarActivity implements Frag_Bouton_
     private Frag_ListeItems mLstMorceaux;
     private Frag_BoutonRetour mBtnRetour;
 
-    private Playlist mPlaylist;
+    private ArrayList<Morceau> mListeSons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +38,9 @@ public class ListeSonsActivity extends ActionBarActivity implements Frag_Bouton_
         getSupportFragmentManager().executePendingTransactions();
         mLstMorceaux = (Frag_ListeItems) getSupportFragmentManager().findFragmentById(R.id.Frag_ListeSons_Liste);
         mBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.ListeSons_BtnRetour);
-        mLstMorceaux.setAfficheBtnSuppr(false);
+
         getListeSons();
-        mLstMorceaux.afficheListView(mPlaylist);
+        mLstMorceaux.afficheListSons(mListeSons);
 
 
     }
@@ -77,9 +78,9 @@ public class ListeSonsActivity extends ActionBarActivity implements Frag_Bouton_
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
         Intent returnIntent = new Intent();
-        Morceau m = mPlaylist.getMorceauAt(position);
+        Morceau m = mListeSons.get(position);
 
-        returnIntent.putExtra("ID", m.getIdMorceau());
+        returnIntent.putExtra("ID", m.getIdMorceauDansTelephone());
         returnIntent.putExtra("TITRE", m.getTitre());
         returnIntent.putExtra("ARTISTE", m.getArtiste());
         setResult(RESULT_OK, returnIntent);
@@ -106,7 +107,7 @@ public class ListeSonsActivity extends ActionBarActivity implements Frag_Bouton_
         ContentResolver musicResolver = getContentResolver();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
-        mPlaylist = new Playlist();
+        mListeSons = new ArrayList<>();
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
             int titleColumn = musicCursor.getColumnIndex
@@ -120,7 +121,7 @@ public class ListeSonsActivity extends ActionBarActivity implements Frag_Bouton_
                 long thisId = musicCursor.getLong(idColumn);
                 String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
-                mPlaylist.ajouterMorceau(new Morceau(thisId, thisTitle, thisArtist));
+                mListeSons.add(new Morceau(-1, thisId, thisTitle, thisArtist));
             }
             while (musicCursor.moveToNext());
         }

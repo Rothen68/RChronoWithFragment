@@ -6,21 +6,29 @@ package com.stephane.rothen.rchrono.model;
  * Created by Stéphane on 14/02/2015.
  */
 public class SyntheseVocale implements Cloneable {
+    /**
+     * Valeur à stocker dans la base de données pour représenter la synthese vocale du nom
+     */
     private static final int NOM = 0x01;
+    /**
+     * Valeur à stocker dans la base de données pour représenter la synthese vocale de la durée
+     */
     private static final int DUREE = 0x02;
+
     /**
      * Le nom est dit par la synthèse vocale
      */
     protected boolean mNom = false;
     /**
-     * La durée est dite par la synthèse vocale
+     * La durée est ennoncée par la synthèse vocale
      */
     protected boolean mDuree = false;
 
+
     /**
-     * initialise l'objet depuis un entier contenu dans la base de donnée
+     * initialise l'objet depuis un entier contenu dans la base de données
      *
-     * @param syntheseVocaleFromBdd : valeur lut dans la base de donnée
+     * @param syntheseVocaleFromBdd : valeur lut dans la base de données
      */
     public SyntheseVocale(int syntheseVocaleFromBdd) {
         if ((syntheseVocaleFromBdd & NOM) != 0) {
@@ -35,15 +43,22 @@ public class SyntheseVocale implements Cloneable {
         }
     }
 
+
+    /**
+     * Constructeur
+     *
+     * @param nom   Ennonce ou non le nom
+     * @param duree Ennonce ou non la duree
+     */
     public SyntheseVocale(boolean nom, boolean duree) {
         mDuree = duree;
         mNom = nom;
     }
 
     /**
-     * Renvois un entier pour stocker l'information de synthese vocale dans la base de donnée
+     * Renvois un entier pour stocker l'information de synthese vocale dans la base de données
      *
-     * @return valeur à stocker dans la base de donnée
+     * @return valeur à stocker dans la base de données
      */
     public int getSyntheseVocaleForBdd() {
         int r = ((mNom) ? (NOM) : (0));
@@ -152,7 +167,6 @@ public class SyntheseVocale implements Cloneable {
      */
     @Override
     public String toString() {
-        String retour = mNom + " " + mDuree;
-        return retour;
+        return mNom + " " + mDuree;
     }
 }
