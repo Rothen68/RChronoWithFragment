@@ -14,16 +14,17 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
-import com.stephane.rothen.rchrono.model.Morceau;
 import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -31,8 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Classe gérant le Service en tache de fond
  */
-public class ChronoService extends Service implements TextToSpeech.OnInitListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener {
+public class ChronoService extends Service implements TextToSpeech.OnInitListener {
 
     public static final String SER_ACTION = "action";
 
@@ -41,7 +41,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     public static final String SER_UPDATE_LISTVIEW = "update_ListView";
     public static final String SER_FIN_LISTESEQUENCE = "fin_liste_sequence";
     private static final int IDNOTIFICATION = 1;
-
+    private static Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
     /**
      * Permet la communication depuis l'interface
      *
@@ -88,8 +88,6 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * @see ChronoService#mTextToSpeach
      */
     private boolean mTextToSpeachReady = false;
-
-
     /**
      * Stocke la notification de l'exercice actif
      */
@@ -106,22 +104,26 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * Stocke l'index de la synthese vocale qui a été énnoncé
      */
     private int mIndexSequenceSyntheseVocaleEnnoncee = -1;
-
     /**
      * Spécifie si il faut énoncer le texte de la synthese vocale apres la sonnerie de notification
      */
     private boolean mEnoncerSyntheseVocale = false;
-
     /**
      * MediaPlayer pour les notifications ( sonnerie )
      */
     private MediaPlayer mMPNotif;
-
     /**
      * Etat de préparation de mMPNotif ( true : pret à jouer la sonnerie )
      */
     private boolean mEtatMPNotif = false;
-
+    /**
+     * MediaPlayer pour la playlist
+     */
+    private MediaPlayer mMPPlaylist;
+    /**
+     * Etat de la préparation de mMPPlaylist( true : pret à jouer la playlist )
+     */
+    private boolean mEtatMPPlaylist = false;
 
     /**
      * Implémente l'interface TextToSpeech.OnInitListener, active lors de la fin de l'initialisation du TextToSpeech
@@ -166,11 +168,74 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
 
         mTextToSpeach = new TextToSpeech(this, this);
+        mTextToSpeach.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+            @Override
+            public void onStart(String utteranceId) {
+
+            }
+
+            @Override
+            public void onDone(String utteranceId) {
+                if (mEtatMPPlaylist) {
+                    mMPPlaylist.seekTo(mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getPositionDansMorceauActif());
+                    mMPPlaylist.start();
+                }
+
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+
+            }
+        });
+
         mMPNotif = new MediaPlayer();
-        mMPNotif.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
-        mMPNotif.setOnPreparedListener(this);
-        mMPNotif.setOnCompletionListener(this);
-        mMPNotif.setOnErrorListener(this);
+        mMPNotif.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMPNotif.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mEtatMPNotif = true;
+            }
+        });
+        mMPNotif.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mMPNotif.reset();
+                gestionSyntheseVocale();
+                prepareMPNotif();
+            }
+        });
+        mMPNotif.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.e("AUDIO", " Erreur media player playlist" + extra);
+                return false;
+            }
+        });
+
+        mMPPlaylist = new MediaPlayer();
+        mMPPlaylist.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMPPlaylist.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mEtatMPPlaylist = true;
+            }
+        });
+        mMPPlaylist.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                onCompletionMPPlaylist(mp);
+
+            }
+        });
+        mMPPlaylist.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.e("AUDIO", " Erreur media player playlist " + extra);
+                return false;
+            }
+        });
+
 
 
     }
@@ -228,6 +293,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
 
             prepareMPNotif();
+            prepareMPPlaylist();
 
         }
     }
@@ -371,17 +437,19 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
 
                 if (!mChrono.get().tick()) {
+                    mChrono.get().getElementSequenceActif().getPlaylistParDefaut().setPositionDansMorceauActif(mMPPlaylist.getCurrentPosition());
+                    mMPPlaylist.pause();
                     updateListView();
                     gestionNotification();
                     updateNotificationSynthVocaleActives();
                     mEnoncerSyntheseVocale = true;
-
                 }
                 updateChrono();
             }
 
             @Override
             public void onFinish() {
+                mMPPlaylist.pause();
                 gestionNotification();
                 resetChrono();
 
@@ -417,6 +485,9 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                 String texte = Fonctions.convertSversVocale(duree);
                 mTextToSpeach.speak(texte, TextToSpeech.QUEUE_ADD, null);
             }
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "messageID");
+            mTextToSpeach.speak("", TextToSpeech.QUEUE_ADD, map);
             mEnoncerSyntheseVocale = false;
         }
     }
@@ -457,11 +528,11 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * Prepare le MediaPlayer jouant la sonnerie de l'exercice
      */
     private void prepareMPNotif() {
-        Morceau m = mChrono.get().getMorceauFromLibMorceau(mNotificationExercice.getFichierSonnerie());
-        if (m != null) {
 
-            Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            Uri sonnerie = ContentUris.withAppendedId(musicUri, m.getIdMorceauDansTelephone());
+        long idSonnerie = mNotificationExercice.getFichierSonnerie();
+        if (idSonnerie != -1) {
+
+            Uri sonnerie = ContentUris.withAppendedId(musicUri, idSonnerie);
             mMPNotif.reset();
             try {
                 mMPNotif.setDataSource(getApplicationContext(), sonnerie);
@@ -477,43 +548,25 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
     }
 
-    /**
-     * Called when the media file is ready for playback.
-     *
-     * @param mp the MediaPlayer that is ready for playback
-     */
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        mEtatMPNotif = true;
+
+    private void prepareMPPlaylist() {
+        long idMorceau = mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getMorceauActif();
+        if (idMorceau > 0 && mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getJouerPlaylist()) {
+            Uri morceau = ContentUris.withAppendedId(musicUri, idMorceau);
+            mMPPlaylist.reset();
+            try {
+                mMPPlaylist.setDataSource(getApplicationContext(), morceau);
+            } catch (Exception e) {
+                Log.e("AUDIO", "Erreur mMPPlaylist setDataSource " + e.toString());
+            }
+            mEtatMPPlaylist = false;
+            mMPPlaylist.prepareAsync();
+        }
     }
 
-    /**
-     * Called when the end of a media source is reached during playback.
-     *
-     * @param mp the MediaPlayer that reached the end of the file
-     */
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        mMPNotif.reset();
-        gestionSyntheseVocale();
-        prepareMPNotif();
-    }
-
-    /**
-     * Called to indicate an error.
-     *
-     * @param mp    the MediaPlayer the error pertains to
-     * @param what  the type of error that has occurred:
-     * @param extra an extra code, specific to the error. Typically
-     *              implementation dependent.
-     * @return True if the method handled the error, false if it didn't.
-     * Returning false, or not having an OnErrorListener at all, will
-     * cause the OnCompletionListener to be called.
-     */
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.e("AUDIO", " Erreur media player " + extra);
-        return false;
+    private void onCompletionMPPlaylist(MediaPlayer mp) {
+        mChrono.get().getElementSequenceActif().getPlaylistParDefaut().nextMorceau();
+        prepareMPPlaylist();
     }
 
 

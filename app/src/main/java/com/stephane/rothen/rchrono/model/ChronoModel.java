@@ -208,8 +208,9 @@ public class ChronoModel {
                             ajouterUtilisation(el.getPlaylistParDefaut().getMorceauAt(k));
                         }
                     }
-                    nettoyerLibMorceaux();
+
                 }
+                nettoyerLibMorceaux();
             } else {
                 Log.d("MODEL", "La séquence n'a pas été trouvée dans la librairie");
             }
@@ -289,7 +290,9 @@ public class ChronoModel {
         for (int i = 0; i < mLibMorceaux.size(); i++) {
             Morceau m = mLibMorceaux.get(i);
             if (m.getNbreUtilisations() <= 0) {
+
                 mBddHelper.supprimerMorceauDansBdd(m.getIdMorceau());
+
                 tmp = morceauxASuppr;
                 morceauxASuppr = new int[morceauxASuppr.length + 1];
                 System.arraycopy(tmp, 0, morceauxASuppr, 0, tmp.length);

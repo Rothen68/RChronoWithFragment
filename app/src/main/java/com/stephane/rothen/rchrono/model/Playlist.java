@@ -17,6 +17,16 @@ public class Playlist implements Cloneable {
      */
     protected boolean mJouerPlaylist;
 
+    /**
+     * index du morceau actif de la playlist
+     */
+    private int mIndexMorceauActif = 0;
+
+    /**
+     * position dans le morceau actif
+     */
+    private int mPositionDansMorceauActif = 0;
+
 
     /**
      * Constructeur
@@ -93,6 +103,43 @@ public class Playlist implements Cloneable {
         return mListeMorceaux.size();
     }
 
+    /**
+     * Retourne l'id du morceau actif
+     *
+     * @return id du morceau
+     */
+    public long getMorceauActif() {
+        return mListeMorceaux.get(mIndexMorceauActif);
+    }
+
+    /**
+     * Gère l'avancement dans la playlist
+     */
+    public void nextMorceau() {
+        if (mIndexMorceauActif < mListeMorceaux.size() - 1) {
+            mIndexMorceauActif++;
+        } else {
+            mIndexMorceauActif = 0;
+        }
+    }
+
+    /**
+     * Renvois la position dans le morceau actif
+     *
+     * @return position
+     */
+    public int getPositionDansMorceauActif() {
+        return mPositionDansMorceauActif;
+    }
+
+    /**
+     * Définit la position dans le morceau actif
+     *
+     * @param pos position
+     */
+    public void setPositionDansMorceauActif(int pos) {
+        mPositionDansMorceauActif = pos;
+    }
 
     /**
      * Creates and returns a copy of this {@code Object}. The default

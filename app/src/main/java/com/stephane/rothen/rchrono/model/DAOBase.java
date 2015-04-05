@@ -454,8 +454,10 @@ public class DAOBase {
      * @param idMorceau id du morceau
      */
     public void supprimerMorceauDansBdd(long idMorceau) {
+        open();
         String where = DatabaseHelper.MORCEAU_ID + " = " + idMorceau;
         m_db.delete(DatabaseHelper.MORCEAU, where, null);
+        close();
     }
 
     /**
