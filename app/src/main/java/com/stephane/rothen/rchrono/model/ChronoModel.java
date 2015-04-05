@@ -140,17 +140,41 @@ public class ChronoModel {
 
     /**
      * Modifie la séquence dans la liste des séquences et dans la librairie
-     * Si une séquence est unique dans la liste des séquences alors elle est remplacée
-     * Si une séquence est présente plusieurs fois dans la liste des séquences alors elle est dupliquée dans la liste des séquences et dans la librairie
-     *
+
      * @param s                  Nouvelle séquence
      */
-    public void modifierSequenceDansListe(Sequence s) {
+    public void modifierSequenceDansListe(Sequence s) {//todo tester gestion libmorceau
         if (s.getIdSequence() > 0) {
             boolean seqModifiee = false;
+            Sequence anciennneSeq;
+            ElementSequence el;
+            Exercice ancienEx;
+            long sonnerie;
+            int j, k;
             for (int i = 0; i < mLibSequences.size(); i++) {
-                if (mLibSequences.get(i).getIdSequence() == s.getIdSequence()) {
+                anciennneSeq = mLibSequences.get(i);
+                if (anciennneSeq.getIdSequence() == s.getIdSequence()) {
+                    //supprime les morceaux de l'ancienne sequence
+                    for (j = 0; j < anciennneSeq.getTabElement().size(); j++) {
+                        el = anciennneSeq.getTabElement().get(j);
+                        sonnerie = el.getNotificationExercice().getFichierSonnerie();
+                        if (sonnerie > 0)
+                            enleverUtilisation(sonnerie);
+                        for (k = 0; k < el.getPlaylistParDefaut().getNbreMorceaux(); k++) {
+                            enleverUtilisation(el.getPlaylistParDefaut().getMorceauAt(k));
+                        }
+                    }
                     mLibSequences.set(i, s);
+                    //ajoute les morceaux de la nouvelle sequence
+                    for (j = 0; j < s.getTabElement().size(); j++) {
+                        el = s.getTabElement().get(j);
+                        sonnerie = el.getNotificationExercice().getFichierSonnerie();
+                        if (sonnerie > 0)
+                            ajouterUtilisation(sonnerie);
+                        for (k = 0; k < el.getPlaylistParDefaut().getNbreMorceaux(); k++) {
+                            ajouterUtilisation(el.getPlaylistParDefaut().getMorceauAt(k));
+                        }
+                    }
                     modifierSequenceDansBdd(s);
                     seqModifiee = true;
                     break;
@@ -159,18 +183,32 @@ public class ChronoModel {
             if (seqModifiee) {
                 //pour chaque ElementSequence, met à jour l'exercice dans la librairie des exercices
                 for (int i = 0; i < s.getTabElement().size(); i++) {
-                    ElementSequence el = s.getTabElement().get(i);
+                    el = s.getTabElement().get(i);
                     boolean elModifie = false;
-                    for (int j = 0; j < mLibExercices.size(); j++) {
+                    for (j = 0; j < mLibExercices.size(); j++) {
                         if (el.getIdExercice() == mLibExercices.get(j).getIdExercice()) {
+                            //supprime l'utilisation des morceaux pour l'exercice mis à jour
+                            ancienEx = mLibExercices.get(j);
+                            for (k = 0; k < ancienEx.getPlaylistParDefaut().getNbreMorceaux(); k++) {
+                                enleverUtilisation(ancienEx.getPlaylistParDefaut().getMorceauAt(k));
+                            }
                             mLibExercices.set(j, el.getExercice());
+                            //affecte les utilisations des morceaux du nouvel exercice
+                            for (k = 0; k < el.getPlaylistParDefaut().getNbreMorceaux(); k++) {
+                                ajouterUtilisation(el.getPlaylistParDefaut().getMorceauAt(k));
+                            }
                             elModifie = true;
                             break;
                         }
                     }
-                    if (!elModifie) {//todo gérer le comptage de l'utilisation des morceaux de la LibMorceaux lors de la modification d'un element
+                    if (!elModifie) {
                         mLibExercices.add(el.getExercice());
+                        //affecte les utilisations des morceaux du nouvel exercice
+                        for (k = 0; k < el.getPlaylistParDefaut().getNbreMorceaux(); k++) {
+                            ajouterUtilisation(el.getPlaylistParDefaut().getMorceauAt(k));
+                        }
                     }
+                    nettoyerLibMorceaux();
                 }
             } else {
                 Log.d("MODEL", "La séquence n'a pas été trouvée dans la librairie");
@@ -221,17 +259,46 @@ public class ChronoModel {
     }
 
     /**
-     * Enlève une utilisation sur un Morceau de la librairie des morceaux et gère la suppression si le morceau n'est plus utilisé
+     * Enlève une utilisation sur un Morceau de la librairie des morceaux
+     *
      *
      * @param idMorceau id du morceau
      */
     public void enleverUtilisation(long idMorceau) {
         Morceau m = getMorceauFromLibMorceau(idMorceau);
-        if (m.enleveUtilisation() <= 0) {
-            supprimerMorceauDansBdd(m);
-            mLibMorceaux.remove(m);
-        }
+        m.enleveUtilisation();
+    }
 
+    /**
+     * Ajoute une utilisation à un morceau de la librairie des morceaux
+     *
+     * @param idMorceau id du morceau
+     */
+    public void ajouterUtilisation(long idMorceau) {
+        Morceau m = getMorceauFromLibMorceau(idMorceau);
+        m.ajouteUtilisation();
+    }
+
+    /**
+     * Parcours la librairie des morceaux et supprime ceux qui sont à 0 utilisation
+     */
+    private void nettoyerLibMorceaux() {
+        int[] morceauxASuppr = new int[0];
+        int[] tmp;
+
+        for (int i = 0; i < mLibMorceaux.size(); i++) {
+            Morceau m = mLibMorceaux.get(i);
+            if (m.getNbreUtilisations() <= 0) {
+                mBddHelper.supprimerMorceauDansBdd(m.getIdMorceau());
+                tmp = morceauxASuppr;
+                morceauxASuppr = new int[morceauxASuppr.length + 1];
+                System.arraycopy(tmp, 0, morceauxASuppr, 0, tmp.length);
+                morceauxASuppr[tmp.length] = i;
+            }
+        }
+        for (int aMorceauxASuppr : morceauxASuppr) {
+            mLibMorceaux.remove(aMorceauxASuppr);
+        }
     }
 
     /**

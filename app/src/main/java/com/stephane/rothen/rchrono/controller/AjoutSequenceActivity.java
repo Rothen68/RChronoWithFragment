@@ -156,6 +156,12 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
 
     }
 
+    /**
+     * Gère la création du menu
+     *
+     * @param menu Menu
+     * @return Etat de la création
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -163,6 +169,13 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         return true;
     }
 
+    /**
+     * Gère les interractions avec le menu
+     * Affiche ou non les boutons de suppression sur la listView
+     *
+     * @param item item cliqué
+     * @return état du traitement du click
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -185,6 +198,16 @@ public class AjoutSequenceActivity extends ActionBarActivity implements Frag_Lis
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Gère le click sur un item de la listView
+     * Si mode supprimer actif, affiche la popup de confirmation
+     * Sinon mémorise l'exercice cliqué et retourne à la fenetre editionSequence
+     *
+     * @param parent   ListView contenant l'item cliqué
+     * @param view     View sur laquelle l'utilisateur a cliqué
+     * @param position position de la View dans la ListView
+     * @param id
+     */
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
         mSeqASuppr = position;

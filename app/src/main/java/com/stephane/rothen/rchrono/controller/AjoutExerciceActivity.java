@@ -163,10 +163,10 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
     }
 
     /**
-     * Gere la creation du menu
+     * Gère la création du menu
      *
-     * @param menu
-     * @return
+     * @param menu Menu
+     * @return Etat de la création
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -179,8 +179,8 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
      * Gère les interractions avec le menu
      * Affiche ou non les boutons de suppression sur la listView
      *
-     * @param item
-     * @return
+     * @param item item cliqué
+     * @return état du traitement du click
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -206,7 +206,7 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
 
 
     /**
-     * Gere le click sur un item de la listView
+     * Gère le click sur un item de la listView
      * Si mode supprimer actif, affiche la popup de confirmation
      * Sinon mémorise l'exercice cliqué et retourne à la fenetre editionSequence
      *

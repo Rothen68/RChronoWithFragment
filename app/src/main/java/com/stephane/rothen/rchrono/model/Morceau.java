@@ -31,10 +31,10 @@ public class Morceau implements Cloneable {
     /**
      * Constructeur
      *
-     * @param idMorceau     id du morceau dans la base de données de l'application
-     * @param idMorceauDansTelephone    id du morceau dans la base de données du téléphone
-     * @param titre     titre du morceau
-     * @param artiste   artiste du morceau
+     * @param idMorceau              id du morceau dans la base de données de l'application
+     * @param idMorceauDansTelephone id du morceau dans la base de données du téléphone
+     * @param titre                  titre du morceau
+     * @param artiste                artiste du morceau
      */
     public Morceau(long idMorceau, long idMorceauDansTelephone, String titre, String artiste) {
         mIdMorceau = idMorceau;
@@ -46,6 +46,7 @@ public class Morceau implements Cloneable {
 
     /**
      * Retourne l'id du morceau dans la base de données de l'application
+     *
      * @return id du morceau
      */
     public long getIdMorceau() {
@@ -76,6 +77,15 @@ public class Morceau implements Cloneable {
      */
     public int enleveUtilisation() {
         mNbreUtilisation--;
+        return mNbreUtilisation;
+    }
+
+    /**
+     * Retourne le nombre d'utilisations du morceau
+     *
+     * @return nombre d'utilisations
+     */
+    public int getNbreUtilisations() {
         return mNbreUtilisation;
     }
 
