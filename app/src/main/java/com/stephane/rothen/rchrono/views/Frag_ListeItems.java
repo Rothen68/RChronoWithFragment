@@ -237,7 +237,7 @@ public class Frag_ListeItems extends Fragment {
         ElementSequence el = mChrono.get().getElementSequenceActif();
         int nbreMorceaux = el.getPlaylistParDefaut().getNbreMorceaux();
         for (int i = 0; i < nbreMorceaux; i++) {
-            Morceau m = mChrono.get().getMorceauFromLibMorceau(el.getPlaylistParDefaut().getMorceauAt(i));
+            Morceau m = mChrono.get().getMorceauFromBDD(el.getPlaylistParDefaut().getMorceauAt(i));
             mAdapter.addItem(m.getTitre() + " - " + m.getArtiste());
         }
         mAdapter.notifyDataSetChanged();
@@ -247,7 +247,7 @@ public class Frag_ListeItems extends Fragment {
         mAdapter.deleteAll();
         int nbreMorceaux = playlist.getNbreMorceaux();
         for (int i = 0; i < nbreMorceaux; i++) {
-            Morceau m = mChrono.get().getMorceauFromLibMorceau(playlist.getMorceauAt(i));
+            Morceau m = mChrono.get().getMorceauFromBDD(playlist.getMorceauAt(i));
             mAdapter.addItem(m.getTitre() + " - " + m.getArtiste());
         }
         mAdapter.notifyDataSetChanged();

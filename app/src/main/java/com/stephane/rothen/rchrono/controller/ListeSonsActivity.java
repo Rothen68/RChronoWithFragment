@@ -81,8 +81,6 @@ public class ListeSonsActivity extends ActionBarActivity implements Frag_Bouton_
         Morceau m = mListeSons.get(position);
 
         returnIntent.putExtra("ID", m.getIdMorceauDansTelephone());
-        returnIntent.putExtra("TITRE", m.getTitre());
-        returnIntent.putExtra("ARTISTE", m.getArtiste());
         setResult(RESULT_OK, returnIntent);
         finish();
 

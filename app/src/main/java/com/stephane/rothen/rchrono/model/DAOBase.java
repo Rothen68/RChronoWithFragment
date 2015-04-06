@@ -54,6 +54,7 @@ public class DAOBase {
 
     /**
      * Restore la liste des séquences à exécuter depuis la base de donnée et la renvois
+     *
      * @return Liste des séquences à exécuter
      */
     public ArrayList<Long> restoreListeSequences() {
@@ -83,7 +84,7 @@ public class DAOBase {
     /**
      * Sauvegarde le tableau de séquences dans la base de donnée
      *
-     * @param tab   tableau à sauvegarder
+     * @param tab tableau à sauvegarder
      */
     public void saveLstSequence(ArrayList<Long> tab) {
         m_db.execSQL(DatabaseHelper.LSTSEQUENCES_TABLE_DROP);
@@ -93,11 +94,8 @@ public class DAOBase {
             ContentValues map = new ContentValues();
             map.put(DatabaseHelper.LSTSEQUENCES_ID_SEQUENCE, String.valueOf(i));
             m_db.insert(DatabaseHelper.LSTSEQUENCES, null, map);
-            }
         }
-
-
-
+    }
 
 
     /**
@@ -119,7 +117,7 @@ public class DAOBase {
 
                 // recherche les morceaux composant la playlist de l'exercice
                 String requete = "SELECT * FROM " + DatabaseHelper.PLAYLIST + " WHERE " +
-                        DatabaseHelper.PLAYLIST_ID_ELEMENTSEQUENCE + " = " + String.valueOf(idExercice) + " ORDER BY " +
+                        DatabaseHelper.PLAYLIST_ID_EXERCICE + " = " + String.valueOf(idExercice) + " ORDER BY " +
                         DatabaseHelper.PLAYLIST_POSITION + ";";
 
                 Cursor cPlaylist = m_db.rawQuery(requete, null);
@@ -144,14 +142,12 @@ public class DAOBase {
     }
 
 
-
     /**
      * Récupère et renvois la librairie des sequences
-     * @return
-     *      Arraylist contenant les sequences récupérées
+     *
+     * @return Arraylist contenant les sequences récupérées
      */
-    public ArrayList<Sequence> restoreLibrairieSequences(ArrayList<Exercice> libExercices)
-    {
+    public ArrayList<Sequence> restoreLibrairieSequences(ArrayList<Exercice> libExercices) {
         ArrayList<Sequence> tab = new ArrayList<>();
 
         //récupération de toutes les séquences de la table Sequence
@@ -182,8 +178,7 @@ public class DAOBase {
 
                     //recherche de l'exercice dans la librairie des exercices
                     Exercice exercice = null;
-                    for (Exercice e : libExercices)
-                    {
+                    for (Exercice e : libExercices) {
                         if (idExercice == e.getIdExercice()) {
                             exercice = e;
                             break;
@@ -207,35 +202,6 @@ public class DAOBase {
             c.close();
         }
         return tab;
-    }
-
-
-    /**
-     * Récupère et renvois la librairie des morceaux
-     *
-     * @return librairie des morceaux
-     */
-    public ArrayList<Morceau> restoreLibrairieMorceau() {
-        ArrayList<Morceau> lib = new ArrayList<>();
-        if (m_db != null) {
-            String requete = "SELECT * FROM " + DatabaseHelper.MORCEAU + ";";
-            Cursor c = m_db.rawQuery(requete, null);
-            if (c.getCount() > 0) {
-                String titre;
-                String artiste;
-                long idMorceau, idMorceauDansTelephone;
-
-                while (c.moveToNext()) {
-                    idMorceau = c.getLong(c.getColumnIndex(DatabaseHelper.MORCEAU_ID));
-                    idMorceauDansTelephone = c.getLong(c.getColumnIndex(DatabaseHelper.MORCEAU_IDENTIFIANT));
-                    titre = c.getString(c.getColumnIndex(DatabaseHelper.MORCEAU_TITRE));
-                    artiste = c.getString(c.getColumnIndex(DatabaseHelper.MORCEAU_ARTISTE));
-                    lib.add(new Morceau(idMorceau, idMorceauDansTelephone, titre, artiste));
-                }
-            }
-            c.close();
-        }
-        return lib;
     }
 
 
@@ -322,23 +288,6 @@ public class DAOBase {
 
 
     /**
-     * Ajoute le Morceau dans la base de données et renvois son id
-     *
-     * @param m Morceau
-     * @return id du Morceau dans la base de données
-     */
-    public long ajouterMorceauDansBdd(Morceau m) {
-        long retour;
-        ContentValues map = new ContentValues();
-        map.put(DatabaseHelper.MORCEAU_TITRE, m.getTitre());
-        map.put(DatabaseHelper.MORCEAU_IDENTIFIANT, String.valueOf(m.getIdMorceauDansTelephone()));
-        map.put(DatabaseHelper.MORCEAU_ARTISTE, m.getArtiste());
-        retour = m_db.insert(DatabaseHelper.MORCEAU, null, map);
-        return retour;
-    }
-
-
-    /**
      * Met à jour la séquence dans la base de données et retourne son identifiant
      *
      * @param s Sequence
@@ -388,6 +337,7 @@ public class DAOBase {
         map.put(DatabaseHelper.EXERCICE_JOUERPLAYLISTPARDEFAUT, String.valueOf((e.getPlaylistParDefaut().getJouerPlaylist()) ? (1) : (0)));
         String where = DatabaseHelper.EXERCICE_ID + " = " + String.valueOf(e.getIdExercice());
         m_db.update(DatabaseHelper.EXERCICE, map, where, null);
+        majPlaylistDansBdd(e.getPlaylistParDefaut(), e.getIdExercice(), -1);
 
         return e.getIdExercice();
     }
@@ -433,6 +383,7 @@ public class DAOBase {
      */
     public void supprimerSequenceDansBdd(Sequence s) {
         int retour;
+
         String where = DatabaseHelper.SEQUENCE_ID + " = " + s.getIdSequence();
         retour = m_db.delete(DatabaseHelper.SEQUENCE, where, null);
         if (retour != 1) {
@@ -448,17 +399,6 @@ public class DAOBase {
         }
     }
 
-    /**
-     * Supprime le morceau dont l'id est passé en paramètre
-     *
-     * @param idMorceau id du morceau
-     */
-    public void supprimerMorceauDansBdd(long idMorceau) {
-        open();
-        String where = DatabaseHelper.MORCEAU_ID + " = " + idMorceau;
-        m_db.delete(DatabaseHelper.MORCEAU, where, null);
-        close();
-    }
 
     /**
      * Supprime l'exercice passé en paramètre

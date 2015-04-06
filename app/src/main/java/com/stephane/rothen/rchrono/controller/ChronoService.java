@@ -22,6 +22,7 @@ import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.NotificationExercice;
+import com.stephane.rothen.rchrono.model.Playlist;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
 
 import java.util.HashMap;
@@ -66,6 +67,11 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * @see ChronoService#mTimer
      */
     private Boolean chronoStart = false;
+
+    /**
+     * Permet de savoir si le chronomètre redémarre après avoir été mis en pause
+     */
+    private Boolean mStartFromPause = false;
     /**
      * Stocke l'état de l'activity appelante pour détecter la fermeture de l'application ou la destruction/recréation de l'activity par le systeme
      */
@@ -125,6 +131,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private boolean mEtatMPPlaylist = false;
 
+
     /**
      * Implémente l'interface TextToSpeech.OnInitListener, active lors de la fin de l'initialisation du TextToSpeech
      *
@@ -176,11 +183,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
             @Override
             public void onDone(String utteranceId) {
-                if (mEtatMPPlaylist) {
-                    mMPPlaylist.seekTo(mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getPositionDansMorceauActif());
-                    mMPPlaylist.start();
-                }
-
+                prepareMPPlaylist();
             }
 
             @Override
@@ -200,9 +203,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mMPNotif.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                mMPNotif.reset();
                 gestionSyntheseVocale();
-                prepareMPNotif();
             }
         });
         mMPNotif.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -219,6 +220,10 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mEtatMPPlaylist = true;
+                mMPPlaylist.seekTo(mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getPositionDansMorceauActif());
+                mMPPlaylist.start();
+
+
             }
         });
         mMPPlaylist.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -280,10 +285,16 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         if (!chronoStart) {
             chronoStart = true;
 
-            updateNotificationSynthVocaleActives();
-            mEnoncerSyntheseVocale = true;
-            gestionSyntheseVocale();
-
+            // Evite la répétition de la synthèse vocale à la reprise du chrono
+            if (!mStartFromPause) {
+                updateNotificationSynthVocaleActives();
+                mEnoncerSyntheseVocale = true;
+                gestionSyntheseVocale();
+            } else {
+                mStartFromPause = false;
+                if (mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getJouerPlaylist())
+                    prepareMPPlaylist();
+            }
 
             lancerTimer();
             updateListView();
@@ -293,7 +304,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
 
             prepareMPNotif();
-            prepareMPPlaylist();
+
 
         }
     }
@@ -316,10 +327,16 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             chronoStart = false;
             if (mTimer != null)
                 mTimer.cancel();
+            mStartFromPause = true;
         }
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentText("Chronomètre arrêté");
         mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
+        if (mEtatMPPlaylist) {
+            mChrono.get().getElementSequenceActif().getPlaylistParDefaut().setPositionDansMorceauActif(mMPPlaylist.getCurrentPosition());
+            mMPPlaylist.reset();
+            mEtatMPPlaylist = false;
+        }
 
     }
 
@@ -340,6 +357,11 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentText("Chronomètre arrêté");
         mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
+        mStartFromPause = false;
+        if (mEtatMPPlaylist) {
+            mMPPlaylist.reset();
+            mEtatMPPlaylist = false;
+        }
 
 
     }
@@ -435,14 +457,17 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             @Override
             public void onTick(long millisUntilFinished) {
 
-
-                if (!mChrono.get().tick()) {
+                if (mChrono.get().isNextComing()) {
                     mChrono.get().getElementSequenceActif().getPlaylistParDefaut().setPositionDansMorceauActif(mMPPlaylist.getCurrentPosition());
                     mMPPlaylist.pause();
+                }
+                if (!mChrono.get().tick()) {
+                    mEnoncerSyntheseVocale = true;
                     updateListView();
                     gestionNotification();
                     updateNotificationSynthVocaleActives();
-                    mEnoncerSyntheseVocale = true;
+                    prepareMPNotif();
+
                 }
                 updateChrono();
             }
@@ -528,39 +553,40 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * Prepare le MediaPlayer jouant la sonnerie de l'exercice
      */
     private void prepareMPNotif() {
+        if (mNotificationExercice.getSonnerie()) {
+            long idSonnerie = mNotificationExercice.getFichierSonnerie();
+            if (idSonnerie != -1) {
 
-        long idSonnerie = mNotificationExercice.getFichierSonnerie();
-        if (idSonnerie != -1) {
+                Uri sonnerie = ContentUris.withAppendedId(musicUri, idSonnerie);
+                mMPNotif.reset();
+                try {
+                    mMPNotif.setDataSource(getApplicationContext(), sonnerie);
 
-            Uri sonnerie = ContentUris.withAppendedId(musicUri, idSonnerie);
-            mMPNotif.reset();
-            try {
-                mMPNotif.setDataSource(getApplicationContext(), sonnerie);
-
-            } catch (Exception e) {
-                Log.e("AUDIO", "Erreur mMpNotif setDataSource " + e.toString());
+                } catch (Exception e) {
+                    Log.e("AUDIO", "Erreur mMpNotif setDataSource " + e.toString());
+                }
+                mEtatMPNotif = false;
+                mMPNotif.prepareAsync();
             }
-            mEtatMPNotif = false;
-            mMPNotif.prepareAsync();
-
-
         }
-
     }
 
 
     private void prepareMPPlaylist() {
-        long idMorceau = mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getMorceauActif();
-        if (idMorceau > 0 && mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getJouerPlaylist()) {
-            Uri morceau = ContentUris.withAppendedId(musicUri, idMorceau);
-            mMPPlaylist.reset();
-            try {
-                mMPPlaylist.setDataSource(getApplicationContext(), morceau);
-            } catch (Exception e) {
-                Log.e("AUDIO", "Erreur mMPPlaylist setDataSource " + e.toString());
+        Playlist pl = mChrono.get().getElementSequenceActif().getPlaylistParDefaut();
+        if (pl.getNbreMorceaux() > 0) {
+            long idMorceau = pl.getMorceauActif();
+            if (idMorceau > 0 && mChrono.get().getElementSequenceActif().getPlaylistParDefaut().getJouerPlaylist()) {
+                Uri morceau = ContentUris.withAppendedId(musicUri, idMorceau);
+                mMPPlaylist.reset();
+                try {
+                    mMPPlaylist.setDataSource(getApplicationContext(), morceau);
+                } catch (Exception e) {
+                    Log.e("AUDIO", "Erreur mMPPlaylist setDataSource " + e.toString());
+                }
+                mEtatMPPlaylist = false;
+                mMPPlaylist.prepareAsync();
             }
-            mEtatMPPlaylist = false;
-            mMPPlaylist.prepareAsync();
         }
     }
 

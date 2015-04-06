@@ -121,6 +121,7 @@ public class Playlist implements Cloneable {
         } else {
             mIndexMorceauActif = 0;
         }
+        mPositionDansMorceauActif = 0;
     }
 
     /**
@@ -139,6 +140,14 @@ public class Playlist implements Cloneable {
      */
     public void setPositionDansMorceauActif(int pos) {
         mPositionDansMorceauActif = pos;
+    }
+
+    /**
+     * Réinitialise la playlsit
+     */
+    public void resetPlaylist() {
+        mPositionDansMorceauActif = 0;
+        mIndexMorceauActif = 0;
     }
 
     /**

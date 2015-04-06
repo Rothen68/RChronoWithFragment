@@ -256,7 +256,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     mTbVibreur.setChecked(mEtatTbVibreur);
                     mSonnerie = mElementSeqTemp.getNotificationExercice().getFichierSonnerie();
                     if (mSonnerie != -1)
-                        mEtxtSonnerie.setText(mChrono.get().getMorceauFromLibMorceau(mSonnerie).getTitre());
+                        mEtxtSonnerie.setText(mChrono.get().getMorceauFromBDD(mSonnerie).getTitre());
                     mEtatTbSonnerie = mElementSeqTemp.getNotificationExercice().getSonnerie();
                     mTbSonnerie.setChecked(mEtatTbSonnerie);
                     mEtatTbJouerPlaylist = mElementSeqTemp.getPlaylistParDefaut().getJouerPlaylist();
@@ -394,14 +394,12 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((requestCode == LISTESONS_SONNERIE) && resultCode == ListeSonsActivity.RESULT_OK) {
             long id = data.getLongExtra("ID", -1);
-            String titre = data.getStringExtra("TITRE");
-            String artiste = data.getStringExtra("ARTISTE");
             if (id != -1) {
                 switch (requestCode) {
 
                     case LISTESONS_SONNERIE:
 
-                        mElementSeqTemp.getNotificationExercice().setFichierSonnerie(mChrono.get().ajouterMorceau(id, titre, artiste));
+                        mElementSeqTemp.getNotificationExercice().setFichierSonnerie(id);
                         break;
                     default:
                         break;

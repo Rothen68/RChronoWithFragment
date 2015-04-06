@@ -187,6 +187,7 @@ public class Chronometre {
             if (mChronoModel.getSeqFromLstSequenceAt(0).getTabElement().size() > 0) {
                 mIndexExerciceActif = 0;
             }
+            mChronoModel.resetPlaylists();
         } else {
             mIndexSequenceActive = -1;
             mIndexExerciceActif = -1;
@@ -434,6 +435,16 @@ public class Chronometre {
     }
 
     /**
+     * Retourne true si l'exercice va se terminer
+     * @return true si fin de l'exercice actif
+     */
+    public boolean isNextComing() {
+        if (mPositionDansExerciceActif <= 1)
+            return true;
+        else return false;
+    }
+
+    /**
      * Ajoute la séquence
      *
      * @param s séquence à ajouter
@@ -541,36 +552,17 @@ public class Chronometre {
         mChronoModel.supprimerExerciceDansLibrairie(indexExerciceDansLibrairie);
     }
 
-    /**
-     * Ajoute un morceau dans la libMorceau
-     * @param idMorceauDansTelephone    id du morceau dans la base de donnée du téléphone
-     * @param titre titre du morceau
-     * @param artiste   artiste du morceau
-     * @return id du morceau
-     * @see com.stephane.rothen.rchrono.model.ChronoModel#ajouterMorceau(long, String, String)
-     */
-    public long ajouterMorceau(long idMorceauDansTelephone, String titre, String artiste) {
-        return mChronoModel.ajouterMorceau(idMorceauDansTelephone, titre, artiste);
-    }
 
     /**
      * Retourne le morceau dont l'id du morceau dans la base de données du téléphone est passé en paramètre
      * @param idMorceauDansTelephone    id du morceau dans la base de donnée du téléphone
      * @return Morceau
-     * @see com.stephane.rothen.rchrono.model.ChronoModel#getMorceauFromLibMorceau(long)
+     * @see com.stephane.rothen.rchrono.model.ChronoModel#getMorceauFromBDD(long)
      */
-    public Morceau getMorceauFromLibMorceau(long idMorceauDansTelephone) {
-        return mChronoModel.getMorceauFromLibMorceau(idMorceauDansTelephone);
+    public Morceau getMorceauFromBDD(long idMorceauDansTelephone) {
+        return mChronoModel.getMorceauFromBDD(idMorceauDansTelephone);
     }
 
-    /**
-     * Enlève une utilisation sur un morceau
-     * @param idMorceau id du morceau
-     *                  @see com.stephane.rothen.rchrono.model.ChronoModel#enleverUtilisation(long)
-     */
-    public void enleverUtilisation(long idMorceau) {
-        mChronoModel.enleverUtilisation(idMorceau);
-    }
 
     /**
      * Renvois true si la séquence dont l'index dans la librairie des séquences est utilisée dans ListeSequence

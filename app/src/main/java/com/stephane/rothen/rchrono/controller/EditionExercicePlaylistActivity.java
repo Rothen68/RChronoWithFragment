@@ -227,7 +227,7 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
         if (mLstMorceaux.getAfficheBtnSupprExercice()) {
             mIndexMorceauASuppr = position;
-            String nom = mChrono.get().getMorceauFromLibMorceau(mPlaylist.getMorceauAt(mIndexMorceauASuppr)).getTitre();
+            String nom = mChrono.get().getMorceauFromBDD(mPlaylist.getMorceauAt(mIndexMorceauASuppr)).getTitre();
             afficheDialogSuppr(nom);
         }
 
@@ -267,7 +267,6 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
      */
     public void doDialogFragSupprClick() {
         Toast.makeText(this, "Suppression...", Toast.LENGTH_SHORT).show();
-        mChrono.get().enleverUtilisation(mPlaylist.getMorceauAt(mIndexMorceauASuppr));
         mPlaylist.supprimerMorceau(mIndexMorceauASuppr);
         mLstMorceaux.afficheListView(mPlaylist, mChrono);
 
@@ -294,13 +293,11 @@ public class EditionExercicePlaylistActivity extends ActionBarActivity implement
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((requestCode == LISTESONS_MORCEAU || requestCode == LISTESONS_MORCEAU) && resultCode == ListeSonsActivity.RESULT_OK) {
             long id = data.getLongExtra("ID", -1);
-            String titre = data.getStringExtra("TITRE");
-            String artiste = data.getStringExtra("ARTISTE");
             if (id != -1) {
                 switch (requestCode) {
 
                     case LISTESONS_MORCEAU:
-                        mPlaylist.ajouterMorceau(mChrono.get().ajouterMorceau(id, titre, artiste));
+                        mPlaylist.ajouterMorceau(id);
 
                         break;
                     default:
