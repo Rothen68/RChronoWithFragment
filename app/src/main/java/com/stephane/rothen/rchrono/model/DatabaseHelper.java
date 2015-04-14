@@ -68,9 +68,7 @@ public class DatabaseHelper {
         if (m_db != null) {
             requete = "SELECT * FROM " + DatabaseBuilder.LSTSEQUENCES;
             c = m_db.rawQuery(requete, null);
-            int nbreSeq = c.getCount();
-            c.moveToFirst();
-            for (int i = 0; i < nbreSeq; i++) {
+            while(c.moveToNext()) {
                 idSequence = c.getInt(c.getColumnIndex(DatabaseBuilder.LSTSEQUENCES_ID_SEQUENCE));
                 tabSeq.add(idSequence);
             }
