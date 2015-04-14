@@ -301,13 +301,12 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             }
 
             lancerTimer();
+            prepareMPNotif();
             updateListView();
             mNotificationBuilder.setSmallIcon(R.drawable.fleche);
             mNotificationBuilder.setContentText("Chronomètre lancé");
             mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
 
-
-            prepareMPNotif();
 
 
         }

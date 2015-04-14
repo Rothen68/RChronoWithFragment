@@ -212,10 +212,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     protected void onPause() {
         super.onPause();
         if (mSauvegarderDonneesTemp) {
-            mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-            mSeqTemp.setNombreRepetition(mFragDetail.getTxtRepetition());
-            mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
-            mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
+            updateSeqTempFromIHM();
             mChrono.get().setSeqTemp(mSeqTemp);
             mSauvegarderDonneesTemp = false;
         }
@@ -255,6 +252,19 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     }
 
     /**
+     * Met à jour la séquence temporaire de sauvegarde des données de l'interface
+     */
+
+    private void updateSeqTempFromIHM()
+    {
+        mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
+        mSeqTemp.setNombreRepetition(mFragDetail.getTxtRepetition());
+        mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
+        mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
+    }
+
+
+    /**
      * Gestion du Callback onclickListener des vues filles
      *
      * @param v View sur laquelle l'utilisateur a cliqué
@@ -263,6 +273,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     public void onClickListener(View v) {
         switch (v.getId()) {
             case R.id.btnRetour:
+                updateSeqTempFromIHM();
                 if (isSequenceModifiee())
                     if (mSeqTemp.getTabElement().size() == 0) {
                         if (!mRetourListeVide) {
@@ -462,10 +473,6 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         boolean erreur = false;
         switch (v.getId()) {
             case R.id.dialFragEnrSeqEcraser:
-                mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-                mSeqTemp.setNombreRepetition(mFragDetail.getTxtRepetition());
-                mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
-                mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
                 //vérifie que le temps total ne dépasse pas 100h
                 int t = mChrono.get().getDureeTotaleSansSeqActive();
                 if (t + mSeqTemp.getDureeSequence() > 100 * 60 * 60) {
@@ -480,10 +487,6 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
                 }
                 break;
             case R.id.dialFragEnrSeqNouvelle:
-                mSeqTemp.setNomSequence(mFragDetail.getTxtNom());
-                mSeqTemp.setNombreRepetition(mFragDetail.getTxtRepetition());
-                mSeqTemp.getSyntheseVocale().setNom(mFragDetail.getTbNom());
-                mSeqTemp.getSyntheseVocale().setDuree(mFragDetail.getTbDuree());
                 //vérifie que le temps total ne dépasse pas 100h
                 t = mChrono.get().getDureeTotale();
                 if (t + mSeqTemp.getDureeSequence() > 100 * 60 * 60) {
