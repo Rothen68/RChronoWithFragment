@@ -271,7 +271,6 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
      */
     @Override
     public void onClickListener(View v) {
-        
         switch (v.getId()) {
             case R.id.btnRetour:
                 updateSeqTempFromIHM();

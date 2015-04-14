@@ -207,6 +207,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         mMPNotif.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                prepareMPNotif();
                 gestionSyntheseVocale();
             }
         });
@@ -291,7 +292,6 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
             // Evite la répétition de la synthèse vocale à la reprise du chrono
             if (!mStartFromPause) {
-                updateNotificationSynthVocaleActives();
                 mEnoncerSyntheseVocale = true;
                 gestionSyntheseVocale();
             } else {
@@ -456,6 +456,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         //todo corriger le bug d'affichage de la durée des séquences
         updateListView();
         int duree = mChrono.get().getDureeRestanteTotale();
+        mNotificationExercice = mChrono.get().getElementSequenceActif().getNotificationExercice();
         mTimer = new CountDownTimer(duree * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -468,8 +469,14 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                     mEnoncerSyntheseVocale = true;
                     updateListView();
                     gestionNotification();
-                    updateNotificationSynthVocaleActives();
-                    prepareMPNotif();
+
+                    //si il n'y avait pas de sonnerie sur cet exercice alors préparer la sonnerie de l'exercice suivant
+                    boolean preparerMPNotif = false;
+                    if(mNotificationExercice.getSonnerie()==false)
+                        preparerMPNotif = true;
+                    mNotificationExercice = mChrono.get().getElementSequenceActif().getNotificationExercice();
+                    if(preparerMPNotif)
+                        prepareMPNotif();
 
                 }
                 updateChrono();
@@ -478,6 +485,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             @Override
             public void onFinish() {
                 mMPPlaylist.pause();
+                mEnoncerSyntheseVocale = false;
                 gestionNotification();
                 resetChrono();
 
@@ -491,6 +499,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private void gestionSyntheseVocale() {
 
+        mSyntheseVocaleSequence = mChrono.get().getSequenceActive().getSyntheseVocale();
         if (mTextToSpeachReady && mEnoncerSyntheseVocale) {
             if (mIndexSequenceSyntheseVocaleEnnoncee != mChrono.get().getIndexSequenceActive()) {
                 if (mSyntheseVocaleSequence.getNom()) {
@@ -505,6 +514,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                 }
                 mIndexSequenceSyntheseVocaleEnnoncee = mChrono.get().getIndexSequenceActive();
             }
+            mSyntheseVocaleExercice = mChrono.get().getElementSequenceActif().getSyntheseVocale();
             if (mSyntheseVocaleExercice.getNom()) {
                 mTextToSpeach.speak(mChrono.get().getElementSequenceActif().getNomExercice(), TextToSpeech.QUEUE_ADD, null);
             }
@@ -517,6 +527,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "messageID");
             mTextToSpeach.speak("", TextToSpeech.QUEUE_ADD, map);
             mEnoncerSyntheseVocale = false;
+
         }
     }
 
@@ -524,6 +535,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * Gestion des notifications de l'exercice actif
      */
     private void gestionNotification() {
+
         if (mNotificationExercice.getVibreur()) {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
@@ -543,6 +555,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                         if(mMPNotif.isPlaying())
                         {
                             mMPNotif.stop();
+                            prepareMPNotif();
                             gestionSyntheseVocale();
                         }
                     }
@@ -554,19 +567,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
 
     }
 
-    /**
-     * Mise à jours des notifications et syntheses vocales des exercices et sequences actifs
-     *
-     * @see ChronoService#mNotificationExercice
-     * @see ChronoService#mSyntheseVocaleExercice
-     * @see ChronoService#mSyntheseVocaleSequence
-     */
-    private void updateNotificationSynthVocaleActives() {
-        mNotificationExercice = mChrono.get().getElementSequenceActif().getNotificationExercice();
-        mSyntheseVocaleExercice = mChrono.get().getElementSequenceActif().getSyntheseVocale();
-        mSyntheseVocaleSequence = mChrono.get().getSequenceActive().getSyntheseVocale();
 
-    }
 
     /**
      * Prepare le MediaPlayer jouant la sonnerie de l'exercice
