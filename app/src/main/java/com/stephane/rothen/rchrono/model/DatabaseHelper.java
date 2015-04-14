@@ -1,187 +1,419 @@
 package com.stephane.rothen.rchrono.model;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
- * Classe controleur gérant la création, la mise à jour et la connexion à base de donnée interne
+ * Classe contrôleur permettant d'ouvrir et de fermer la base de données
  * <p/>
- * Created by Stéphane on 14/02/2015.
+ * Created by Stéphane on 17/02/2015.
  */
-public class DatabaseHelper extends SQLiteOpenHelper {
-
-    public static final String DB_NAME = "RCHRONO.db";
-    public static final int DB_VERSION = 4;
-
-    /*
-    Historique des versions de la base de donnée
-    1: 14/02/15 : Stéphane : architecture de base
-    2: 14/02/15 : Stéphane : Ajout d'une table playlist permettant d'allouer une playlist par défaut à un exercice en plus de celle d'un ElementSequence
-    3: 17/02/15 : Stéphane : Ajout d'un element JouerPlaylist dans la table exercice
-    4: 18/02/15 : Stéphane : Remplacement du champ Chemin de la table Morceau par le champs Identifiant et ajout de l'artiste et changement du type FichierAudioNotificaiton dans ElementSequence
-
-
-
+public class DatabaseHelper {
+    /**
+     * base de donnée SQLite
      */
+    protected SQLiteDatabase m_db = null;
+    /**
+     * Gestionnaire de connexion à la base de donnée
+     */
+    protected DatabaseBuilder m_helper = null;
+
 
     /**
-     * Table Exercice
+     * Constructeur
+     *
+     * @param context: Context de l'application
      */
-    public static final String EXERCICE_ID = "ID_EXERCICE";
-    public static final String EXERCICE_NOM = "NOM";
-    public static final String EXERCICE_DESCRIPTION = "DESCRIPTION";
-    public static final String EXERCICE_DUREEPARDEFAUT = "DUREEPARDEFAUT";
-    public static final String EXERCICE = "EXERCICE";
-    public static final String EXERCICE_TABLE_DROP = "DROP TABLE IF EXISTS " + EXERCICE + ";";
-    public static final String EXERCICE_JOUERPLAYLISTPARDEFAUT = "JOUERPLAYLISTPARDEFAUT";
-    public static final String EXERCICE_TABLE_CREATE = "CREATE TABLE " + EXERCICE + " (" + EXERCICE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            EXERCICE_NOM + " TEXT, " +
-            EXERCICE_DESCRIPTION + " TEXT, " +
-            EXERCICE_DUREEPARDEFAUT + " INTEGER, " +
-            EXERCICE_JOUERPLAYLISTPARDEFAUT + " INTEGER );";
-    /**
-     * Table Sequence
-     */
-    public static final String SEQUENCE_ID = "ID_SEQUENCE";
-    public static final String SEQUENCE_NOM = "NOM";
-    public static final String SEQUENCE_NOMBREREPETITON = "NOMBREREPETITON";
-    public static final String SEQUENCE_SYNTHESEVOCALE = "SYNTHESEVOCALE";
-    public static final String SEQUENCE = "SEQUENCE";
-    public static final String SEQUENCE_TABLE_CREATE = "CREATE TABLE " + SEQUENCE + "(" + SEQUENCE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            SEQUENCE_NOM + " TEXT, " +
-            SEQUENCE_NOMBREREPETITON + " INTEGER," +
-            SEQUENCE_SYNTHESEVOCALE + " INTEGER);";
-    public static final String SEQUENCE_TABLE_DROP = "DROP TABLE IF EXISTS " + SEQUENCE + ";";
-
-    /**
-     * Table ListeSequence
-     */
-    public static final String LSTSEQUENCES = "LISTESEQUENCE";
-    public static final String LSTSEQUENCES_TABLE_DROP = "DROP TABLE IF EXISTS " + LSTSEQUENCES + ";";
-    public static final String LSTSEQUENCES_ID_LISTEQUENCES = "ID_LISTESEQUENCE";
-    public static final String LSTSEQUENCES_ID_SEQUENCE = "ID_SEQUENCE";
-    public static final String LSTSEQUENCES_TABLE_CREATE = "CREATE TABLE " + LSTSEQUENCES + "(" + LSTSEQUENCES_ID_LISTEQUENCES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            LSTSEQUENCES_ID_SEQUENCE + " INTEGER);";
-    /**
-     * Table Morceau
-     */
-    public static final String MORCEAU = "MORCEAU";
-    public static final String MORCEAU_TABLE_DROP = "DROP TABLE IF EXISTS " + MORCEAU + ";";
-    public static final String MORCEAU_ID = "ID_MORCEAU";
-    public static final String MORCEAU_TITRE = "TITRE";
-    public static final String MORCEAU_ARTISTE = "ARTISTE";
-    public static final String MORCEAU_IDENTIFIANT = "IDENTIFIANT";
-    public static final String MORCEAU_TABLE_CREATE = "CREATE TABLE " + MORCEAU + "(" + MORCEAU_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            MORCEAU_TITRE + " TEXT, " +
-            MORCEAU_ARTISTE + " TEXT, " +
-            MORCEAU_IDENTIFIANT + " INTEGER); ";
-    /**
-     * Table Playlist
-     * Fait le lien entre les morceaux et un exercice ou un ElementSequence.
-     * Si une playlist existe pour un exercice et pour l'ElementSequence qui en hérite, c'est la playlist de l'ElementSequence qui est pris en compte
-     */
-    public static final String PLAYLIST = "PLAYLIST";
-    public static final String PLAYLIST_TABLE_DROP = "DROP TABLE IF EXISTS " + PLAYLIST + ";";
-    public static final String PLAYLIST_ID = "ID_PLAYLIST";
-    public static final String PLAYLIST_ID_MORCEAU = "ID_MORCEAU";
-    public static final String PLAYLIST_ID_EXERCICE = "ID_EXERCICE";
-    public static final String PLAYLIST_ID_ELEMENTSEQUENCE = "ID_ELEMENTSEQUENCE";
-    public static final String PLAYLIST_POSITION = "POSITION";
-    public static final String PLAYLIST_TABLE_CREATE = "CREATE TABLE " + PLAYLIST + "(" + PLAYLIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            PLAYLIST_ID_MORCEAU + " INTEGER," +
-            PLAYLIST_ID_EXERCICE + " INTEGER," +
-            PLAYLIST_ID_ELEMENTSEQUENCE + " INTEGER," +
-            PLAYLIST_POSITION + " INTEGER);";
-    /**
-     * Table ElementSequence
-     */
-
-    public static final String ELEMENTSEQUENCE = "ELEMENTSEQUENCE";
-    public static final String ELEMENTSEQUENCE_TABLE_DROP = "DROP TABLE IF EXISTS " + ELEMENTSEQUENCE + ";";
-    public static final String ELEMENTSEQUENCE_ID = "ID_ELEMENTSEQUENCE";
-    public static final String ELEMENTSEQUENCE_ID_EXERCICE = "ID_EXERCICE";
-    public static final String ELEMENTSEQUENCE_ID_SEQUENCE = "ID_SEQUENCE";
-    public static final String ELEMENTSEQUENCE_POSITION = "POSITION";
-    public static final String ELEMENTSEQUENCE_SYNTHESEVOCALE = "SYNTHESEVOCALE";
-    public static final String ELEMENTSEQUENCE_DUREE = "DUREE";
-    public static final String ELEMENTSEQUENCE_JOUERPLAYLIST = "JOUERPLAYLIST";
-    public static final String ELEMENTSEQUENCE_NOTIFICATION = "NOTIFICATION";
-    public static final String ELEMENTSEQUENCE_FICHIERAUDIONOTIFICATION = "FICHIERAUDIONOTIFICATION";
-    public static final String ELEMENTSEQUENCE_TABLE_CREATE = "CREATE TABLE " + ELEMENTSEQUENCE + "(" + ELEMENTSEQUENCE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            ELEMENTSEQUENCE_ID_EXERCICE + " INTEGER," +
-            ELEMENTSEQUENCE_ID_SEQUENCE + " INTEGER," +
-            ELEMENTSEQUENCE_POSITION + " INTEGER," +
-            ELEMENTSEQUENCE_SYNTHESEVOCALE + " INTEGER," +
-            ELEMENTSEQUENCE_DUREE + " INTEGER," +
-            ELEMENTSEQUENCE_JOUERPLAYLIST + " INTEGER, " +
-            ELEMENTSEQUENCE_NOTIFICATION + " INTEGER," +
-            ELEMENTSEQUENCE_FICHIERAUDIONOTIFICATION + " INTEGER);";
-
-
     public DatabaseHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+        m_helper = new DatabaseBuilder(context);
+    }
 
+    /**
+     * Ouvre la base de donnée et la renvois
+     *
+     * @return : base de donnée SQLite ouverte
+     */
+    public SQLiteDatabase open() {
+        m_db = m_helper.getReadableDatabase();
+        return m_db;
+    }
+
+    /**
+     * Ferme la base de donnée
+     */
+    public void close() {
+        if (m_db != null)
+            m_db.close();
     }
 
 
-    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    /**
+     * Restore la liste des séquences à exécuter depuis la base de donnée et la renvois
+     *
+     * @return Liste des séquences à exécuter
+     */
+    public ArrayList<Long> restoreListeSequences() {
+        ArrayList<Long> tabSeq = new ArrayList<>();
+        //déclaration des variables d'initialisation utilisées dans les boucles à des fins d'optimisation du code
+        String requete;
+        Cursor c;
+        long idSequence;
 
+
+        if (m_db != null) {
+            requete = "SELECT * FROM " + DatabaseBuilder.LSTSEQUENCES;
+            c = m_db.rawQuery(requete, null);
+            int nbreSeq = c.getCount();
+            c.moveToFirst();
+            for (int i = 0; i < nbreSeq; i++) {
+                idSequence = c.getInt(c.getColumnIndex(DatabaseBuilder.LSTSEQUENCES_ID_SEQUENCE));
+                tabSeq.add(idSequence);
+            }
+            c.close();
+        }
+
+        return tabSeq;
     }
 
-    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
 
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-
-        try {
-            db.execSQL(EXERCICE_TABLE_CREATE);
-        } catch (SQLiteException e) {
-            Log.d("SQL", "Erreur exercice :" + e.toString());
-        }
-        try {
-            db.execSQL(SEQUENCE_TABLE_CREATE);
-        } catch (SQLiteException e) {
-            Log.d("SQL", "Erreur sequence :" + e.toString());
-        }
-        try {
-            db.execSQL(ELEMENTSEQUENCE_TABLE_CREATE);
-        } catch (SQLiteException e) {
-            Log.d("SQL", "Erreur ElementSequence :" + e.toString());
-        }
-        try {
-            db.execSQL(LSTSEQUENCES_TABLE_CREATE);
-        } catch (SQLiteException e) {
-            Log.d("SQL", "Erreur ListeSequence :" + e.toString());
-        }
-        try {
-            db.execSQL(MORCEAU_TABLE_CREATE);
-        } catch (SQLiteException e) {
-            Log.d("SQL", "Erreur morceau :" + e.toString());
-        }
-
-        try {
-            db.execSQL(PLAYLIST_TABLE_CREATE);
-        } catch (SQLiteException e) {
-            Log.d("SQL", "Erreur Playlist :" + e.toString());
+    /**
+     * Sauvegarde le tableau de séquences dans la base de donnée
+     *
+     * @param tab tableau à sauvegarder
+     */
+    public void saveLstSequence(ArrayList<Long> tab) {
+        m_db.execSQL(DatabaseBuilder.LSTSEQUENCES_TABLE_DROP);
+        m_db.execSQL(DatabaseBuilder.LSTSEQUENCES_TABLE_CREATE);
+        for (Long i : tab) {
+            // Ajoute la séquence dans la table ListeSequence
+            ContentValues map = new ContentValues();
+            map.put(DatabaseBuilder.LSTSEQUENCES_ID_SEQUENCE, String.valueOf(i));
+            m_db.insert(DatabaseBuilder.LSTSEQUENCES, null, map);
         }
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(EXERCICE_TABLE_DROP);
-        db.execSQL(SEQUENCE_TABLE_DROP);
-        db.execSQL(ELEMENTSEQUENCE_TABLE_DROP);
-        db.execSQL(LSTSEQUENCES_TABLE_DROP);
-        db.execSQL(MORCEAU_TABLE_DROP);
-        db.execSQL(PLAYLIST_TABLE_DROP);
-        onCreate(db);
+
+    /**
+     * Récupère et renvois la librairie des exercices
+     *
+     * @return Arraylist contenant les exercices récupérés
+     */
+    public ArrayList<Exercice> restoreLibrairieExercice() {
+
+        ArrayList<Exercice> tab = new ArrayList<>();
+        if (m_db != null) {
+            Cursor cExercice = m_db.rawQuery("SELECT * FROM " + DatabaseBuilder.EXERCICE + ";", null);
+            while (cExercice.moveToNext()) {
+                int idExercice = cExercice.getInt(cExercice.getColumnIndex(DatabaseBuilder.EXERCICE_ID));
+                String nom = cExercice.getString(cExercice.getColumnIndex(DatabaseBuilder.EXERCICE_NOM));
+                String description = cExercice.getString(cExercice.getColumnIndex(DatabaseBuilder.EXERCICE_DESCRIPTION));
+                int dureeParDefaut = cExercice.getInt(cExercice.getColumnIndex(DatabaseBuilder.EXERCICE_DUREEPARDEFAUT));
+                int jouerPlaylist = cExercice.getInt(cExercice.getColumnIndex(DatabaseBuilder.EXERCICE_JOUERPLAYLISTPARDEFAUT));
+
+                // recherche les morceaux composant la playlist de l'exercice
+                String requete = "SELECT * FROM " + DatabaseBuilder.PLAYLIST + " WHERE " +
+                        DatabaseBuilder.PLAYLIST_ID_EXERCICE + " = " + String.valueOf(idExercice) + " ORDER BY " +
+                        DatabaseBuilder.PLAYLIST_POSITION + ";";
+
+                Cursor cPlaylist = m_db.rawQuery(requete, null);
+
+                Playlist pl = new Playlist();
+                if (jouerPlaylist > 0)
+                    pl.setJouerPlaylist(true);
+                else
+                    pl.setJouerPlaylist(false);
+
+                while (cPlaylist.moveToNext()) {
+                    pl.ajouterMorceau(cPlaylist.getInt(cPlaylist.getColumnIndex(DatabaseBuilder.PLAYLIST_ID_MORCEAU)));
+                }
+                cPlaylist.close();
+                Exercice exercice = new Exercice(idExercice, nom, description, dureeParDefaut, pl);
+
+                tab.add(exercice);
+            }
+            cExercice.close();
+        }
+        return tab;
+    }
+
+
+    /**
+     * Récupère et renvois la librairie des sequences
+     *
+     * @return Arraylist contenant les sequences récupérées
+     */
+    public ArrayList<Sequence> restoreLibrairieSequences(ArrayList<Exercice> libExercices) {
+        ArrayList<Sequence> tab = new ArrayList<>();
+
+        //récupération de toutes les séquences de la table Sequence
+        if (m_db != null) {
+            Cursor c = m_db.rawQuery("SELECT * FROM " + DatabaseBuilder.SEQUENCE + ";", null);
+            while (c.moveToNext()) {
+                int idSequence = c.getInt(c.getColumnIndex(DatabaseBuilder.SEQUENCE_ID));
+                String nomSequence = c.getString(c.getColumnIndex(DatabaseBuilder.SEQUENCE_NOM));
+                int nbreRepetition = c.getInt(c.getColumnIndex(DatabaseBuilder.SEQUENCE_NOMBREREPETITON));
+                int syntheseVocale = c.getInt(c.getColumnIndex(DatabaseBuilder.SEQUENCE_SYNTHESEVOCALE));
+                Sequence seq = new Sequence(idSequence, nomSequence, nbreRepetition, new SyntheseVocale(syntheseVocale));
+                //Recherche des ElementSequence et Exercices pour la séquence en cours
+                String requete = "SELECT * FROM " + DatabaseBuilder.ELEMENTSEQUENCE + " INNER JOIN " + DatabaseBuilder.EXERCICE + " ON " +
+                        DatabaseBuilder.ELEMENTSEQUENCE + "." + DatabaseBuilder.ELEMENTSEQUENCE_ID_EXERCICE + " = " + DatabaseBuilder.EXERCICE + "." +
+                        DatabaseBuilder.EXERCICE_ID + " WHERE " + DatabaseBuilder.ELEMENTSEQUENCE + "." + DatabaseBuilder.ELEMENTSEQUENCE_ID_SEQUENCE +
+                        " = " + String.valueOf(idSequence) + ";";
+                Cursor cElement = m_db.rawQuery(requete, null);
+                while (cElement.moveToNext()) {
+
+
+                    int idElement = cElement.getInt(cElement.getColumnIndex(DatabaseBuilder.ELEMENTSEQUENCE_ID));
+                    int idExercice = cElement.getInt(cElement.getColumnIndex(DatabaseBuilder.EXERCICE_ID));
+                    int syntheseVocaleElement = cElement.getInt(cElement.getColumnIndex(DatabaseBuilder.ELEMENTSEQUENCE_SYNTHESEVOCALE));
+                    int dureeElement = cElement.getInt(cElement.getColumnIndex(DatabaseBuilder.ELEMENTSEQUENCE_DUREE));
+                    int notificationElement = cElement.getInt(cElement.getColumnIndex(DatabaseBuilder.ELEMENTSEQUENCE_NOTIFICATION));
+                    int jouerPlaylist = cElement.getInt(cElement.getColumnIndex(DatabaseBuilder.ELEMENTSEQUENCE_JOUERPLAYLIST));
+                    long idMorceauSonnerie = cElement.getInt(cElement.getColumnIndex(DatabaseBuilder.ELEMENTSEQUENCE_FICHIERAUDIONOTIFICATION));
+
+                    //recherche de l'exercice dans la librairie des exercices
+                    Exercice exercice = null;
+                    for (Exercice e : libExercices) {
+                        if (idExercice == e.getIdExercice()) {
+                            exercice = e;
+                            break;
+                        }
+                    }
+                    if (exercice == null) {
+                        Log.d("SQL", "Erreur l'exercice n'existe pas dans la librairie");
+                    } else {
+
+
+                        ElementSequence element = new ElementSequence(exercice.getIdExercice(), idElement, exercice.getNomExercice(), exercice.getDescriptionExercice(),
+                                exercice.getDureeParDefaut(), exercice.getPlaylistParDefaut(), dureeElement, null,
+                                new NotificationExercice(notificationElement, idMorceauSonnerie), new SyntheseVocale(syntheseVocaleElement));
+                        seq.ajouterElement(element);
+                    }
+                }
+                cElement.close();
+                tab.add(seq);
+
+            }
+            c.close();
+        }
+        return tab;
+    }
+
+
+    /**
+     * Ajoute la séquence passée en paramètre dans la base de données et renvois son id
+     *
+     * @param s séquence
+     * @return identifiant de la séquence dans la base de données
+     */
+    public long ajouterSequenceDansBdd(Sequence s) {
+        long idSequence;
+        ContentValues map = new ContentValues();
+        map.put(DatabaseBuilder.SEQUENCE_NOM, s.getNomSequence());
+        map.put(DatabaseBuilder.SEQUENCE_NOMBREREPETITON, String.valueOf(s.getNombreRepetition()));
+        map.put(DatabaseBuilder.SEQUENCE_SYNTHESEVOCALE, String.valueOf(s.getSyntheseVocale().getSyntheseVocaleForBdd()));
+        idSequence = m_db.insert(DatabaseBuilder.SEQUENCE, null, map);
+        s.setIdSequence(idSequence);
+        for (ElementSequence el : s.getTabElement()) {
+            ajouterElementSequenceDansBdd(el, s.getIdSequence());
+
+        }
+
+
+        return idSequence;
+    }
+
+    /**
+     * Ajoute l'ElementSequence dans la base de données et renvois son id
+     *
+     * @param el         ElementSequence
+     * @param idSequence id de la séquence contenant l'ElementSequence
+     * @return id de l'ElementSequence dans la base de données
+     */
+    public long ajouterElementSequenceDansBdd(ElementSequence el, long idSequence) {
+        ContentValues map;
+        long retour = el.getIdExercice();
+        long idMorceau;
+        if (retour == -1) {
+            retour = ajouterExerciceDansBdd(el.getExercice());
+        }
+        if (retour != -1) {
+            el.setIdExercice(retour);
+
+            idMorceau = el.getNotificationExercice().getFichierSonnerie();
+
+            map = new ContentValues();
+            map.put(DatabaseBuilder.ELEMENTSEQUENCE_ID_EXERCICE, el.getIdExercice());
+            map.put(DatabaseBuilder.ELEMENTSEQUENCE_ID_SEQUENCE, String.valueOf(idSequence));
+            map.put(DatabaseBuilder.ELEMENTSEQUENCE_NOTIFICATION, String.valueOf(el.getNotificationExercice().getNotificationForBdd()));
+            map.put(DatabaseBuilder.ELEMENTSEQUENCE_FICHIERAUDIONOTIFICATION, String.valueOf(idMorceau));
+            map.put(DatabaseBuilder.ELEMENTSEQUENCE_SYNTHESEVOCALE, String.valueOf(el.getSyntheseVocale().getSyntheseVocaleForBdd()));
+            map.put(DatabaseBuilder.ELEMENTSEQUENCE_DUREE, String.valueOf(el.getDureeExercice()));
+            map.put(DatabaseBuilder.ELEMENTSEQUENCE_POSITION, String.valueOf(el));
+            retour = m_db.insert(DatabaseBuilder.ELEMENTSEQUENCE, null, map);
+            if (retour != -1) {
+                el.setIdElementSequence(retour);
+                majPlaylistDansBdd(el.getPlaylistParDefaut(), -1, el.getIdElementSequence());
+            }
+        } else {
+            Log.d("BDD", "Erreur ajouter Exercice dans bdd");
+        }
+        return retour;
+    }
+
+    /**
+     * Ajoute l'Exercice dans la base de données et renvois son id
+     *
+     * @param e Exercice
+     * @return id de l'Exercice dans la base de données
+     */
+    public long ajouterExerciceDansBdd(Exercice e) {
+        long idExercice;
+        ContentValues map = new ContentValues();
+        map.put(DatabaseBuilder.EXERCICE_NOM, e.getNomExercice());
+        map.put(DatabaseBuilder.EXERCICE_DESCRIPTION, e.getDescriptionExercice());
+        map.put(DatabaseBuilder.EXERCICE_DUREEPARDEFAUT, String.valueOf(e.getDureeParDefaut()));
+        map.put(DatabaseBuilder.EXERCICE_JOUERPLAYLISTPARDEFAUT, String.valueOf((e.getPlaylistParDefaut().getJouerPlaylist()) ? (1) : (0)));
+        idExercice = m_db.insert(DatabaseBuilder.EXERCICE, null, map);
+        e.setIdExercice(idExercice);
+        majPlaylistDansBdd(e.getPlaylistParDefaut(), e.getIdExercice(), -1);
+
+        return idExercice;
+    }
+
+
+    /**
+     * Met à jour la séquence dans la base de données et retourne son identifiant
+     *
+     * @param s Sequence
+     * @return identifiant de la séquence dans la base de données
+     */
+    public long majSequenceDansBdd(Sequence s) {
+        long idSequence = s.getIdSequence();
+        if (idSequence > 0) {
+            ContentValues map = new ContentValues();
+            map.put(DatabaseBuilder.SEQUENCE_NOM, s.getNomSequence());
+            map.put(DatabaseBuilder.SEQUENCE_NOMBREREPETITON, String.valueOf(s.getNombreRepetition()));
+            map.put(DatabaseBuilder.SEQUENCE_SYNTHESEVOCALE, String.valueOf(s.getSyntheseVocale().getSyntheseVocaleForBdd()));
+            String where = DatabaseBuilder.SEQUENCE_ID + " = " + s.getIdSequence();
+            long retour = m_db.update(DatabaseBuilder.SEQUENCE, map, where, null);
+            if (retour == 1) {
+                ElementSequence el;
+                where = DatabaseBuilder.ELEMENTSEQUENCE_ID_SEQUENCE + " = " + s.getIdSequence();
+                m_db.delete(DatabaseBuilder.ELEMENTSEQUENCE, where, null);
+
+                for (int i = 0; i < s.getTabElement().size(); i++) {
+                    el = s.getTabElement().get(i);
+                    ajouterElementSequenceDansBdd(el, s.getIdSequence());
+                }
+            } else {
+                Log.d("BDD", "Erreur maj sequence dans bdd : " + retour + " lignes modifiées");
+                return -1;
+            }
+        } else {
+            Log.d("BDD", "Erreur maj sequence dans bdd : id pas enregistré");
+            return -1;
+        }
+        return idSequence;
+    }
+
+
+    /**
+     * Met à jour l'Exercice dans la base de données
+     *
+     * @param e Exercice
+     * @return id de l'Exercice
+     */
+    public long majExerciceDansBdd(Exercice e) {
+        ContentValues map = new ContentValues();
+        map.put(DatabaseBuilder.EXERCICE_NOM, e.getNomExercice());
+        map.put(DatabaseBuilder.EXERCICE_DESCRIPTION, e.getDescriptionExercice());
+        map.put(DatabaseBuilder.EXERCICE_DUREEPARDEFAUT, String.valueOf(e.getDureeParDefaut()));
+        map.put(DatabaseBuilder.EXERCICE_JOUERPLAYLISTPARDEFAUT, String.valueOf((e.getPlaylistParDefaut().getJouerPlaylist()) ? (1) : (0)));
+        String where = DatabaseBuilder.EXERCICE_ID + " = " + String.valueOf(e.getIdExercice());
+        m_db.update(DatabaseBuilder.EXERCICE, map, where, null);
+        majPlaylistDansBdd(e.getPlaylistParDefaut(), e.getIdExercice(), -1);
+
+        return e.getIdExercice();
+    }
+
+
+    /**
+     * Met à jour la Playlist dans la base de données
+     *
+     * @param pl                Playlist
+     * @param idExercice        id de l'exercice lié à la Playlist ou -1
+     * @param idElementSequence id de l'ElementSequence lié à la Playlist ou -1
+     */
+    public void majPlaylistDansBdd(Playlist pl, long idExercice, long idElementSequence) {
+        if (idExercice > 0) {
+            idElementSequence = -1;
+        } else {
+            idExercice = -1;
+        }
+
+        //supprime tous les champs playlist qui pointent vers ce morceau
+
+        String requete = "DELETE FROM " + DatabaseBuilder.PLAYLIST + " WHERE " + DatabaseBuilder.PLAYLIST_ID_EXERCICE + " = " +
+                String.valueOf(idExercice) + " AND " + DatabaseBuilder.PLAYLIST_ID_ELEMENTSEQUENCE + " = " + String.valueOf(idElementSequence) + " ;";
+        m_db.execSQL(requete);
+
+        ContentValues map;
+        for (int i = 0; i < pl.getNbreMorceaux(); i++) {
+            //ajout de la ligne de la playlist dans la base de donnée
+            map = new ContentValues();
+            map.put(DatabaseBuilder.PLAYLIST_ID_MORCEAU, pl.getMorceauAt(i));
+            map.put(DatabaseBuilder.PLAYLIST_ID_EXERCICE, idExercice);
+            map.put(DatabaseBuilder.PLAYLIST_ID_ELEMENTSEQUENCE, idElementSequence);
+            map.put(DatabaseBuilder.PLAYLIST_POSITION, i);
+            m_db.insert(DatabaseBuilder.PLAYLIST, null, map);
+        }
+    }
+
+
+    /**
+     * Supprime la séquence passée en paramètre de la base de données
+     *
+     * @param s Sequence
+     */
+    public void supprimerSequenceDansBdd(Sequence s) {
+        int retour;
+
+        String where = DatabaseBuilder.SEQUENCE_ID + " = " + s.getIdSequence();
+        retour = m_db.delete(DatabaseBuilder.SEQUENCE, where, null);
+        if (retour != 1) {
+            Log.d("BDD", "Erreur supprimerSequenceDansLibrairie : " + retour + " lignes supprimées");
+        } else {
+            for (ElementSequence el : s.getTabElement()) {
+                where = DatabaseBuilder.PLAYLIST_ID_ELEMENTSEQUENCE + " = " + el.getIdElementSequence();
+                m_db.delete(DatabaseBuilder.PLAYLIST, where, null);
+
+            }
+            where = DatabaseBuilder.ELEMENTSEQUENCE_ID_SEQUENCE + " = " + s.getIdSequence();
+            m_db.delete(DatabaseBuilder.ELEMENTSEQUENCE, where, null);
+        }
+    }
+
+
+    /**
+     * Supprime l'exercice passé en paramètre
+     *
+     * @param e Exercice
+     */
+    public void supprimerExerciceDansBdd(Exercice e) {
+        int retour;
+        String where = DatabaseBuilder.EXERCICE_ID + " = " + e.getIdExercice();
+        retour = m_db.delete(DatabaseBuilder.EXERCICE, where, null);
+        if (retour != 1) {
+            Log.d("BDD", "Erreur supprimerExerciceDansBdd : " + retour + " lignes supprimées");
+        } else {
+            where = DatabaseBuilder.PLAYLIST_ID_EXERCICE + " = " + e.getIdExercice();
+            m_db.delete(DatabaseBuilder.PLAYLIST, where, null);
+        }
     }
 }

@@ -3,7 +3,7 @@ package com.stephane.rothen.rchrono.controller;
 import android.content.Context;
 
 import com.stephane.rothen.rchrono.model.ChronoModel;
-import com.stephane.rothen.rchrono.model.DAOBase;
+import com.stephane.rothen.rchrono.model.DatabaseHelper;
 import com.stephane.rothen.rchrono.model.ElementSequence;
 import com.stephane.rothen.rchrono.model.Exercice;
 import com.stephane.rothen.rchrono.model.Morceau;
@@ -90,7 +90,7 @@ public class Chronometre {
      * Constructeur
      *
      * @param c Context de l'application, pour l'acces à la base de donnée
-     * @see DAOBase
+     * @see DatabaseHelper
      */
     public Chronometre(Context c) {
 

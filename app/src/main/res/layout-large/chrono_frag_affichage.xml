@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="Exercice"
+        android:text="@string/descChronometre_Exercice"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1" />
 
     <TextView

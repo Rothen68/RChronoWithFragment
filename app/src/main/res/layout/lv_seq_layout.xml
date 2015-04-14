@@ -22,7 +22,7 @@ Définit le layout d'une séquence dans la listView
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="left|center_vertical"
-            android:text="Medium Text"
+            android:text=""
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#3EA849" />
 

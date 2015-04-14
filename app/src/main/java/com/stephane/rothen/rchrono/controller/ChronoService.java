@@ -81,6 +81,10 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      */
     private CountDownTimer mTimer;
     /**
+     * Instance de la classe timer permettant de limiter la taille de la notification Sonnerie à 5s
+     */
+    private CountDownTimer mSonnerieTimer;
+    /**
      * Manager de notification
      */
     private NotificationManager mNotificationManager;
@@ -528,6 +532,22 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         if (mNotificationExercice.getSonnerie()) {
             if (mEtatMPNotif) {
                 mMPNotif.start();
+                //Démarre le compte à rebours pour limiter la durée de la sonnerie à 5 secondes
+                mSonnerieTimer = new CountDownTimer(5000,5000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        if(mMPNotif.isPlaying())
+                        {
+                            mMPNotif.stop();
+                            gestionSyntheseVocale();
+                        }
+                    }
+                }.start();
             }
         } else {
             gestionSyntheseVocale();

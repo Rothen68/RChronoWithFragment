@@ -26,9 +26,9 @@ public class ChronoModel {
     /**
      * Gestionnaire de l'accès à la base de donnée
      *
-     * @see com.stephane.rothen.rchrono.model.DAOBase
+     * @see DatabaseHelper
      */
-    protected DAOBase mBddHelper;
+    protected DatabaseHelper mBddHelper;
     /**
      * Instance de l'objet contenant la librairie des exercices présents dans la base de données du téléphone
      */
@@ -40,7 +40,7 @@ public class ChronoModel {
     /**
      * Instance de l'objet contenant la liste des séquences à effectuer
      */
-    protected ArrayList<Long> mListeSequences;
+    protected ArrayList<Long> mListeSequences; //todo utiliser un sparseArray
     /**
      * ContentResolver pour la recherche des données des musiques
      */
@@ -53,7 +53,7 @@ public class ChronoModel {
      * @param context Context de l'application
      */
     public ChronoModel(Context context) {
-        mBddHelper = new DAOBase(context);
+        mBddHelper = new DatabaseHelper(context);
         mMusicResolver = context.getContentResolver();
     }
 
@@ -61,7 +61,7 @@ public class ChronoModel {
      * Restore les classes modèle depuis la base de donnée
      *
      * @return état de la restoration : true si réussie
-     * @see DAOBase
+     * @see DatabaseHelper
      */
     public boolean restore() {
         mBddHelper.open();

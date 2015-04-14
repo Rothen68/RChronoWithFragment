@@ -1,76 +1,76 @@
 <component name="ProjectDictionaryState">
   <dictionary name="stéphane">
     <words>
+      <w>actif</w>
       <w>affecte</w>
       <w>affecter</w>
       <w>affichage</w>
+      <w>affiche</w>
+      <w>afficher</w>
       <w>ajout</w>
       <w>ajoute</w>
       <w>ajouter</w>
-      <w>ajouté</w>
-      <w>alors</w>
-      <w>ancien</w>
-      <w>ancienne</w>
-      <w>anciennne</w>
+      <w>appelée</w>
       <w>arraylist</w>
       <w>boucles</w>
+      <w>bouton</w>
       <w>calcule</w>
       <w>caractéristiques</w>
-      <w>ceux</w>
-      <w>chaque</w>
+      <w>cette</w>
       <w>chemin</w>
+      <w>chrono</w>
+      <w>chronometre</w>
       <w>chronomètre</w>
+      <w>classe</w>
       <w>cliqué</w>
       <w>comme</w>
       <w>composant</w>
-      <w>comptage</w>
       <w>constantes</w>
       <w>constructeur</w>
+      <w>constructeurs</w>
       <w>contenant</w>
       <w>contenu</w>
-      <w>contructeur</w>
       <w>contrôleur</w>
       <w>cours</w>
-      <w>création</w>
       <w>créé</w>
       <w>curseur</w>
+      <w>curseurs</w>
       <w>d'affichage</w>
       <w>d'après</w>
       <w>d'entier</w>
       <w>d'initialisation</w>
+      <w>d'initialiser</w>
       <w>d'optimisation</w>
       <w>d'ouvrir</w>
       <w>d'un</w>
       <w>d'une</w>
       <w>d'utilisations</w>
       <w>defaut</w>
-      <w>directement</w>
+      <w>depuis</w>
       <w>doit</w>
       <w>donnée</w>
       <w>données</w>
       <w>dont</w>
-      <w>dupliquée</w>
+      <w>duree</w>
       <w>durée</w>
       <w>déclaration</w>
       <w>défaut</w>
+      <w>définie</w>
       <w>définissant</w>
       <w>définit</w>
-      <w>déjà</w>
       <w>editionexercice</w>
       <w>editionexerciceplaylist</w>
-      <w>effectuer</w>
       <w>egale</w>
       <w>enleve</w>
-      <w>enlever</w>
       <w>enlève</w>
       <w>ennonce</w>
       <w>ennoncée</w>
-      <w>enregistre</w>
       <w>enregistré</w>
       <w>entier</w>
       <w>erreur</w>
       <w>etat</w>
       <w>executer</w>
+      <w>exercice</w>
       <w>exercices</w>
       <w>exécuter</w>
       <w>fenêtre</w>
@@ -78,12 +78,15 @@
       <w>fermer</w>
       <w>fichier</w>
       <w>finie</w>
+      <w>fleche</w>
       <w>fois</w>
+      <w>fonction</w>
       <w>forme</w>
       <w>garder</w>
       <w>gestionnaire</w>
       <w>globale</w>
       <w>gère</w>
+      <w>gérant</w>
       <w>héritant</w>
       <w>identifiant</w>
       <w>incluant</w>
@@ -91,11 +94,11 @@
       <w>jour</w>
       <w>jouée</w>
       <w>l'acces</w>
-      <w>l'accès</w>
       <w>l'ajoute</w>
-      <w>l'ancienne</w>
       <w>l'application</w>
       <w>l'artiste</w>
+      <w>l'avancement</w>
+      <w>l'exercice</w>
       <w>l'id</w>
       <w>l'identifiant</w>
       <w>l'index</w>
@@ -105,76 +108,67 @@
       <w>l'utilisateur</w>
       <w>l'utilisation</w>
       <w>l'élément</w>
+      <w>l'état</w>
       <w>lequel</w>
       <w>librairie</w>
       <w>ligne</w>
       <w>lignes</w>
+      <w>liste</w>
       <w>lors</w>
       <w>membre</w>
+      <w>mettre</w>
       <w>mises</w>
-      <w>modifie</w>
-      <w>modifiee</w>
-      <w>modifiée</w>
       <w>modifiées</w>
-      <w>modèle</w>
       <w>morceau</w>
       <w>morceaux</w>
       <w>musique</w>
-      <w>mère</w>
       <w>métier</w>
       <w>n'est</w>
       <w>n'existe</w>
       <w>nbre</w>
-      <w>nettoyer</w>
       <w>nofitications</w>
       <w>nombre</w>
       <w>nouvel</w>
-      <w>nouvelle</w>
       <w>objet</w>
-      <w>occurences</w>
       <w>ouverte</w>
       <w>ouvre</w>
-      <w>paramàtre</w>
       <w>paramètre</w>
-      <w>parcours</w>
       <w>parcourt</w>
       <w>partir</w>
       <w>passé</w>
       <w>passée</w>
-      <w>plusieurs</w>
+      <w>permet</w>
+      <w>permettant</w>
+      <w>playlsit</w>
       <w>pointent</w>
-      <w>préparée</w>
-      <w>présent</w>
-      <w>présente</w>
-      <w>présentes</w>
-      <w>présents</w>
-      <w>quand</w>
-      <w>redémarre</w>
+      <w>positionner</w>
       <w>remplace</w>
       <w>remplacement</w>
       <w>remplacer</w>
-      <w>remplacée</w>
       <w>renvois</w>
       <w>représenter</w>
       <w>requete</w>
+      <w>restant</w>
       <w>restante</w>
       <w>restantes</w>
       <w>retour</w>
+      <w>retourne</w>
       <w>récupère</w>
       <w>récupération</w>
       <w>récupérées</w>
       <w>récupérés</w>
       <w>réinitialise</w>
       <w>répétitions</w>
-      <w>réussie</w>
       <w>sauvegarde</w>
       <w>sauvegarder</w>
       <w>sinon</w>
       <w>sonnerie</w>
-      <w>sont</w>
       <w>spécifiques</w>
       <w>stockant</w>
+      <w>stocke</w>
+      <w>stocker</w>
       <w>stockée</w>
+      <w>stéphane</w>
       <w>suppr</w>
       <w>supprime</w>
       <w>supprimer</w>
@@ -182,24 +176,27 @@
       <w>supprimées</w>
       <w>synthese</w>
       <w>synthèse</w>
+      <w>séquence</w>
       <w>séquences</w>
       <w>temporaire</w>
+      <w>terminer</w>
+      <w>texte</w>
       <w>totale</w>
       <w>tous</w>
       <w>toutes</w>
-      <w>trouve</w>
-      <w>trouvée</w>
+      <w>trois</w>
       <w>téléphone</w>
       <w>utilisations</w>
       <w>utilisee</w>
       <w>utilisé</w>
       <w>utilisée</w>
       <w>utilisées</w>
-      <w>utilisés</w>
+      <w>valeur</w>
       <w>valeurs</w>
+      <w>vers</w>
       <w>vibreur</w>
+      <w>visibilite</w>
       <w>vocale</w>
-      <w>vérifie</w>
       <w>état</w>
       <w>être</w>
     </words>

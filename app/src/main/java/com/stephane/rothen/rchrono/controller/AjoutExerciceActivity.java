@@ -40,7 +40,7 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
     public static final int RESULT_AJOUT = 50;
     public static final int RESULT_CREER = 51;
 
-
+//todo bouton supprimer
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *
@@ -213,7 +213,7 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
      * @param parent   ListView contenant l'item cliqué
      * @param view     View sur laquelle l'utilisateur a cliqué
      * @param position position de la View dans la ListView
-     * @param id
+     * @param id       id de l'objet
      */
     @Override
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
