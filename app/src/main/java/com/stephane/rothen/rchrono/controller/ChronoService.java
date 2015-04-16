@@ -41,7 +41,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     public static final String SER_TEMPS_RESTANT = "temps_restant";
     public static final String SER_UPDATE_LISTVIEW = "update_ListView";
     public static final String SER_FIN_LISTESEQUENCE = "fin_liste_sequence";
-    private static final int IDNOTIFICATION = 1;
+    public static final int IDNOTIFICATION = 1;
     private static Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
     /**
      * Permet la communication depuis l'interface
@@ -168,15 +168,21 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
     public void onCreate() {
         super.onCreate();
 
+        //Création de la notification du service
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationBuilder = new NotificationCompat.Builder(this);
         mNotificationBuilder.setSmallIcon(R.drawable.pause);
         mNotificationBuilder.setContentTitle("RChrono");
         mNotificationBuilder.setContentText("Chronomètre arrêté");
+        mNotificationBuilder.setCategory(NOTIFICATION_SERVICE);
+        mNotificationBuilder.setAutoCancel(false);
+        mNotificationBuilder.setOngoing(true);
         Intent i = new Intent(this, ChronometreActivity.class);
         PendingIntent nPi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationBuilder.setContentIntent(nPi);
-        mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
+
+        //Définition du service en foregroundService pour qu'il tourne même en veille
+        startForeground(IDNOTIFICATION, mNotificationBuilder.build());
 
         mTextToSpeach = new TextToSpeech(this, this);
         mTextToSpeach.setOnUtteranceProgressListener(new UtteranceProgressListener() {
@@ -539,6 +545,10 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         if (mNotificationExercice.getVibreur()) {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
+        }
+        if (mNotificationExercice.getPopup()) {
+
+
         }
         if (mNotificationExercice.getSonnerie()) {
             if (mEtatMPNotif) {

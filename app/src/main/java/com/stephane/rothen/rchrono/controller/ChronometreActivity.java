@@ -162,6 +162,8 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                 chronoService = null;
             }
         };
+
+
         Intent intent = new Intent(getApplicationContext(), ChronoService.class);
         intent.putExtra(ChronoService.SER_ACTION, 0);
         startService(intent);
