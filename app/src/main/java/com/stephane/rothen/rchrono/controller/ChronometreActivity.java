@@ -302,7 +302,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
     public void onItemClickListener(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()) {
             /*
-             * Lors d'un appuis court sur un item de la ListView, arrête le chrono et le place sur l'exercice sélectionné, ou en cas de séquence sélectionnée, sur le premier exercice de la séquence
+             * Lors d'un appuis court sur un item de la ListView quand le chrono est arreté, place le curseur sur l'exercice ou sur le premier exercice de la séquence cliqué
              * @param parent
              */
             case R.id.Frag_Liste_listView:

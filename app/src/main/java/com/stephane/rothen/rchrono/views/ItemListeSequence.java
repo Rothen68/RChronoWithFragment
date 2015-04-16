@@ -17,7 +17,8 @@ import com.stephane.rothen.rchrono.R;
 public class ItemListeSequence extends LinearLayout {
 
     protected ImageView mImgSuppr;
-    protected TextView mText;
+    protected TextView mTxtSequence;
+    protected TextView mTxtNbreRepetSequence;
     protected int mPosition;
 
     public ItemListeSequence(Context context) {
@@ -45,7 +46,8 @@ public class ItemListeSequence extends LinearLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.lv_seq_layout, this, true);
         setOrientation(HORIZONTAL);
-        mText = (TextView) findViewById(R.id.txtLvSequence);
+        mTxtSequence = (TextView) findViewById(R.id.txtLvSequence);
+        mTxtNbreRepetSequence = (TextView) findViewById(R.id.txtLvNbreRepetSequence);
         mImgSuppr = (ImageView) findViewById(R.id.imgSuppr);
     }
 
@@ -53,11 +55,13 @@ public class ItemListeSequence extends LinearLayout {
     /**
      * permet de modifier les valeurs de la view
      *
-     * @param txt              valeur à affecter à la zone de texte
+     * @param txtSequence              valeur à affecter à la zone de texte Sequence
+     *                                 @param txtNbreRepet      valeur à afficher dans la zone de texte nombre de repetition séquence
      * @param visibiliteBouton visibilité du bouton
      */
-    public void setUpView(String txt, boolean visibiliteBouton) {
-        mText.setText(txt);
+    public void setUpView(String txtSequence, String txtNbreRepet, boolean visibiliteBouton) {
+        mTxtSequence.setText(txtSequence);
+        mTxtNbreRepetSequence.setText(txtNbreRepet);
         mImgSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
     }
 }

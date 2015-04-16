@@ -21,7 +21,7 @@ public class CustomAdapter extends BaseAdapter {
     /**
      * Tableau contenant les données à afficher
      */
-    protected ArrayList<String> m_Data = new ArrayList<>();
+    protected ArrayList<SourceItem> m_Data = new ArrayList<>();
     /**
      * TreeSet contenant les positions des séquences dans le tableau de donnée
      *
@@ -89,24 +89,26 @@ public class CustomAdapter extends BaseAdapter {
     /**
      * Ajoute un item dans le tableau de donnée
      *
-     * @param item item représentant un Exercice
+     * @param nom nom de l'exercice
+     *            @param  duree  durée de l'exercice
      * @see CustomAdapter#m_Data
      * @see com.stephane.rothen.rchrono.model.Exercice
      */
-    public void addItem(final String item) {
-        m_Data.add(item);
+    public void addItem(final String nom, final String duree) {
+        m_Data.add(new SourceItem(nom, duree));
         notifyDataSetChanged();
     }
 
     /**
      * Ajoute un item de section dans le tableau de donnée
      *
-     * @param item item représentant une Sequence
+     * @param nom nom d'une Sequence
+     * @param nbreRepetitions  nombre de répétitions d'une séquence
      * @see CustomAdapter#m_Data
      * @see com.stephane.rothen.rchrono.model.Sequence
      */
-    public void addSectionHeaderItem(final String item) {
-        m_Data.add(item);
+    public void addSectionHeaderItem(final String nom, final String nbreRepetitions) {
+        m_Data.add(new SourceItem(nom, nbreRepetitions));
         sectionHeader.add(m_Data.size() - 1);
         notifyDataSetChanged();
 
@@ -202,9 +204,10 @@ public class CustomAdapter extends BaseAdapter {
                 }
                 // met à jour les valeurs de la vue
                 if (position == mfocusPosition && mAfficheCurseur) {
-                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position), true, mAfficheBtnSupprExercice);
+
+                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position).nom, m_Data.get(position).donnee, true, mAfficheBtnSupprExercice);
                 } else {
-                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position), false, mAfficheBtnSupprExercice);
+                    ((ItemListeExercice) convertView).setUpView(m_Data.get(position).nom, m_Data.get(position).donnee, false, mAfficheBtnSupprExercice);
 
                 }
                 break;
@@ -212,10 +215,28 @@ public class CustomAdapter extends BaseAdapter {
                 if (!(convertView instanceof ItemListeSequence)) {
                     convertView = new ItemListeSequence(m_inflater.getContext());
                 }
-                ((ItemListeSequence) convertView).setUpView(m_Data.get(position), mAfficheBtnSupprSequence);
+                ((ItemListeSequence) convertView).setUpView(m_Data.get(position).nom, m_Data.get(position).donnee, mAfficheBtnSupprSequence);
                 break;
         }
 
         return convertView;
+    }
+
+
+    /**
+     * Classe contenant les données à afficher pour un item de la listView
+     */
+    private class SourceItem {
+        public String nom;
+        public String donnee;
+
+        public SourceItem(String nom, String donnee) {
+            this.nom = nom;
+            this.donnee = donnee;
+        }
+
+        public SourceItem create(String nom, String donnee) {
+            return new SourceItem(nom, donnee);
+        }
     }
 }

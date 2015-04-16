@@ -17,7 +17,8 @@ public class ItemListeExercice extends LinearLayout {
 
     protected ImageView mFleche;
     protected ImageView mImgSuppr;
-    protected TextView mText;
+    protected TextView mTxtExercice;
+    protected TextView mTxtDureeExercice;
     protected int mPosition;
 
 
@@ -46,7 +47,8 @@ public class ItemListeExercice extends LinearLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.lv_exercice_layout, this, true);
         setOrientation(HORIZONTAL);
-        mText = (TextView) findViewById(R.id.txtLvExercice);
+        mTxtExercice = (TextView) findViewById(R.id.txtLvExercice);
+        mTxtDureeExercice = (TextView) findViewById(R.id.txtLvDureeExercice);
         mFleche = (ImageView) findViewById(R.id.imageView);
         mImgSuppr = (ImageView) findViewById(R.id.imgSuppr);
         mPosition = -1;
@@ -55,12 +57,14 @@ public class ItemListeExercice extends LinearLayout {
     /**
      * Permet de mettre à jour les valeurs de l'objet
      *
-     * @param txt              Texte à afficher dans la TextView
+     * @param txtExercice              Texte à afficher dans la TextView Exercice
+     * @param txtDureeExercice          Texte à afficher dans la TextView dureeExercice
      * @param visibiliteFleche Affiche ou non la fleche de focus
      * @param visibiliteBouton Affiche ou non le bouton suppression
      */
-    public void setUpView(String txt, boolean visibiliteFleche, boolean visibiliteBouton) {
-        mText.setText(txt);
+    public void setUpView(String txtExercice, String txtDureeExercice, boolean visibiliteFleche, boolean visibiliteBouton) {
+        mTxtExercice.setText(txtExercice);
+        mTxtDureeExercice.setText(txtDureeExercice);
         mFleche.setVisibility((visibiliteFleche) ? VISIBLE : INVISIBLE);
         mImgSuppr.setVisibility((visibiliteBouton) ? VISIBLE : INVISIBLE);
 

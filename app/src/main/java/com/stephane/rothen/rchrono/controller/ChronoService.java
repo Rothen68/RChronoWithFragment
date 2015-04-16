@@ -17,6 +17,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.stephane.rothen.rchrono.Fonctions;
 import com.stephane.rothen.rchrono.R;
@@ -102,6 +103,11 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
      * Stocke la notification de l'exercice actif
      */
     private NotificationExercice mNotificationExercice;
+
+    /**
+     * Stocke le nom de l'ElementSequence actif
+     */
+    private String mNomElementSequenceActif;
     /**
      * Stocke la synthese vocale de l'exercice actif
      */
@@ -462,7 +468,11 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         //todo corriger le bug d'affichage de la durée des séquences
         updateListView();
         int duree = mChrono.get().getDureeRestanteTotale();
+
+        //Met à jour les données de notification de l'exercice en cours
         mNotificationExercice = mChrono.get().getElementSequenceActif().getNotificationExercice();
+        mNomElementSequenceActif = mChrono.get().getElementSequenceActif().getNomExercice();
+
         mTimer = new CountDownTimer(duree * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -470,6 +480,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                 if (mChrono.get().isNextComing()) {
                     mChrono.get().getElementSequenceActif().getPlaylistParDefaut().setPositionDansMorceauActif(mMPPlaylist.getCurrentPosition());
                     mMPPlaylist.pause();
+
                 }
                 if (!mChrono.get().tick()) {
                     mEnoncerSyntheseVocale = true;
@@ -480,7 +491,10 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
                     boolean preparerMPNotif = false;
                     if(mNotificationExercice.getSonnerie()==false)
                         preparerMPNotif = true;
+
+                    //met à jour les données pour les notifications de l'exercice en cours
                     mNotificationExercice = mChrono.get().getElementSequenceActif().getNotificationExercice();
+                    mNomElementSequenceActif = mChrono.get().getElementSequenceActif().getNomExercice();
                     if(preparerMPNotif)
                         prepareMPNotif();
 
@@ -548,7 +562,8 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
         }
         if (mNotificationExercice.getPopup()) {
 
-
+            String texte =  mNomElementSequenceActif+ " terminé";
+            Toast.makeText(this,texte,Toast.LENGTH_LONG).show();
         }
         if (mNotificationExercice.getSonnerie()) {
             if (mEtatMPNotif) {

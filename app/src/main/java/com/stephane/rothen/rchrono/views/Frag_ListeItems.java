@@ -238,7 +238,7 @@ public class Frag_ListeItems extends Fragment {
         int nbreMorceaux = el.getPlaylistParDefaut().getNbreMorceaux();
         for (int i = 0; i < nbreMorceaux; i++) {
             Morceau m = mChrono.get().getMorceauFromBDD(el.getPlaylistParDefaut().getMorceauAt(i));
-            mAdapter.addItem(m.getTitre() + " - " + m.getArtiste());
+            mAdapter.addItem(m.getTitre(), "- " + m.getArtiste());
         }
         mAdapter.notifyDataSetChanged();
     }
@@ -248,7 +248,7 @@ public class Frag_ListeItems extends Fragment {
         int nbreMorceaux = playlist.getNbreMorceaux();
         for (int i = 0; i < nbreMorceaux; i++) {
             Morceau m = mChrono.get().getMorceauFromBDD(playlist.getMorceauAt(i));
-            mAdapter.addItem(m.getTitre() + " - " + m.getArtiste());
+            mAdapter.addItem(m.getTitre(), "- " + m.getArtiste());
         }
         mAdapter.notifyDataSetChanged();
     }
@@ -257,7 +257,7 @@ public class Frag_ListeItems extends Fragment {
         mAdapter.deleteAll();
         int nbreMorceau = lst.size();
         for (int i = 0; i < nbreMorceau; i++) {
-            mAdapter.addItem(lst.get(i).getTitre() + " - " + lst.get(i).getArtiste());
+            mAdapter.addItem(lst.get(i).getTitre(), "- " + lst.get(i).getArtiste());
         }
     }
 
@@ -271,7 +271,7 @@ public class Frag_ListeItems extends Fragment {
         Sequence s = mChrono.get().getSequenceActive();
         for (int i = 0; i < s.getTabElement().size(); i++) {
             ElementSequence e = s.getTabElement().get(i);
-            mAdapter.addItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeExercice()));
+            mAdapter.addItem(e.getNomExercice(), Fonctions.convertSversHMSSansZeros(e.getDureeExercice()));
         }
         mAdapter.notifyDataSetChanged();
     }
@@ -281,7 +281,7 @@ public class Frag_ListeItems extends Fragment {
         mAdapter.deleteAll();
         for (int i = 0; i < s.getTabElement().size(); i++) {
             ElementSequence e = s.getTabElement().get(i);
-            mAdapter.addItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeExercice()));
+            mAdapter.addItem(e.getNomExercice(), Fonctions.convertSversHMSSansZeros(e.getDureeExercice()));
         }
         mAdapter.notifyDataSetChanged();
     }
@@ -291,7 +291,7 @@ public class Frag_ListeItems extends Fragment {
         mAdapter.setFocusPosition(0);
         for (int i = 0; i < mChrono.get().getLibSequence().size(); i++) {
             Sequence s = mChrono.get().getLibSequence().get(i);
-            mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + s.getNombreRepetition() + "x - " + Fonctions.convertSversHMSSansZeros(s.getDureeSequence()));
+            mAdapter.addSectionHeaderItem(s.getNomSequence(), s.getNombreRepetition() + "x - " + Fonctions.convertSversHMSSansZeros(s.getDureeSequence()));
 
         }
         mAdapter.notifyDataSetChanged();
@@ -302,7 +302,7 @@ public class Frag_ListeItems extends Fragment {
         mAdapter.setFocusPosition(0);
         for (int i = 0; i < mChrono.get().getLibExercice().size(); i++) {
             Exercice e = mChrono.get().getLibExercice().get(i);
-            mAdapter.addItem(e.getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(e.getDureeParDefaut()));
+            mAdapter.addItem(e.getNomExercice(), "- " + Fonctions.convertSversHMSSansZeros(e.getDureeParDefaut()));
 
         }
         mAdapter.notifyDataSetChanged();
@@ -318,22 +318,22 @@ public class Frag_ListeItems extends Fragment {
             //si s est la séquence active, afficher le nombre de répétitions restantes
             if (mChrono.get().getIndexSequenceActive() == i) {
                 if (mChrono.get().getNbreRepetition() == 0) {
-                    mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + Fonctions.convertSversHMSSansZeros(mChrono.get().getDureeRestanteSequenceActive()));
+                    mAdapter.addSectionHeaderItem(s.getNomSequence(), Fonctions.convertSversHMSSansZeros(mChrono.get().getDureeRestanteSequenceActive()));
                 } else {
-                    mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + mChrono.get().getNbreRepetition() + "x" + " - " + Fonctions.convertSversHMSSansZeros(mChrono.get().getDureeRestanteSequenceActive()));
+                    mAdapter.addSectionHeaderItem(s.getNomSequence(), mChrono.get().getNbreRepetition() + "x" + " - " + Fonctions.convertSversHMSSansZeros(mChrono.get().getDureeRestanteSequenceActive()));
                 }
             }
             //si s est avant la séquence active, donc est déjà passée, met 0 à la durée de la séquence et des exercices qui la composent
             else if (mChrono.get().getIndexSequenceActive() > i) {
-                mAdapter.addSectionHeaderItem(s.getNomSequence());
+                mAdapter.addSectionHeaderItem(s.getNomSequence(), "");
             } else {
-                mAdapter.addSectionHeaderItem(s.getNomSequence() + " - " + s.getNombreRepetition() + "x" + " - " + Fonctions.convertSversHMSSansZeros(s.getDureeSequence()));
+                mAdapter.addSectionHeaderItem(s.getNomSequence(), s.getNombreRepetition() + "x" + " - " + Fonctions.convertSversHMSSansZeros(s.getDureeSequence()));
             }
             for (int j = 0; j < s.getTabElement().size(); j++) {
                 if (mChrono.get().getIndexSequenceActive() > i)
-                    mAdapter.addItem(s.getTabElement().get(j).getNomExercice());
+                    mAdapter.addItem(s.getTabElement().get(j).getNomExercice(), "");
                 else
-                    mAdapter.addItem(s.getTabElement().get(j).getNomExercice() + " - " + Fonctions.convertSversHMSSansZeros(s.getTabElement().get(j).getDureeExercice()));
+                    mAdapter.addItem(s.getTabElement().get(j).getNomExercice(), Fonctions.convertSversHMSSansZeros(s.getTabElement().get(j).getDureeExercice()));
             }
         }
         mAdapter.notifyDataSetChanged();
