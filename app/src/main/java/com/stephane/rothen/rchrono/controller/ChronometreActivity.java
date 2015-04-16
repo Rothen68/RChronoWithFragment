@@ -306,12 +306,14 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
              * @param parent
              */
             case R.id.Frag_Liste_listView:
-                chronoService.stopChrono();
-                int posExercice = mChrono.get().setChronoAt(position);
-                if (posExercice > -1)
-                    mFragListe.afficheListView(posExercice, mChrono);
-                mFragBoutons.setTexteBtnStart(R.string.chronometre_start);
-                chronoService.updateChrono();
+                if (!chronoService.getChronoStart()) {
+                    chronoService.stopChrono();
+                    int posExercice = mChrono.get().setChronoAt(position);
+                    if (posExercice > -1)
+                        mFragListe.afficheListView(posExercice, mChrono);
+                    mFragBoutons.setTexteBtnStart(R.string.chronometre_start);
+                    chronoService.updateChrono();
+                }
                 break;
             default:
                 break;
