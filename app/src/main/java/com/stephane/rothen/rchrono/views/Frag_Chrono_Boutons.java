@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.stephane.rothen.rchrono.R;
 
@@ -22,11 +22,11 @@ public class Frag_Chrono_Boutons extends Fragment {
      * Instance de l'interface OnClickListener
      */
     private Frag_Bouton_Callback mCallback;
-    private Button mbtnStart;
+    private ImageButton mbtnStart;
     /**
      * Objet de l'inteface, Button qui est l'instance du bouton Reset
      */
-    private Button mbtnReset;
+    private ImageButton mbtnReset;
 
     public Frag_Chrono_Boutons() {
     }
@@ -52,10 +52,10 @@ public class Frag_Chrono_Boutons extends Fragment {
     /**
      * Modifie le texte du bouton Start/Pause
      *
-     * @param texte identifiant de la chaine de caractere stockée dans les ressources à afficher dans le bouton
+     * @param imageRes identifiant de l'image stockée dans les ressources à afficher dans le bouton
      */
-    public void setTexteBtnStart(int texte) {
-        mbtnStart.setText(texte);
+    public void setImageBtnStart(int imageRes) {
+        mbtnStart.setImageResource(imageRes);
     }
 
 
@@ -73,14 +73,14 @@ public class Frag_Chrono_Boutons extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.chrono_frag_boutons, container, false);
 
-        mbtnReset = (Button) rootView.findViewById(R.id.btnReset);
+        mbtnReset = (ImageButton) rootView.findViewById(R.id.btnReset);
         mbtnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCallback.onClickListener(v);
             }
         });
-        mbtnStart = (Button) rootView.findViewById(R.id.btnStart);
+        mbtnStart = (ImageButton) rootView.findViewById(R.id.btnStart);
         mbtnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

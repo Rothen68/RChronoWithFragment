@@ -13,7 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.stephane.rothen.rchrono.R;
@@ -149,9 +149,9 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                     chronoService.updateListView();
                     chronoService.updateChrono();
                     if (chronoService.getChronoStart())
-                        mFragBoutons.setTexteBtnStart(R.string.chronometre_pause);
+                        mFragBoutons.setImageBtnStart(R.drawable.pause);
                     else
-                        mFragBoutons.setTexteBtnStart(R.string.chronometre_start);
+                        mFragBoutons.setImageBtnStart(R.drawable.play);
                     chronoService.setPersistance(false);
                 }
 
@@ -226,10 +226,10 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                     if (chronoService != null) {
                         if (chronoService.getChronoStart()) {
                             chronoService.stopChrono();
-                            ((Button) v).setText(R.string.chronometre_start);
+                            ((ImageButton) v).setImageResource(R.drawable.play);
                         } else {
                             chronoService.startChrono();
-                            ((Button) v).setText(R.string.chronometre_pause);
+                            ((ImageButton) v).setImageResource(R.drawable.pause);
                         }
                     }
                 } else {
@@ -311,7 +311,7 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                     int posExercice = mChrono.get().setChronoAt(position);
                     if (posExercice > -1)
                         mFragListe.afficheListView(posExercice, mChrono);
-                    mFragBoutons.setTexteBtnStart(R.string.chronometre_start);
+                    mFragBoutons.setImageBtnStart(R.drawable.play);
                     chronoService.updateChrono();
                 }
                 break;
@@ -377,16 +377,16 @@ public class ChronometreActivity extends ActionBarActivity implements Frag_Chron
                         if (position != -1) {
                             mFragListe.afficheListView(position, mChrono);
                             if (mChrono.get().getListeSequence().size() == 0) {
-                                mFragBoutons.setTexteBtnStart(R.string.listesequences_ajoutsequence);
+                                mFragBoutons.setImageBtnStart(R.drawable.add);
                             } else if (chronoService.getChronoStart())
-                                mFragBoutons.setTexteBtnStart(R.string.chronometre_pause);
+                                mFragBoutons.setImageBtnStart(R.drawable.pause);
                             else
-                                mFragBoutons.setTexteBtnStart(R.string.chronometre_start);
+                                mFragBoutons.setImageBtnStart(R.drawable.play);
 
                         }
                         break;
                     case ChronoService.SER_FIN_LISTESEQUENCE:
-                        mFragBoutons.setTexteBtnStart(R.string.chronometre_start);
+                        mFragBoutons.setImageBtnStart(R.drawable.play);
                         mFragListe.afficheListView(0, mChrono);
                         break;
                     default:

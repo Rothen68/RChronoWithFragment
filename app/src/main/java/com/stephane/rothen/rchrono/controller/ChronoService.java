@@ -315,7 +315,7 @@ public class ChronoService extends Service implements TextToSpeech.OnInitListene
             lancerTimer();
             prepareMPNotif();
             updateListView();
-            mNotificationBuilder.setSmallIcon(R.drawable.fleche);
+            mNotificationBuilder.setSmallIcon(R.drawable.play);
             mNotificationBuilder.setContentText("Chronomètre lancé");
             mNotificationManager.notify(IDNOTIFICATION, mNotificationBuilder.build());
 
