@@ -12,6 +12,7 @@ Définit le layout d'une séquence dans la listView
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:background="@color/Green"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingBottom="6dp"
@@ -22,11 +23,12 @@ Définit le layout d'une séquence dans la listView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:gravity="left|center_vertical"
             android:text="sequence"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#3EA849" />
+            android:textColor="@color/WHITE" />
 
         <TextView
             android:id="@+id/txtLvNbreRepetSequence"
@@ -36,7 +38,7 @@ Définit le layout d'une séquence dans la listView
             android:gravity="left|center_vertical"
             android:text="sequence"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#3EA849" />
+            android:textColor="@color/WHITE" />
 
         <LinearLayout
             android:layout_width="wrap_content"
