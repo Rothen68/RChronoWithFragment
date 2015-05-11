@@ -90,6 +90,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     private boolean mEtatTbJouerPlaylist = false;
     private Button mBtnValider;
     private Button mBtnRetour;
+    private Button mBtnModifierPlaylist;
     /**
      * Permet de stocker les données de l'ElementSequence en cours de modification lors du basculement vers la fenetre de la playlist
      */
@@ -203,6 +204,9 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
 
         mBtnValider.setOnClickListener(this);
         mBtnRetour.setOnClickListener(this);
+
+        mBtnModifierPlaylist = (Button) findViewById(R.id.editionex_main_btnModifierPlaylist);
+        mBtnModifierPlaylist.setOnClickListener(this);
 
 
     }
@@ -438,6 +442,9 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     mChrono.get().setElementSeqTemp(null);
                     finish();
                 }
+                break;
+            case R.id.editionex_main_btnModifierPlaylist:
+                gotToEditionExercicePlaylist();
                 break;
             default:
                 break;

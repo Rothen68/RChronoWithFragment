@@ -203,6 +203,14 @@
                     android:textColor="@color/Green"
                     android:textOff="@string/editionex_frag_playlist_jouerplaylist"
                     android:textOn="@string/editionex_frag_playlist_jouerplaylist" />
+
+                <Button
+                    android:id="@+id/editionex_main_btnModifierPlaylist"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/editionex_frag_playlist_editionplaylist"
+                    android:textColor="@color/Green" />
             </LinearLayout>
 
         </LinearLayout>

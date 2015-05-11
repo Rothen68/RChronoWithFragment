@@ -63,6 +63,7 @@
     <string name="editionex_frag_detail_sonnerie">Sonnerie :</string>
 
     <string name="editionex_frag_playlist_jouerplaylist">Jouer la playlist</string>
+    <string name="editionex_frag_playlist_editionplaylist">Modifier la playlist</string>
 
     <string name="editionex_frag_ajoutmorceau_btnajout">Ajouter un morceau</string>
 

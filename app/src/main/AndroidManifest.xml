@@ -51,7 +51,8 @@
             android:name=".controller.EditionSequenceActivity"
             android:label="@string/title_activity_editionSequence"
             android:parentActivityName=".controller.ListeSequencesActivity"
-            android:windowSoftInputMode="stateVisible|adjustPan">
+
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
@@ -59,7 +60,8 @@
         <activity
             android:name=".controller.EditionExerciceActivity"
             android:label="Edition de l&apos;exercice"
-            android:parentActivityName=".controller.EditionSequenceActivity">
+            android:parentActivityName=".controller.EditionSequenceActivity"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.stephane.rothen.rchrono.controller.ChronometreActivity" />
