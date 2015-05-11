@@ -67,11 +67,12 @@
         </LinearLayout>
 
         <fragment
-            android:id="@+id/Frag_EditSeq_BtnRetour"
-            android:name="com.stephane.rothen.rchrono.views.Frag_BoutonRetour"
+            android:id="@+id/Frag_EditSeq_BtnValiderAnnuler"
+            android:name="com.stephane.rothen.rchrono.views.Frag_Bouton_Valider_Annuler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout="@layout/frag_bouton_retour" />
+            android:layout_gravity="center_horizontal"
+            tools:layout="@layout/frag_bouton_valider_annuler" />
     </LinearLayout>
 
 </LinearLayout>

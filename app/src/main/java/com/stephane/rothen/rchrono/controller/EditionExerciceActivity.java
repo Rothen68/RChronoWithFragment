@@ -28,6 +28,8 @@ import com.stephane.rothen.rchrono.model.NotificationExercice;
 import com.stephane.rothen.rchrono.model.Playlist;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
+import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
+import com.stephane.rothen.rchrono.views.Frag_Bouton_Valider_Annuler;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,7 +38,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Created by stéphane on 31/03/2015.
  */
 public class EditionExerciceActivity extends ActionBarActivity implements View.OnClickListener,
-        Frag_Dialog_Duree.Frag_Dialog_Duree_Callback {
+        Frag_Dialog_Duree.Frag_Dialog_Duree_Callback, Frag_Bouton_Callback {
 
 
     private static final int LISTESONS_SONNERIE = 1;
@@ -88,8 +90,10 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     private long mSonnerie = -1;
     private ToggleButton mTbJouerPlaylist;
     private boolean mEtatTbJouerPlaylist = false;
-    private Button mBtnValider;
-    private Button mBtnRetour;
+
+
+    private Frag_Bouton_Valider_Annuler mFragBtnValiderAnnuler;
+
     private Button mBtnModifierPlaylist;
     /**
      * Permet de stocker les données de l'ElementSequence en cours de modification lors du basculement vers la fenetre de la playlist
@@ -132,9 +136,7 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
         mTbSonnerie = (ToggleButton) findViewById(R.id.editionex_main_tbSonnerie);
         mEtxtSonnerie = (EditText) findViewById(R.id.editionex_main_etxtSonnerie);
         mTbJouerPlaylist = (ToggleButton) findViewById(R.id.editionex_main_tbJouerPlaylist);
-        mBtnValider = (Button) findViewById(R.id.editionex_main_btnValider);
-        mBtnRetour = (Button) findViewById(R.id.editionex_main_btnRetour);
-
+        mFragBtnValiderAnnuler = (Frag_Bouton_Valider_Annuler) getSupportFragmentManager().findFragmentById(R.id.EditionEx_host_frag_btnValiderAnnuler);
         mEtxtDuree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,8 +204,6 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
             }
         });
 
-        mBtnValider.setOnClickListener(this);
-        mBtnRetour.setOnClickListener(this);
 
         mBtnModifierPlaylist = (Button) findViewById(R.id.editionex_main_btnModifierPlaylist);
         mBtnModifierPlaylist.setOnClickListener(this);
@@ -420,12 +420,23 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.editionex_main_btnRetour:
-                mChrono.get().setElementSeqTemp(null);
-                finish();
+            case R.id.editionex_main_btnModifierPlaylist:
+                gotToEditionExercicePlaylist();
                 break;
+            default:
+                break;
+        }
+    }
 
-            case R.id.editionex_main_btnValider:
+    /**
+     * Callback du fragment contenant les boutons Valider et annuler
+     * @param v View sur laquelle l'utilisateur aa cliqué
+     */
+    @Override
+    public void onClickListener(View v) {
+        switch(v.getId())
+        {
+            case R.id.btnValider:
                 mElementSeqTemp.setNomExercice(mEtxtNom.getText().toString());
                 mElementSeqTemp.setDescriptionExercice(mEtxtDescription.getText().toString());
                 mElementSeqTemp.setDureeExercice(mDuree);
@@ -443,12 +454,14 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
                     finish();
                 }
                 break;
-            case R.id.editionex_main_btnModifierPlaylist:
-                gotToEditionExercicePlaylist();
+            case R.id.btnAnnuler:
+                mChrono.get().setElementSeqTemp(null);
+                finish();
                 break;
             default:
                 break;
         }
+
     }
 
 

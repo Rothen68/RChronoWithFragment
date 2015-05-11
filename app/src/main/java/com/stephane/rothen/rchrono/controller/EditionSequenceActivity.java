@@ -21,8 +21,8 @@ import com.stephane.rothen.rchrono.R;
 import com.stephane.rothen.rchrono.model.Sequence;
 import com.stephane.rothen.rchrono.model.SyntheseVocale;
 import com.stephane.rothen.rchrono.views.Frag_AlertDialog_Suppr;
-import com.stephane.rothen.rchrono.views.Frag_BoutonRetour;
 import com.stephane.rothen.rchrono.views.Frag_Bouton_Callback;
+import com.stephane.rothen.rchrono.views.Frag_Bouton_Valider_Annuler;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_Duree;
 import com.stephane.rothen.rchrono.views.Frag_Dialog_EnregistrementSeq;
 import com.stephane.rothen.rchrono.views.Frag_EditSeq_BtnExercice;
@@ -91,7 +91,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     /**
      * Instance de la classe du fragment affichant le bouton retour
      */
-    private Frag_BoutonRetour mFragBtnRetour;
+    private Frag_Bouton_Valider_Annuler mFragBtnValiderAnnuler;
     /**
      * index de la séquence a supprimer dans la librairie des séquences
      */
@@ -136,7 +136,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         mFragDetail = (Frag_EditSeq_Detail) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_Detail);
 
         mFragBtnExercice = (Frag_EditSeq_BtnExercice) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_BtnExercice);
-        mFragBtnRetour = (Frag_BoutonRetour) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_BtnRetour);
+        mFragBtnValiderAnnuler = (Frag_Bouton_Valider_Annuler) getSupportFragmentManager().findFragmentById(R.id.Frag_EditSeq_BtnValiderAnnuler);
 
 
     }
@@ -272,7 +272,11 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
     @Override
     public void onClickListener(View v) {
         switch (v.getId()) {
-            case R.id.btnRetour:
+            case R.id.btnAnnuler:
+                mChrono.get().resetChrono();
+                finish();
+                break;
+            case R.id.btnValider:
                 updateSeqTempFromIHM();
                 if (isSequenceModifiee())
                     if (mSeqTemp.getTabElement().size() == 0) {
