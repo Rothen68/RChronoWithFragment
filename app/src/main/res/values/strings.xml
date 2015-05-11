@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">RChrono</string>
+    <string name="annuler">Annuler</string>
 
     <string name="chronometre_start">Démarrer</string>
     <string name="chronometre_pause">Pause</string>
@@ -17,7 +18,7 @@
 
     <string name="alertDialog_suppr">Supprimer</string>
     <string name="alertDialog_dutelephone">du téléphone ?</string>
-    <string name="alertDialog_annuler">Annuler</string>
+
 
     <string name="dialogRep_Ok">Valider</string>
     <string name="dialogRep_Repetition">Répétitions :</string>
@@ -62,6 +63,7 @@
     <string name="editionex_frag_detail_nsonnerie">Sonnerie</string>
     <string name="editionex_frag_detail_sonnerie">Sonnerie :</string>
 
+
     <string name="editionex_frag_playlist_jouerplaylist">Jouer la playlist</string>
     <string name="editionex_frag_playlist_editionplaylist">Modifier la playlist</string>
 
@@ -78,7 +80,7 @@
     <string name="alert_dureeTotaleTropGrande">100 heures maximum</string>
     <string name="title_activity_liste_sons">ListeSons</string>
 
-    <string name="hello_world">Hello world!</string>
+
     <string name="action_settings">Settings</string>
 
 

@@ -47,7 +47,7 @@ public class Frag_AlertDialog_Suppr extends DialogFragment {
                         mCallback.doDialogFragSupprClick();
                     }
                 })
-                .setNegativeButton(R.string.alertDialog_annuler, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.annuler, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mCallback.doDialogFragCancelClick();
