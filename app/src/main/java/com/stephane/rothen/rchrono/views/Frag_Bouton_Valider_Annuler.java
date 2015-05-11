@@ -24,9 +24,12 @@ public class Frag_Bouton_Valider_Annuler extends Fragment {
     private Frag_Bouton_Callback mCallback;
 
     /**
-     * Bouton Ajouter du fragment
+     * Bouton Valider du fragment
      */
     private Button mBtnValider;
+    /**
+     * Bouton Annuler du fragment
+     */
     private Button mBtnAnnuler;
 
 
