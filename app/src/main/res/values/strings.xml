@@ -18,6 +18,7 @@
 
     <string name="alertDialog_suppr">Supprimer</string>
     <string name="alertDialog_dutelephone">du téléphone ?</string>
+    <string name="dialogDuree_dblePoints">:</string>
 
 
     <string name="dialogRep_Ok">Valider</string>

@@ -28,12 +28,10 @@ lv_exercice_layout.xmlt le layout d'un exercice qui a le focus dans la listView
             android:id="@+id/txtLvExercice"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
             android:layout_weight="1"
             android:gravity="left|center_vertical"
-            android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#3EA849"
             android:typeface="sans" />
@@ -42,12 +40,9 @@ lv_exercice_layout.xmlt le layout d'un exercice qui a le focus dans la listView
             android:id="@+id/txtLvDureeExercice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
-
             android:gravity="left|center_vertical"
-            android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#3EA849"
             android:typeface="sans" />

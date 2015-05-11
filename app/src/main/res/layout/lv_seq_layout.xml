@@ -36,7 +36,7 @@ Définit le layout d'une séquence dans la listView
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="left|center_vertical"
-            android:text="sequence"
+
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/WHITE" />
 
