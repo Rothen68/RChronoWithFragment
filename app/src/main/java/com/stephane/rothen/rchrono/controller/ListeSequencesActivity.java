@@ -142,7 +142,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
                     chronoService.updateListView();
                 } else {
                     mChrono = chronoService.getAtomicChronometre();
-                    mChrono.get().resetChrono();
+
                     if (mChrono.get().getListeSequence().size() > 0) {
                         chronoService.updateListView();
                         chronoService.setPersistance(false);
