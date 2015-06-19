@@ -29,7 +29,6 @@ import com.stephane.rothen.rchrono.views.Frag_Liste_Callback;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-//todo controler fonctionnement de l'activity
 
 /**
  * Classe Activity affichant l'écran AjoutExercice
@@ -40,7 +39,7 @@ public class AjoutExerciceActivity extends ActionBarActivity implements Frag_Lis
     public static final int RESULT_AJOUT = 50;
     public static final int RESULT_CREER = 51;
 
-//todo bouton supprimer
+
     /**
      * Instance de la classe AtomicReference<Chronometre> pour éviter les conflits d'acces entre le ChronoService et l'activity
      *

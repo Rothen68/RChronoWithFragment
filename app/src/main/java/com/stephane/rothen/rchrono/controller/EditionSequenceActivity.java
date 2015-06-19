@@ -337,7 +337,7 @@ public class EditionSequenceActivity extends ActionBarActivity implements Frag_L
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ACTIVITY_AJOUT_EX) {
             if (resultCode == AjoutExerciceActivity.RESULT_AJOUT) {
-                //todo gérer l'erreur
+
                 mIndexElementSequenceTemp = mSeqTemp.getTabElement().size() - 1;
                 goToEditionExerciceActivity();
             }

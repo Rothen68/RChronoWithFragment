@@ -149,7 +149,7 @@ public class ChronoModel {
      *
      * @param s Nouvelle séquence
      */
-    public void modifierSequenceDansListe(Sequence s) {//todo tester gestion libmorceau
+    public void modifierSequenceDansListe(Sequence s) {
         if (s.getIdSequence() > 0) {
             boolean seqModifiee = false;
             Sequence anciennneSeq;

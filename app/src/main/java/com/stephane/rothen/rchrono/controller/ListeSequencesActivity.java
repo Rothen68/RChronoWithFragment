@@ -343,7 +343,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
      * @see com.stephane.rothen.rchrono.views.Frag_Dialog_Repetition
      */
     private void afficheDialogRepetition() {
-        //todo gérer modification d'une séquence ou d'un exercice par creation d'un ou plusieurs doublons
+
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentByTag("dialog") == null) {
             DialogFragment df = Frag_Dialog_Repetition.newInstance(mChrono.get().getSeqFromLstSequenceAt(mChrono.get().mIndexSequenceActive).getNombreRepetition());
@@ -432,7 +432,7 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ACTIVITY_AJOUT_SEQ) {
             if (resultCode == AjoutSequenceActivity.RESULT_AJOUT) {
-                //todo gérer l'erreur
+
                 int derniereSeq = mChrono.get().getListeSequence().size() - 1;
                 mChrono.get().setChronoAt(derniereSeq, 0);
                 goToEditionSequenceActivity();

@@ -302,7 +302,12 @@ public class EditionExerciceActivity extends ActionBarActivity implements View.O
             mChrono.get().setElementSeqTemp(mElementSeqTemp);
             mSauvegarderDonneesTemp = false;
         } else {
-            mChrono.get().setElementSeqTemp(null);
+            //issue #17 : Crash lors de la rotation de l'écran
+            //Lors de la rotation successive de l'écran, le service n'a pas le temps de renvoyer mChrono
+            //Cela déclanche une nullPointerException
+            //Vérification de l'état de mChrono avant l'utilisation
+            if (mChrono != null)
+                mChrono.get().setElementSeqTemp(null);
         }
         if (myReceiver.isRegistered)
             unregisterReceiver(myReceiver);
