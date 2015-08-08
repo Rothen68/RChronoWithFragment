@@ -40,7 +40,7 @@ public class ChronoModel {
     /**
      * Instance de l'objet contenant la liste des séquences à effectuer
      */
-    protected ArrayList<Long> mListeSequences; //todo utiliser un sparseArray
+    protected ArrayList<Long> mListeSequences;
     /**
      * ContentResolver pour la recherche des données des musiques
      */
@@ -285,6 +285,7 @@ public class ChronoModel {
         mBddHelper.open();
         mBddHelper.supprimerSequenceDansBdd(s);
         mBddHelper.close();
+        mLibSequences.remove(index);
     }
 
 
@@ -299,6 +300,7 @@ public class ChronoModel {
         mBddHelper.open();
         mBddHelper.supprimerExerciceDansBdd(e);
         mBddHelper.close();
+        mLibExercices.remove(index);
     }
 
     /**

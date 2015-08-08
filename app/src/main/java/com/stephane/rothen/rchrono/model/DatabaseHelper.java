@@ -17,11 +17,11 @@ public class DatabaseHelper {
     /**
      * base de donnée SQLite
      */
-    protected SQLiteDatabase m_db = null;
+    protected SQLiteDatabase mDb = null;
     /**
      * Gestionnaire de connexion à la base de donnée
      */
-    protected DatabaseBuilder m_helper = null;
+    protected DatabaseBuilder mBuilder = null;
 
 
     /**
@@ -30,7 +30,7 @@ public class DatabaseHelper {
      * @param context: Context de l'application
      */
     public DatabaseHelper(Context context) {
-        m_helper = new DatabaseBuilder(context);
+        mBuilder = new DatabaseBuilder(context);
     }
 
     /**
@@ -39,16 +39,16 @@ public class DatabaseHelper {
      * @return : base de donnée SQLite ouverte
      */
     public SQLiteDatabase open() {
-        m_db = m_helper.getReadableDatabase();
-        return m_db;
+        mDb = mBuilder.getReadableDatabase();
+        return mDb;
     }
 
     /**
      * Ferme la base de donnée
      */
     public void close() {
-        if (m_db != null)
-            m_db.close();
+        if (mDb != null)
+            mDb.close();
     }
 
 
@@ -65,9 +65,9 @@ public class DatabaseHelper {
         long idSequence;
 
 
-        if (m_db != null) {
+        if (mDb != null) {
             requete = "SELECT * FROM " + DatabaseBuilder.LSTSEQUENCES;
-            c = m_db.rawQuery(requete, null);
+            c = mDb.rawQuery(requete, null);
             while(c.moveToNext()) {
                 idSequence = c.getInt(c.getColumnIndex(DatabaseBuilder.LSTSEQUENCES_ID_SEQUENCE));
                 tabSeq.add(idSequence);
@@ -85,13 +85,13 @@ public class DatabaseHelper {
      * @param tab tableau à sauvegarder
      */
     public void saveLstSequence(ArrayList<Long> tab) {
-        m_db.execSQL(DatabaseBuilder.LSTSEQUENCES_TABLE_DROP);
-        m_db.execSQL(DatabaseBuilder.LSTSEQUENCES_TABLE_CREATE);
+        mDb.execSQL(DatabaseBuilder.LSTSEQUENCES_TABLE_DROP);
+        mDb.execSQL(DatabaseBuilder.LSTSEQUENCES_TABLE_CREATE);
         for (Long i : tab) {
             // Ajoute la séquence dans la table ListeSequence
             ContentValues map = new ContentValues();
             map.put(DatabaseBuilder.LSTSEQUENCES_ID_SEQUENCE, String.valueOf(i));
-            m_db.insert(DatabaseBuilder.LSTSEQUENCES, null, map);
+            mDb.insert(DatabaseBuilder.LSTSEQUENCES, null, map);
         }
     }
 
@@ -104,8 +104,8 @@ public class DatabaseHelper {
     public ArrayList<Exercice> restoreLibrairieExercice() {
 
         ArrayList<Exercice> tab = new ArrayList<>();
-        if (m_db != null) {
-            Cursor cExercice = m_db.rawQuery("SELECT * FROM " + DatabaseBuilder.EXERCICE + ";", null);
+        if (mDb != null) {
+            Cursor cExercice = mDb.rawQuery("SELECT * FROM " + DatabaseBuilder.EXERCICE + ";", null);
             while (cExercice.moveToNext()) {
                 int idExercice = cExercice.getInt(cExercice.getColumnIndex(DatabaseBuilder.EXERCICE_ID));
                 String nom = cExercice.getString(cExercice.getColumnIndex(DatabaseBuilder.EXERCICE_NOM));
@@ -118,7 +118,7 @@ public class DatabaseHelper {
                         DatabaseBuilder.PLAYLIST_ID_EXERCICE + " = " + String.valueOf(idExercice) + " ORDER BY " +
                         DatabaseBuilder.PLAYLIST_POSITION + ";";
 
-                Cursor cPlaylist = m_db.rawQuery(requete, null);
+                Cursor cPlaylist = mDb.rawQuery(requete, null);
 
                 Playlist pl = new Playlist();
                 if (jouerPlaylist > 0)
@@ -149,8 +149,8 @@ public class DatabaseHelper {
         ArrayList<Sequence> tab = new ArrayList<>();
 
         //récupération de toutes les séquences de la table Sequence
-        if (m_db != null) {
-            Cursor c = m_db.rawQuery("SELECT * FROM " + DatabaseBuilder.SEQUENCE + ";", null);
+        if (mDb != null) {
+            Cursor c = mDb.rawQuery("SELECT * FROM " + DatabaseBuilder.SEQUENCE + ";", null);
             while (c.moveToNext()) {
                 int idSequence = c.getInt(c.getColumnIndex(DatabaseBuilder.SEQUENCE_ID));
                 String nomSequence = c.getString(c.getColumnIndex(DatabaseBuilder.SEQUENCE_NOM));
@@ -162,7 +162,7 @@ public class DatabaseHelper {
                         DatabaseBuilder.ELEMENTSEQUENCE + "." + DatabaseBuilder.ELEMENTSEQUENCE_ID_EXERCICE + " = " + DatabaseBuilder.EXERCICE + "." +
                         DatabaseBuilder.EXERCICE_ID + " WHERE " + DatabaseBuilder.ELEMENTSEQUENCE + "." + DatabaseBuilder.ELEMENTSEQUENCE_ID_SEQUENCE +
                         " = " + String.valueOf(idSequence) + ";";
-                Cursor cElement = m_db.rawQuery(requete, null);
+                Cursor cElement = mDb.rawQuery(requete, null);
                 while (cElement.moveToNext()) {
 
 
@@ -215,7 +215,7 @@ public class DatabaseHelper {
         map.put(DatabaseBuilder.SEQUENCE_NOM, s.getNomSequence());
         map.put(DatabaseBuilder.SEQUENCE_NOMBREREPETITON, String.valueOf(s.getNombreRepetition()));
         map.put(DatabaseBuilder.SEQUENCE_SYNTHESEVOCALE, String.valueOf(s.getSyntheseVocale().getSyntheseVocaleForBdd()));
-        idSequence = m_db.insert(DatabaseBuilder.SEQUENCE, null, map);
+        idSequence = mDb.insert(DatabaseBuilder.SEQUENCE, null, map);
         s.setIdSequence(idSequence);
         for (ElementSequence el : s.getTabElement()) {
             ajouterElementSequenceDansBdd(el, s.getIdSequence());
@@ -253,7 +253,7 @@ public class DatabaseHelper {
             map.put(DatabaseBuilder.ELEMENTSEQUENCE_SYNTHESEVOCALE, String.valueOf(el.getSyntheseVocale().getSyntheseVocaleForBdd()));
             map.put(DatabaseBuilder.ELEMENTSEQUENCE_DUREE, String.valueOf(el.getDureeExercice()));
             map.put(DatabaseBuilder.ELEMENTSEQUENCE_POSITION, String.valueOf(el));
-            retour = m_db.insert(DatabaseBuilder.ELEMENTSEQUENCE, null, map);
+            retour = mDb.insert(DatabaseBuilder.ELEMENTSEQUENCE, null, map);
             if (retour != -1) {
                 el.setIdElementSequence(retour);
                 majPlaylistDansBdd(el.getPlaylistParDefaut(), -1, el.getIdElementSequence());
@@ -277,7 +277,7 @@ public class DatabaseHelper {
         map.put(DatabaseBuilder.EXERCICE_DESCRIPTION, e.getDescriptionExercice());
         map.put(DatabaseBuilder.EXERCICE_DUREEPARDEFAUT, String.valueOf(e.getDureeParDefaut()));
         map.put(DatabaseBuilder.EXERCICE_JOUERPLAYLISTPARDEFAUT, String.valueOf((e.getPlaylistParDefaut().getJouerPlaylist()) ? (1) : (0)));
-        idExercice = m_db.insert(DatabaseBuilder.EXERCICE, null, map);
+        idExercice = mDb.insert(DatabaseBuilder.EXERCICE, null, map);
         e.setIdExercice(idExercice);
         majPlaylistDansBdd(e.getPlaylistParDefaut(), e.getIdExercice(), -1);
 
@@ -299,11 +299,11 @@ public class DatabaseHelper {
             map.put(DatabaseBuilder.SEQUENCE_NOMBREREPETITON, String.valueOf(s.getNombreRepetition()));
             map.put(DatabaseBuilder.SEQUENCE_SYNTHESEVOCALE, String.valueOf(s.getSyntheseVocale().getSyntheseVocaleForBdd()));
             String where = DatabaseBuilder.SEQUENCE_ID + " = " + s.getIdSequence();
-            long retour = m_db.update(DatabaseBuilder.SEQUENCE, map, where, null);
+            long retour = mDb.update(DatabaseBuilder.SEQUENCE, map, where, null);
             if (retour == 1) {
                 ElementSequence el;
                 where = DatabaseBuilder.ELEMENTSEQUENCE_ID_SEQUENCE + " = " + s.getIdSequence();
-                m_db.delete(DatabaseBuilder.ELEMENTSEQUENCE, where, null);
+                mDb.delete(DatabaseBuilder.ELEMENTSEQUENCE, where, null);
 
                 for (int i = 0; i < s.getTabElement().size(); i++) {
                     el = s.getTabElement().get(i);
@@ -334,7 +334,7 @@ public class DatabaseHelper {
         map.put(DatabaseBuilder.EXERCICE_DUREEPARDEFAUT, String.valueOf(e.getDureeParDefaut()));
         map.put(DatabaseBuilder.EXERCICE_JOUERPLAYLISTPARDEFAUT, String.valueOf((e.getPlaylistParDefaut().getJouerPlaylist()) ? (1) : (0)));
         String where = DatabaseBuilder.EXERCICE_ID + " = " + String.valueOf(e.getIdExercice());
-        m_db.update(DatabaseBuilder.EXERCICE, map, where, null);
+        mDb.update(DatabaseBuilder.EXERCICE, map, where, null);
         majPlaylistDansBdd(e.getPlaylistParDefaut(), e.getIdExercice(), -1);
 
         return e.getIdExercice();
@@ -359,7 +359,7 @@ public class DatabaseHelper {
 
         String requete = "DELETE FROM " + DatabaseBuilder.PLAYLIST + " WHERE " + DatabaseBuilder.PLAYLIST_ID_EXERCICE + " = " +
                 String.valueOf(idExercice) + " AND " + DatabaseBuilder.PLAYLIST_ID_ELEMENTSEQUENCE + " = " + String.valueOf(idElementSequence) + " ;";
-        m_db.execSQL(requete);
+        mDb.execSQL(requete);
 
         ContentValues map;
         for (int i = 0; i < pl.getNbreMorceaux(); i++) {
@@ -369,7 +369,7 @@ public class DatabaseHelper {
             map.put(DatabaseBuilder.PLAYLIST_ID_EXERCICE, idExercice);
             map.put(DatabaseBuilder.PLAYLIST_ID_ELEMENTSEQUENCE, idElementSequence);
             map.put(DatabaseBuilder.PLAYLIST_POSITION, i);
-            m_db.insert(DatabaseBuilder.PLAYLIST, null, map);
+            mDb.insert(DatabaseBuilder.PLAYLIST, null, map);
         }
     }
 
@@ -383,17 +383,17 @@ public class DatabaseHelper {
         int retour;
 
         String where = DatabaseBuilder.SEQUENCE_ID + " = " + s.getIdSequence();
-        retour = m_db.delete(DatabaseBuilder.SEQUENCE, where, null);
+        retour = mDb.delete(DatabaseBuilder.SEQUENCE, where, null);
         if (retour != 1) {
             Log.d("BDD", "Erreur supprimerSequenceDansLibrairie : " + retour + " lignes supprimées");
         } else {
             for (ElementSequence el : s.getTabElement()) {
                 where = DatabaseBuilder.PLAYLIST_ID_ELEMENTSEQUENCE + " = " + el.getIdElementSequence();
-                m_db.delete(DatabaseBuilder.PLAYLIST, where, null);
+                mDb.delete(DatabaseBuilder.PLAYLIST, where, null);
 
             }
             where = DatabaseBuilder.ELEMENTSEQUENCE_ID_SEQUENCE + " = " + s.getIdSequence();
-            m_db.delete(DatabaseBuilder.ELEMENTSEQUENCE, where, null);
+            mDb.delete(DatabaseBuilder.ELEMENTSEQUENCE, where, null);
         }
     }
 
@@ -406,12 +406,12 @@ public class DatabaseHelper {
     public void supprimerExerciceDansBdd(Exercice e) {
         int retour;
         String where = DatabaseBuilder.EXERCICE_ID + " = " + e.getIdExercice();
-        retour = m_db.delete(DatabaseBuilder.EXERCICE, where, null);
+        retour = mDb.delete(DatabaseBuilder.EXERCICE, where, null);
         if (retour != 1) {
             Log.d("BDD", "Erreur supprimerExerciceDansBdd : " + retour + " lignes supprimées");
         } else {
             where = DatabaseBuilder.PLAYLIST_ID_EXERCICE + " = " + e.getIdExercice();
-            m_db.delete(DatabaseBuilder.PLAYLIST, where, null);
+            mDb.delete(DatabaseBuilder.PLAYLIST, where, null);
         }
     }
 }

@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
 
-        <fragment
+    <fragment
             android:id="@+id/Frag_ListeSeq_Liste"
             android:name="com.stephane.rothen.rchrono.views.Frag_ListeItems"
             android:layout_width="match_parent"

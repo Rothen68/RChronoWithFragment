@@ -99,15 +99,6 @@ public class ElementSequence extends Exercice implements Cloneable {
     }
 
 
-//    public Playlist getPlaylistExercice() {
-//        return mPlaylistExercice;
-//    }
-//
-//
-//    public void setPlaylistExercice(Playlist pl) {
-//        mPlaylistExercice = pl;
-//    }
-
     /**
      * Retourne la synthese vocale de l'exercice
      *
