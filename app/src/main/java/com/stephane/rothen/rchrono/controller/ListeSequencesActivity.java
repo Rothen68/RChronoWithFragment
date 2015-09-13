@@ -402,7 +402,14 @@ public class ListeSequencesActivity extends ActionBarActivity implements Frag_Bo
             afficheDialogDuree();
 
         } else {
-            mChrono.get().remplacerSequenceActive(s);
+            if(mChrono.get().controleSiPlusieursOccurancesSequenceActiveDansListSequence())
+            {
+                mChrono.get().dupliquerSequenceActive(s);
+
+            }
+            else {
+                mChrono.get().remplacerSequenceActive(s);
+            }
             chronoService.resetChrono();
             mTxtDuree.setText(getString(R.string.listeSequences_tempstotal) + " " + Fonctions.convertSversHMS(mChrono.get().getDureeTotale()));
         }

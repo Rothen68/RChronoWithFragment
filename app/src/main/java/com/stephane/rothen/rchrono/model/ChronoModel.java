@@ -93,20 +93,39 @@ public class ChronoModel {
      * @param s Séquence à ajouter
      */
     public void ajouterSequenceDansListe(Sequence s) {
-        if (mLibSequences.indexOf(s) < 0) {
+        ajouterSequenceDansLibrairie(s);
+        mListeSequences.add(s.getIdSequence());
+        saveListeSequence();
+    }
+
+    public void dupliquerSequenceActive(Sequence s, int indexSequenceActiveDansListSequence)
+    {
+        ajouterSequenceDansLibrairie(s);
+
+        if(indexSequenceActiveDansListSequence>=0 && indexSequenceActiveDansListSequence<mListeSequences.size()) {
+            mListeSequences.set(indexSequenceActiveDansListSequence, mLibSequences.get(mLibSequences.size() - 1).getIdSequence());
+            saveListeSequence();
+        }
+
+    }
+
+    /**
+     * Ajoute une séquence dans la librairie des séquences
+     * @param s
+     */
+
+    private void ajouterSequenceDansLibrairie(Sequence s)
+    {
+        if(mLibSequences.indexOf(s)<0)
+        {
             long idSequence = ajouterSequenceDansBdd(s);
             s.setIdSequence(idSequence);
             mLibSequences.add(s);
             for (int i = 0; i < s.getTabElement().size(); i++) {
                 ajouterExerciceDansLibrairie(s.getTabElement().get(i).getExercice());
-
             }
-
         }
-        mListeSequences.add(s.getIdSequence());
-        saveListeSequence();
     }
-
 
     /**
      * Ajoute l'exercice passé en paramètre dans la Librairie des exercices
@@ -149,7 +168,7 @@ public class ChronoModel {
      *
      * @param s Nouvelle séquence
      */
-    public void modifierSequenceDansListe(Sequence s) {
+    public void modifierSequenceDansListe(Sequence s, int indexCurrentSequence) {
         if (s.getIdSequence() > 0) {
             boolean seqModifiee = false;
             Sequence anciennneSeq;
@@ -157,45 +176,93 @@ public class ChronoModel {
             Exercice ancienEx;
             long sonnerie;
             int j, k;
-            for (int i = 0; i < mLibSequences.size(); i++) {
-                anciennneSeq = mLibSequences.get(i);
-                if (anciennneSeq.getIdSequence() == s.getIdSequence()) {
-                    mLibSequences.set(i, s);
-                    modifierSequenceDansBdd(s);
-                    seqModifiee = true;
-                    break;
-                }
-            }
-            if (seqModifiee) {
-                //pour chaque ElementSequence, met à jour l'exercice dans la librairie des exercices
-                for (int i = 0; i < s.getTabElement().size(); i++) {
-                    el = s.getTabElement().get(i);
-                    boolean elModifie = false;
-                    for (j = 0; j < mLibExercices.size(); j++) {
-                        Exercice ex = el.getExercice();
-                        if (ex.getIdExercice() == mLibExercices.get(j).getIdExercice()) {
-                            mLibExercices.set(j, ex);
-                            mBddHelper.open();
-                            mBddHelper.majExerciceDansBdd(ex);
-                            mBddHelper.close();
-                            elModifie = true;
-                            break;
-                        }
-                    }
-                    if (!elModifie) {
-                        mLibExercices.add(el.getExercice());
-                        mBddHelper.open();
-                        mBddHelper.ajouterExerciceDansBdd(el.getExercice());
-                        mBddHelper.close();
-                    }
+            if (controleSiSequenceUtiliseDansListSequence(s)) {
+                ajouterSequenceDansLibrairie(s);
+                mListeSequences.set(indexCurrentSequence,s.getIdSequence());
+                for(int i = 0 ; i < s.getTabElement().size() ; i++)
+                {
+                    ajouterExerciceDansLibrairie(s.getTabElement().get(i).getExercice());
+
                 }
             } else {
-                Log.d("MODEL", "La séquence n'a pas été trouvée dans la librairie");
+                for (int i = 0; i < mLibSequences.size(); i++) {
+                    anciennneSeq = mLibSequences.get(i);
+                    if (anciennneSeq.getIdSequence() == s.getIdSequence()) {
+                        mLibSequences.set(i, s);
+                        modifierSequenceDansBdd(s);
+                        seqModifiee = true;
+                        break;
+                    }
+                }
+
+                if (seqModifiee) {
+                    //pour chaque ElementSequence, met à jour l'exercice dans la librairie des exercices
+                    for (int i = 0; i < s.getTabElement().size(); i++) {
+                        el = s.getTabElement().get(i);
+                        boolean elModifie = false;
+                        for (j = 0; j < mLibExercices.size(); j++) {
+                            Exercice ex = el.getExercice();
+                            if (ex.getIdExercice() == mLibExercices.get(j).getIdExercice()) {
+                                if (!controleSiElementSequenceUtiliseDansAutreSequence((el))) {
+                                    mLibExercices.set(j, ex);
+                                    mBddHelper.open();
+                                    mBddHelper.majExerciceDansBdd(ex);
+                                    mBddHelper.close();
+                                    elModifie = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!elModifie) {
+                            mLibExercices.add(el.getExercice());
+                            mBddHelper.open();
+                            mBddHelper.ajouterExerciceDansBdd(el.getExercice());
+                            mBddHelper.close();
+                        }
+                    }
+
+                } else {
+                    Log.d("MODEL", "La séquence n'a pas été trouvée dans la librairie");
+                }
             }
-        } else {
+        }
+        else {
             Log.d("MODEL", "Erreur modifierSequenceDansListe : L'id de la séquence n'est pas enregistré");
         }
     }
+
+    private boolean controleSiSequenceUtiliseDansListSequence(Sequence s)
+    {
+        int nbreOccurence=0;
+        long idSequence = s.getIdSequence();
+        for (int i = 0 ; i < mListeSequences.size() ; i++)
+        {
+            if(mListeSequences.get(i)==idSequence)
+                nbreOccurence++;
+        }
+        if(nbreOccurence>1)
+            return true;
+        else
+            return false;
+    }
+
+    private boolean controleSiElementSequenceUtiliseDansAutreSequence(Exercice e)
+    {
+        boolean estUtilise = false;
+        for(int i=0; i < mLibSequences.size(); i++)
+        {
+            Sequence s = mLibSequences.get(i);
+            for (int j = 0 ; j < s.getTabElement().size() ; j++) {
+                if (e.getIdExercice() == s.getTabElement().get(j).getIdExercice()) {
+                    estUtilise = true;
+                    break;
+                }
+            }
+        }
+        return estUtilise;
+    }
+
+
 
 
     /**

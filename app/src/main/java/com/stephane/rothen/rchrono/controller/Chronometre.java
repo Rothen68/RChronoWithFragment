@@ -453,13 +453,19 @@ public class Chronometre {
         mChronoModel.ajouterSequenceDansListe(s);
     }
 
+    public void dupliquerSequenceActive(Sequence s)
+    {
+        mChronoModel.dupliquerSequenceActive(s,getIndexSequenceActive());
+
+    }
+
     /**
      * Remplace la séquence active par la séquence passée en paramètre
      *
      * @param s séquence de remplacement
      */
     public void remplacerSequenceActive(Sequence s) {
-        mChronoModel.modifierSequenceDansListe(s);
+        mChronoModel.modifierSequenceDansListe(s,getIndexSequenceActive());
     }
 
 
@@ -584,4 +590,19 @@ public class Chronometre {
         return mChronoModel.isExerciceUtilise(indexLibExercice);
     }
 
+    public boolean controleSiPlusieursOccurancesSequenceActiveDansListSequence() {
+        int nbreOccurence = 0;
+        Sequence sequenceActive = getSequenceActive();
+        int indexSequenceActive = mChronoModel.getLibrairieSequences().indexOf(sequenceActive);
+        for (int i = 0 ; i < mChronoModel.getListeSequences().size() ;i++)
+        {
+            if(indexSequenceActive == mChronoModel.getListeSequences().get(i))
+                nbreOccurence++;
+        }
+
+        if(nbreOccurence>1)
+            return false;
+        else
+            return true;
+    }
 }
